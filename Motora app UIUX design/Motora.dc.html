@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box}
+  *::-webkit-scrollbar{display:none}
+  body{margin:0;background:#C7CEDA;font-family:Manrope,system-ui,sans-serif}
+  a{color:#2F72E8;text-decoration:none}
+  a:hover{color:#1B57C0}
+  .msym{font-family:'Material Symbols Outlined';font-weight:normal;font-style:normal;line-height:1;letter-spacing:normal;-webkit-font-feature-settings:'liga';font-feature-settings:'liga';-webkit-font-smoothing:antialiased}
+</style>
+</helmet>
+<div style="min-height:100vh;background:radial-gradient(circle at 30% 0%,#D5DBE6,#BEC6D3);padding:72px 80px 120px">
+
+  <div style="max-width:760px;margin:0 0 64px">
+    <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px">
+      <div style="width:46px;height:46px;border-radius:14px;background:#0E1520;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px -8px rgba(15,25,40,.5)"><span class="msym" style="font-size:26px;color:#FF8A3D">directions_car</span></div>
+      <span style="font:800 30px/1 'Space Grotesk';color:#141C28;letter-spacing:-.5px">Motora</span>
+      <span style="margin-left:6px;font:600 12px/1 Manrope;color:#5A6678;background:#E3E8F0;border:1px solid rgba(20,30,45,.08);padding:6px 10px;border-radius:99px">Carnet Auto</span>
+    </div>
+    <h1 style="font:800 30px/1.15 'Space Grotesk';color:#141C28;margin:0 0 12px;letter-spacing:-.6px">Design UI/UX — suivi d'entretien automobile</h1>
+    <p style="font:400 16px/1.6 Manrope;color:#445060;margin:0">Application mobile Android (Material). Palette bleu-nuit sobre et technique, accents orange pour l'urgence. Priorité&nbsp;: lire en un coup d'œil «&nbsp;qu'est-ce qui est urgent maintenant&nbsp;». 9 écrans + variante thème clair.</p>
+  </div>
+
+  <div id="wall" style="display:flex;flex-direction:column;gap:80px">
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:baseline;gap:14px">
+        <h2 style="font:700 20px/1 'Space Grotesk';color:#141C28;margin:0;letter-spacing:-.3px">Entrée dans l'app</h2>
+        <span style="font:500 13px/1 Manrope;color:#5A6678">Connexion &amp; vue d'accueil</span>
+      </div>
+      <div style="display:flex;gap:56px;flex-wrap:wrap">
+
+        <!-- ===== 01 ONBOARDING / LOGIN ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#0E1520;color:#4C8DFF;display:flex;align-items:center;justify-content:center;font:700 11px 'Space Grotesk'">01</span>Onboarding · Connexion</div>
+          <div data-screen-label="Onboarding / Connexion" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#0E1520;border:11px solid #0A0F16;box-shadow:0 44px 80px -30px rgba(10,18,30,.65);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#EAF0F7">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span>
+              <div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#05090F"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#EAF0F7"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;overflow:auto;display:flex;flex-direction:column;padding:0 28px 28px">
+              <div style="flex:0 0 auto;padding:44px 0 30px;display:flex;flex-direction:column;align-items:center;gap:18px">
+                <div style="width:66px;height:66px;border-radius:20px;background:linear-gradient(150deg,#1E2A3A,#141C28);border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;box-shadow:0 16px 30px -12px rgba(0,0,0,.7)"><span class="msym" style="font-size:36px;color:#FF8A3D">directions_car</span></div>
+                <div style="text-align:center">
+                  <div style="font:700 30px/1 'Space Grotesk';letter-spacing:-.5px">Motora</div>
+                  <div style="font:500 14px/1.4 Manrope;color:#8695A8;margin-top:8px">Votre carnet d'entretien auto</div>
+                </div>
+              </div>
+              <div style="flex:0 0 auto;height:170px;border-radius:22px;background:repeating-linear-gradient(45deg,#141C28,#141C28 9px,#17202E 9px,#17202E 18px);border:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:center;margin-bottom:30px"><span style="font:400 12px/1 monospace;color:#5D6B7E">illustration · voiture</span></div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <label style="font:600 12px/1 Manrope;color:#8695A8;letter-spacing:.3px;text-transform:uppercase">Email</label>
+                <div style="height:52px;border-radius:14px;background:#17202E;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;gap:12px;padding:0 16px"><span class="msym" style="font-size:20px;color:#5D6B7E">mail</span><span style="font:500 15px Manrope;color:#EAF0F7">karim.b@email.com</span></div>
+                <label style="font:600 12px/1 Manrope;color:#8695A8;letter-spacing:.3px;text-transform:uppercase;margin-top:6px">Mot de passe</label>
+                <div style="height:52px;border-radius:14px;background:#17202E;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;padding:0 16px"><div style="display:flex;align-items:center;gap:12px"><span class="msym" style="font-size:20px;color:#5D6B7E">lock</span><span style="font:500 16px Manrope;color:#EAF0F7;letter-spacing:3px">••••••••</span></div><span class="msym" style="font-size:20px;color:#5D6B7E">visibility_off</span></div>
+              </div>
+              <button style="margin-top:26px;height:54px;border:none;border-radius:15px;background:#4C8DFF;color:#fff;font:700 16px Manrope;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 14px 26px -10px rgba(76,141,255,.7);cursor:pointer">Se connecter <span class="msym" style="font-size:20px">arrow_forward</span></button>
+              <button style="margin-top:12px;height:54px;border-radius:15px;background:transparent;border:1px solid rgba(255,255,255,.14);color:#EAF0F7;font:600 15px Manrope;display:flex;align-items:center;justify-content:center;gap:10px;cursor:pointer"><span class="msym" style="font-size:20px;color:#8695A8">link</span>Recevoir un lien magique</button>
+              <div style="text-align:center;margin-top:auto;padding-top:26px;font:500 14px Manrope;color:#8695A8">Pas encore de compte&nbsp;? <span style="color:#4C8DFF;font-weight:700">Créer un compte</span></div>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(255,255,255,.28)"></div></div>
+          </div>
+        </div>
+
+        <!-- ===== 02 ACCUEIL ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#0E1520;color:#4C8DFF;display:flex;align-items:center;justify-content:center;font:700 11px 'Space Grotesk'">02</span>Accueil · véhicules &amp; alertes</div>
+          <div data-screen-label="Accueil" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#0E1520;border:11px solid #0A0F16;box-shadow:0 44px 80px -30px rgba(10,18,30,.65);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#EAF0F7">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span>
+              <div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#05090F"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#EAF0F7"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;position:relative;overflow:hidden">
+              <div style="position:absolute;inset:0;overflow:auto;padding:8px 20px 104px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+                  <div><div style="font:500 14px Manrope;color:#8695A8">Bonjour Karim</div><div style="font:700 24px/1.1 'Space Grotesk';letter-spacing:-.4px;margin-top:3px">Mes véhicules</div></div>
+                  <div style="width:44px;height:44px;border-radius:50%;background:#1E2A3A;border:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;font:700 15px 'Space Grotesk';color:#4C8DFF">KB</div>
+                </div>
+
+                <div style="border-radius:20px;background:linear-gradient(155deg,#26140B,#1A0F0A);border:1px solid rgba(255,138,61,.3);padding:16px 16px 8px;margin-bottom:22px">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px"><span class="msym" style="font-size:20px;color:#FF8A3D">warning</span><span style="font:700 14px Manrope;color:#FFB183">2 alertes prioritaires</span></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="width:9px;height:9px;border-radius:50%;background:#FF5D5D;flex:0 0 auto;box-shadow:0 0 0 4px rgba(255,93,93,.16)"></span><div style="flex:1"><div style="font:600 14px Manrope">Vidange — Clio 4</div><div style="font:500 12px Manrope;color:#8695A8">Dépassement imminent</div></div><div style="font:700 13px 'Space Grotesk';color:#FF5D5D;text-align:right">dans<br>320 km</div></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid rgba(255,255,255,.06)"><span style="width:9px;height:9px;border-radius:50%;background:#F5B23D;flex:0 0 auto;box-shadow:0 0 0 4px rgba(245,178,61,.16)"></span><div style="flex:1"><div style="font:600 14px Manrope">Assurance — Golf 7</div><div style="font:500 12px Manrope;color:#8695A8">Expire bientôt</div></div><div style="font:700 13px 'Space Grotesk';color:#F5B23D;text-align:right">dans<br>12 jours</div></div>
+                </div>
+
+                <div style="font:600 13px Manrope;color:#8695A8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">2 véhicules</div>
+
+                <div style="border-radius:22px;background:#17202E;border:1px solid rgba(255,255,255,.07);overflow:hidden;margin-bottom:16px">
+                  <div style="height:118px;background:repeating-linear-gradient(45deg,#141C28,#141C28 9px,#1B2534 9px,#1B2534 18px);display:flex;align-items:flex-end;justify-content:space-between;padding:12px">
+                    <span style="font:400 11px monospace;color:#5D6B7E">photo · Clio 4</span>
+                    <span style="font:600 11px Manrope;color:#EAF0F7;background:rgba(10,15,22,.7);backdrop-filter:blur(6px);padding:5px 10px;border-radius:8px">AB-123-CD</span>
+                  </div>
+                  <div style="padding:16px">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div style="font:700 18px 'Space Grotesk';letter-spacing:-.3px">Clio 4</div><div style="font:500 13px Manrope;color:#8695A8;margin-top:2px">Renault · 2018 · Diesel</div></div><div style="text-align:right"><div style="font:700 22px/1 'Space Grotesk';color:#EAF0F7">112 480</div><div style="font:600 11px Manrope;color:#8695A8;margin-top:3px">km · +1 240/mois</div></div></div>
+                    <div style="display:flex;gap:8px;margin-top:16px"><span style="flex:1;display:flex;align-items:center;gap:6px;background:#241009;border:1px solid rgba(255,93,93,.25);color:#FF8A8A;font:600 12px Manrope;padding:8px 10px;border-radius:10px"><span class="msym" style="font-size:16px">oil_barrel</span>Vidange · 320 km</span><span style="display:flex;align-items:center;gap:6px;background:#1E2A3A;color:#8695A8;font:600 12px Manrope;padding:8px 10px;border-radius:10px"><span class="msym" style="font-size:16px">fact_check</span>CT · 3 mois</span></div>
+                  </div>
+                </div>
+
+                <div style="border-radius:22px;background:#17202E;border:1px solid rgba(255,255,255,.07);overflow:hidden">
+                  <div style="height:118px;background:repeating-linear-gradient(45deg,#141C28,#141C28 9px,#1B2534 9px,#1B2534 18px);display:flex;align-items:flex-end;justify-content:space-between;padding:12px">
+                    <span style="font:400 11px monospace;color:#5D6B7E">photo · Golf 7</span>
+                    <span style="font:600 11px Manrope;color:#EAF0F7;background:rgba(10,15,22,.7);backdrop-filter:blur(6px);padding:5px 10px;border-radius:8px">CD-456-EF</span>
+                  </div>
+                  <div style="padding:16px">
+                    <div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div style="font:700 18px 'Space Grotesk';letter-spacing:-.3px">Golf 7</div><div style="font:500 13px Manrope;color:#8695A8;margin-top:2px">Volkswagen · 2016 · Essence</div></div><div style="text-align:right"><div style="font:700 22px/1 'Space Grotesk';color:#EAF0F7">98 200</div><div style="font:600 11px Manrope;color:#8695A8;margin-top:3px">km · +820/mois</div></div></div>
+                    <div style="display:flex;gap:8px;margin-top:16px"><span style="flex:1;display:flex;align-items:center;gap:6px;background:#20180A;border:1px solid rgba(245,178,61,.28);color:#F5C878;font:600 12px Manrope;padding:8px 10px;border-radius:10px"><span class="msym" style="font-size:16px">verified_user</span>Assurance · 12 j</span><span style="display:flex;align-items:center;gap:6px;background:#0E2018;color:#5FCFA0;font:600 12px Manrope;padding:8px 10px;border-radius:10px"><span class="msym" style="font-size:16px">check_circle</span>À jour</span></div>
+                  </div>
+                </div>
+              </div>
+
+              <div style="position:absolute;left:0;right:0;bottom:0;height:80px;background:#0C121B;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:flex-start;padding:11px 14px 0">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#4C8DFF"><span class="msym" style="font-size:24px">home</span><span style="font:600 10px Manrope">Accueil</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">build</span><span style="font:500 10px Manrope">Entretien</span></div>
+                <div style="flex:1"></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">description</span><span style="font:500 10px Manrope">Docs</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E;position:relative"><span class="msym" style="font-size:24px">notifications</span><span style="position:absolute;top:-2px;right:26px;width:8px;height:8px;border-radius:50%;background:#FF5D5D;border:2px solid #0C121B"></span><span style="font:500 10px Manrope">Alertes</span></div>
+              </div>
+              <div style="position:absolute;bottom:44px;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:20px;background:#FF8A3D;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 26px -6px rgba(255,138,61,.65)"><span class="msym" style="font-size:30px;color:#1A0F08">add</span></div>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(255,255,255,.28)"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:baseline;gap:14px">
+        <h2 style="font:700 20px/1 'Space Grotesk';color:#141C28;margin:0;letter-spacing:-.3px">Le véhicule</h2>
+        <span style="font:500 13px/1 Manrope;color:#5A6678">Jauge km &amp; pièces d'usure</span>
+      </div>
+      <div style="display:flex;gap:56px;flex-wrap:wrap">
+
+        <!-- ===== 03 DÉTAIL VÉHICULE ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#0E1520;color:#4C8DFF;display:flex;align-items:center;justify-content:center;font:700 11px 'Space Grotesk'">03</span>Détail véhicule · jauge km</div>
+          <div data-screen-label="Détail véhicule" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#0E1520;border:11px solid #0A0F16;box-shadow:0 44px 80px -30px rgba(10,18,30,.65);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#EAF0F7">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span><div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#05090F"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#EAF0F7"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;overflow:auto;padding:4px 20px 28px">
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px">
+                <span class="msym" style="font-size:26px;color:#8695A8">arrow_back</span>
+                <div style="flex:1"><div style="font:700 20px 'Space Grotesk';letter-spacing:-.3px">Clio 4</div><div style="font:500 13px Manrope;color:#8695A8">Renault · 2018 · AB-123-CD</div></div>
+                <span class="msym" style="font-size:24px;color:#8695A8">edit</span>
+              </div>
+
+              <div style="display:flex;flex-direction:column;align-items:center;padding:8px 0 20px">
+                <div style="width:206px;height:206px;border-radius:50%;background:conic-gradient(#4C8DFF 0turn .62turn,#1E2A3A .62turn 1turn);display:flex;align-items:center;justify-content:center">
+                  <div style="width:168px;height:168px;border-radius:50%;background:#0E1520;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><div style="font:500 12px Manrope;color:#8695A8;letter-spacing:.4px">KILOMÉTRAGE</div><div style="font:700 34px/1 'Space Grotesk';color:#EAF0F7;letter-spacing:-.5px">112 480</div><div style="font:600 13px Manrope;color:#4C8DFF;margin-top:2px">+1 240 km / mois</div></div>
+                </div>
+                <button style="margin-top:22px;height:50px;padding:0 26px;border:none;border-radius:14px;background:#4C8DFF;color:#fff;font:700 15px Manrope;display:flex;align-items:center;gap:9px;box-shadow:0 12px 24px -10px rgba(76,141,255,.7)"><span class="msym" style="font-size:20px">speed</span>Mettre à jour le km</button>
+              </div>
+
+              <div style="display:flex;gap:10px;margin-bottom:22px">
+                <div style="flex:1;background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px"><div style="font:700 20px 'Space Grotesk';color:#EAF0F7">1 214 €</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">entretien total</div></div>
+                <div style="flex:1;background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px"><div style="font:700 20px 'Space Grotesk';color:#EAF0F7">14</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">interventions</div></div>
+              </div>
+
+              <div style="font:600 13px Manrope;color:#8695A8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Prochaines échéances</div>
+              <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:6px 16px">
+                <div style="padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span class="msym" style="font-size:20px;color:#FF5D5D">oil_barrel</span><span style="font:600 15px Manrope">Vidange moteur</span></div><span style="font:700 13px 'Space Grotesk';color:#FF5D5D">dans 320 km</span></div><div style="height:7px;border-radius:99px;background:#0E1520;overflow:hidden"><div style="width:96%;height:100%;background:#FF5D5D"></div></div></div>
+                <div style="padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span class="msym" style="font-size:20px;color:#F5B23D">disc_full</span><span style="font:600 15px Manrope">Plaquettes avant</span></div><span style="font:700 13px 'Space Grotesk';color:#F5B23D">dans 4 200 km</span></div><div style="height:7px;border-radius:99px;background:#0E1520;overflow:hidden"><div style="width:64%;height:100%;background:#F5B23D"></div></div></div>
+                <div style="padding:14px 0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span class="msym" style="font-size:20px;color:#35C88A">fact_check</span><span style="font:600 15px Manrope">Contrôle technique</span></div><span style="font:700 13px 'Space Grotesk';color:#35C88A">dans 3 mois</span></div><div style="height:7px;border-radius:99px;background:#0E1520;overflow:hidden"><div style="width:28%;height:100%;background:#35C88A"></div></div></div>
+              </div>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(255,255,255,.28)"></div></div>
+          </div>
+        </div>
+
+        <!-- ===== 04 ENTRETIEN / PIÈCES ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#0E1520;color:#4C8DFF;display:flex;align-items:center;justify-content:center;font:700 11px 'Space Grotesk'">04</span>Entretien · pièces d'usure</div>
+          <div data-screen-label="Entretien / Pièces" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#0E1520;border:11px solid #0A0F16;box-shadow:0 44px 80px -30px rgba(10,18,30,.65);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#EAF0F7">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span><div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#05090F"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#EAF0F7"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;position:relative;overflow:hidden">
+              <div style="position:absolute;inset:0;overflow:auto;padding:4px 20px 104px">
+                <div style="font:700 24px/1.1 'Space Grotesk';letter-spacing:-.4px;margin-bottom:16px">Entretien</div>
+                <div style="display:flex;gap:6px;background:#141C28;border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:5px;margin-bottom:20px">
+                  <div style="flex:1;text-align:center;padding:9px 0;border-radius:10px;background:#4C8DFF;color:#fff;font:700 14px Manrope">Clio 4</div>
+                  <div style="flex:1;text-align:center;padding:9px 0;border-radius:10px;color:#8695A8;font:600 14px Manrope">Golf 7</div>
+                </div>
+
+                <div style="display:flex;gap:8px;margin-bottom:18px">
+                  <div style="flex:1;background:#241009;border:1px solid rgba(255,93,93,.22);border-radius:14px;padding:12px;text-align:center"><div style="font:700 20px 'Space Grotesk';color:#FF5D5D">1</div><div style="font:600 11px Manrope;color:#FF8A8A;margin-top:2px">urgent</div></div>
+                  <div style="flex:1;background:#20180A;border:1px solid rgba(245,178,61,.22);border-radius:14px;padding:12px;text-align:center"><div style="font:700 20px 'Space Grotesk';color:#F5B23D">2</div><div style="font:600 11px Manrope;color:#F5C878;margin-top:2px">à surveiller</div></div>
+                  <div style="flex:1;background:#0E2018;border:1px solid rgba(53,200,138,.22);border-radius:14px;padding:12px;text-align:center"><div style="font:700 20px 'Space Grotesk';color:#35C88A">3</div><div style="font:600 11px Manrope;color:#5FCFA0;margin-top:2px">OK</div></div>
+                </div>
+
+                <div style="display:flex;flex-direction:column;gap:12px">
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-left:3px solid #FF5D5D;border-radius:14px;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div style="display:flex;gap:11px"><span class="msym" style="font-size:22px;color:#FF5D5D">oil_barrel</span><div><div style="font:600 15px Manrope">Vidange moteur</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:2px">Faite à 102 800 km · il y a 8 mois</div></div></div><span style="font:700 12px 'Space Grotesk';color:#FF5D5D;background:#241009;padding:5px 9px;border-radius:8px">320 km</span></div><div style="height:7px;border-radius:99px;background:#0E1520;overflow:hidden"><div style="width:96%;height:100%;background:#FF5D5D"></div></div><div style="display:flex;justify-content:space-between;font:600 11px Manrope;color:#5D6B7E;margin-top:7px"><span>9 680 / 10 000 km</span><span>tous les 10 000 km</span></div></div>
+
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-left:3px solid #F5B23D;border-radius:14px;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div style="display:flex;gap:11px"><span class="msym" style="font-size:22px;color:#F5B23D">disc_full</span><div><div style="font:600 15px Manrope">Plaquettes avant</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:2px">Faites à 88 400 km</div></div></div><span style="font:700 12px 'Space Grotesk';color:#F5B23D;background:#20180A;padding:5px 9px;border-radius:8px">4 200 km</span></div><div style="height:7px;border-radius:99px;background:#0E1520;overflow:hidden"><div style="width:64%;height:100%;background:#F5B23D"></div></div><div style="display:flex;justify-content:space-between;font:600 11px Manrope;color:#5D6B7E;margin-top:7px"><span>24 080 / 30 000 km</span><span>tous les 30 000 km</span></div></div>
+
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-left:3px solid #F5B23D;border-radius:14px;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div style="display:flex;gap:11px"><span class="msym" style="font-size:22px;color:#F5B23D">battery_charging_full</span><div><div style="font:600 15px Manrope">Batterie</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:2px">Posée il y a 3 ans et 4 mois</div></div></div><span style="font:700 12px 'Space Grotesk';color:#F5B23D;background:#20180A;padding:5px 9px;border-radius:8px">~8 mois</span></div><div style="height:7px;border-radius:99px;background:#0E1520;overflow:hidden"><div style="width:70%;height:100%;background:#F5B23D"></div></div><div style="display:flex;justify-content:space-between;font:600 11px Manrope;color:#5D6B7E;margin-top:7px"><span>durée de vie ~4 ans</span><span>3 a 4 m</span></div></div>
+
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-left:3px solid #35C88A;border-radius:14px;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div style="display:flex;gap:11px"><span class="msym" style="font-size:22px;color:#35C88A">tire_repair</span><div><div style="font:600 15px Manrope">Pneus</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:2px">Posés à 105 400 km</div></div></div><span style="font:700 12px 'Space Grotesk';color:#35C88A;background:#0E2018;padding:5px 9px;border-radius:8px">22 900 km</span></div><div style="height:7px;border-radius:99px;background:#0E1520;overflow:hidden"><div style="width:19%;height:100%;background:#35C88A"></div></div><div style="display:flex;justify-content:space-between;font:600 11px Manrope;color:#5D6B7E;margin-top:7px"><span>7 080 / 30 000 km</span><span>tous les 30 000 km</span></div></div>
+
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-left:3px solid #35C88A;border-radius:14px;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px"><div style="display:flex;gap:11px"><span class="msym" style="font-size:22px;color:#35C88A">settings_input_component</span><div><div style="font:600 15px Manrope">Kit distribution</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:2px">Changé à 90 000 km</div></div></div><span style="font:700 12px 'Space Grotesk';color:#35C88A;background:#0E2018;padding:5px 9px;border-radius:8px">37 500 km</span></div><div style="height:7px;border-radius:99px;background:#0E1520;overflow:hidden"><div style="width:37%;height:100%;background:#35C88A"></div></div><div style="display:flex;justify-content:space-between;font:600 11px Manrope;color:#5D6B7E;margin-top:7px"><span>22 480 / 60 000 km</span><span>tous les 60 000 km</span></div></div>
+                </div>
+              </div>
+
+              <div style="position:absolute;left:0;right:0;bottom:0;height:80px;background:#0C121B;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:flex-start;padding:11px 14px 0">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">home</span><span style="font:500 10px Manrope">Accueil</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#4C8DFF"><span class="msym" style="font-size:24px">build</span><span style="font:600 10px Manrope">Entretien</span></div>
+                <div style="flex:1"></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">description</span><span style="font:500 10px Manrope">Docs</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">notifications</span><span style="font:500 10px Manrope">Alertes</span></div>
+              </div>
+              <div style="position:absolute;bottom:44px;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:20px;background:#FF8A3D;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 26px -6px rgba(255,138,61,.65)"><span class="msym" style="font-size:30px;color:#1A0F08">add</span></div>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(255,255,255,.28)"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:baseline;gap:14px">
+        <h2 style="font:700 20px/1 'Space Grotesk';color:#141C28;margin:0;letter-spacing:-.3px">Le suivi</h2>
+        <span style="font:500 13px/1 Manrope;color:#5A6678">Historique &amp; papiers</span>
+      </div>
+      <div style="display:flex;gap:56px;flex-wrap:wrap">
+
+        <!-- ===== 05 HISTORIQUE (TIMELINE) ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#0E1520;color:#4C8DFF;display:flex;align-items:center;justify-content:center;font:700 11px 'Space Grotesk'">05</span>Historique réparations · timeline</div>
+          <div data-screen-label="Historique réparations" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#0E1520;border:11px solid #0A0F16;box-shadow:0 44px 80px -30px rgba(10,18,30,.65);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#EAF0F7">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span><div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#05090F"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#EAF0F7"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;overflow:auto;padding:4px 20px 28px">
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:18px"><span class="msym" style="font-size:26px;color:#8695A8">arrow_back</span><div style="font:700 22px 'Space Grotesk';letter-spacing:-.4px">Historique · Clio 4</div></div>
+              <div style="display:flex;gap:10px;margin-bottom:22px">
+                <div style="flex:1;background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px"><div style="font:700 20px 'Space Grotesk'">454 €</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">12 derniers mois</div></div>
+                <div style="flex:1;background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px"><div style="font:700 20px 'Space Grotesk'">3</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">interventions</div></div>
+              </div>
+
+              <div style="position:relative;padding-left:26px">
+                <div style="position:absolute;left:6px;top:8px;bottom:8px;width:2px;background:rgba(255,255,255,.1)"></div>
+
+                <div style="position:relative;margin-bottom:16px"><span style="position:absolute;left:-26px;top:6px;width:14px;height:14px;border-radius:50%;background:#4C8DFF;border:3px solid #0E1520;box-shadow:0 0 0 2px #4C8DFF"></span>
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font:700 15px Manrope">Vidange + filtre à huile</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">12 mars 2026 · 110 200 km</div></div><div style="font:700 16px 'Space Grotesk';color:#4C8DFF">89 €</div></div><div style="display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap"><span style="display:flex;align-items:center;gap:5px;font:600 11px Manrope;color:#8695A8;background:#0E1520;padding:5px 9px;border-radius:8px"><span class="msym" style="font-size:15px">store</span>Norauto Lyon</span><span style="display:flex;align-items:center;gap:5px;font:600 11px Manrope;color:#5FCFA0;background:#0E2018;padding:5px 9px;border-radius:8px"><span class="msym" style="font-size:15px">receipt_long</span>Facture</span></div></div>
+                </div>
+
+                <div style="position:relative;margin-bottom:16px"><span style="position:absolute;left:-26px;top:6px;width:14px;height:14px;border-radius:50%;background:#1E2A3A;border:3px solid #0E1520;box-shadow:0 0 0 2px rgba(255,255,255,.14)"></span>
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font:700 15px Manrope">Plaquettes avant</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">5 janvier 2026 · 108 900 km</div></div><div style="font:700 16px 'Space Grotesk';color:#4C8DFF">145 €</div></div><div style="display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap"><span style="display:flex;align-items:center;gap:5px;font:600 11px Manrope;color:#8695A8;background:#0E1520;padding:5px 9px;border-radius:8px"><span class="msym" style="font-size:15px">store</span>Speedy</span><span style="display:flex;align-items:center;gap:5px;font:600 11px Manrope;color:#5FCFA0;background:#0E2018;padding:5px 9px;border-radius:8px"><span class="msym" style="font-size:15px">receipt_long</span>Facture</span></div></div>
+                </div>
+
+                <div style="position:relative"><span style="position:absolute;left:-26px;top:6px;width:14px;height:14px;border-radius:50%;background:#1E2A3A;border:3px solid #0E1520;box-shadow:0 0 0 2px rgba(255,255,255,.14)"></span>
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div><div style="font:700 15px Manrope">Pneus avant × 2</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">20 octobre 2025 · 105 400 km</div></div><div style="font:700 16px 'Space Grotesk';color:#4C8DFF">220 €</div></div><div style="display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap"><span style="display:flex;align-items:center;gap:5px;font:600 11px Manrope;color:#8695A8;background:#0E1520;padding:5px 9px;border-radius:8px"><span class="msym" style="font-size:15px">store</span>Euromaster</span><span style="display:flex;align-items:center;gap:5px;font:600 11px Manrope;color:#5FCFA0;background:#0E2018;padding:5px 9px;border-radius:8px"><span class="msym" style="font-size:15px">receipt_long</span>Facture</span></div></div>
+                </div>
+              </div>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(255,255,255,.28)"></div></div>
+          </div>
+        </div>
+
+        <!-- ===== 06 DOCUMENTS ADMINISTRATIFS ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#0E1520;color:#4C8DFF;display:flex;align-items:center;justify-content:center;font:700 11px 'Space Grotesk'">06</span>Documents · cartes par année</div>
+          <div data-screen-label="Documents administratifs" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#0E1520;border:11px solid #0A0F16;box-shadow:0 44px 80px -30px rgba(10,18,30,.65);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#EAF0F7">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span><div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#05090F"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#EAF0F7"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;position:relative;overflow:hidden">
+              <div style="position:absolute;inset:0;overflow:auto;padding:4px 20px 104px">
+                <div style="font:700 24px/1.1 'Space Grotesk';letter-spacing:-.4px;margin-bottom:16px">Documents · Clio 4</div>
+                <div style="display:flex;gap:8px;margin-bottom:22px"><span style="padding:8px 16px;border-radius:99px;background:#4C8DFF;color:#fff;font:700 14px 'Space Grotesk'">2026</span><span style="padding:8px 16px;border-radius:99px;background:#141C28;border:1px solid rgba(255,255,255,.08);color:#8695A8;font:600 14px 'Space Grotesk'">2025</span><span style="padding:8px 16px;border-radius:99px;background:#141C28;border:1px solid rgba(255,255,255,.08);color:#8695A8;font:600 14px 'Space Grotesk'">2024</span></div>
+
+                <div style="display:flex;flex-direction:column;gap:14px">
+                  <div style="background:#17202E;border:1px solid rgba(245,178,61,.3);border-radius:18px;overflow:hidden"><div style="display:flex"><div style="width:76px;flex:0 0 auto;background:repeating-linear-gradient(45deg,#141C28,#141C28 7px,#1B2534 7px,#1B2534 14px);display:flex;align-items:center;justify-content:center"><span style="font:400 9px monospace;color:#5D6B7E;transform:rotate(-90deg);white-space:nowrap">scan</span></div><div style="flex:1;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="display:flex;align-items:center;gap:8px"><span class="msym" style="font-size:20px;color:#F5B23D">verified_user</span><span style="font:700 15px Manrope">Assurance</span></div><span style="font:700 11px Manrope;color:#F5C878;background:#20180A;padding:4px 8px;border-radius:7px">EXPIRE 12 J</span></div><div style="font:500 13px Manrope;color:#8695A8;margin-top:8px">AXA · contrat n° 4471 002</div><div style="font:600 13px 'Space Grotesk';color:#F5B23D;margin-top:6px">Échéance 23 juil. 2026</div></div></div></div>
+
+                  <div style="background:#17202E;border:1px solid rgba(53,200,138,.25);border-radius:18px;overflow:hidden"><div style="display:flex"><div style="width:76px;flex:0 0 auto;background:repeating-linear-gradient(45deg,#141C28,#141C28 7px,#1B2534 7px,#1B2534 14px);display:flex;align-items:center;justify-content:center"><span style="font:400 9px monospace;color:#5D6B7E;transform:rotate(-90deg);white-space:nowrap">scan</span></div><div style="flex:1;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="display:flex;align-items:center;gap:8px"><span class="msym" style="font-size:20px;color:#35C88A">local_activity</span><span style="font:700 15px Manrope">Vignette</span></div><span style="font:700 11px Manrope;color:#5FCFA0;background:#0E2018;padding:4px 8px;border-radius:7px">VALIDE</span></div><div style="font:500 13px Manrope;color:#8695A8;margin-top:8px">Vignette annuelle 2026</div><div style="font:600 13px 'Space Grotesk';color:#35C88A;margin-top:6px">Valable jusqu'au 31 déc. 2026</div></div></div></div>
+
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:18px;overflow:hidden"><div style="display:flex"><div style="width:76px;flex:0 0 auto;background:repeating-linear-gradient(45deg,#141C28,#141C28 7px,#1B2534 7px,#1B2534 14px);display:flex;align-items:center;justify-content:center"><span class="msym" style="font-size:22px;color:#5D6B7E">add_a_photo</span></div><div style="flex:1;padding:14px"><div style="display:flex;justify-content:space-between;align-items:flex-start"><div style="display:flex;align-items:center;gap:8px"><span class="msym" style="font-size:20px;color:#8695A8">fact_check</span><span style="font:700 15px Manrope">Contrôle technique</span></div><span style="font:700 11px Manrope;color:#8695A8;background:#0E1520;padding:4px 8px;border-radius:7px">À FAIRE</span></div><div style="font:500 13px Manrope;color:#8695A8;margin-top:8px">Prochaine visite estimée</div><div style="font:600 13px 'Space Grotesk';color:#EAF0F7;margin-top:6px">Vers oct. 2026 · aucun scan</div></div></div></div>
+                </div>
+
+                <button style="margin-top:20px;width:100%;height:52px;border-radius:15px;background:transparent;border:1.5px dashed rgba(255,255,255,.18);color:#8695A8;font:600 15px Manrope;display:flex;align-items:center;justify-content:center;gap:9px"><span class="msym" style="font-size:20px">upload_file</span>Scanner un document</button>
+              </div>
+              <div style="position:absolute;left:0;right:0;bottom:0;height:80px;background:#0C121B;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:flex-start;padding:11px 14px 0">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">home</span><span style="font:500 10px Manrope">Accueil</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">build</span><span style="font:500 10px Manrope">Entretien</span></div>
+                <div style="flex:1"></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#4C8DFF"><span class="msym" style="font-size:24px">description</span><span style="font:600 10px Manrope">Docs</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">notifications</span><span style="font:500 10px Manrope">Alertes</span></div>
+              </div>
+              <div style="position:absolute;bottom:44px;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:20px;background:#FF8A3D;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 26px -6px rgba(255,138,61,.65)"><span class="msym" style="font-size:30px;color:#1A0F08">add</span></div>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(255,255,255,.28)"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:baseline;gap:14px">
+        <h2 style="font:700 20px/1 'Space Grotesk';color:#141C28;margin:0;letter-spacing:-.3px">Actions &amp; compte</h2>
+        <span style="font:500 13px/1 Manrope;color:#5A6678">Ajout rapide · rappels · réglages</span>
+      </div>
+      <div style="display:flex;gap:56px;flex-wrap:wrap">
+
+        <!-- ===== 07 AJOUT RAPIDE (BOTTOM SHEET) ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#0E1520;color:#4C8DFF;display:flex;align-items:center;justify-content:center;font:700 11px 'Space Grotesk'">07</span>Ajout rapide · bottom sheet</div>
+          <div data-screen-label="Ajout rapide" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#0E1520;border:11px solid #0A0F16;box-shadow:0 44px 80px -30px rgba(10,18,30,.65);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#EAF0F7">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span><div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#05090F"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#EAF0F7"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;position:relative;overflow:hidden">
+              <!-- dimmed accueil behind -->
+              <div style="position:absolute;inset:0;padding:8px 20px;opacity:.32;filter:blur(1px)"><div style="font:500 14px Manrope;color:#8695A8">Bonjour Karim</div><div style="font:700 24px 'Space Grotesk';margin-top:3px">Mes véhicules</div><div style="height:80px;border-radius:18px;background:#17202E;margin-top:22px"></div><div style="height:150px;border-radius:20px;background:#17202E;margin-top:16px"></div></div>
+              <div style="position:absolute;inset:0;background:rgba(6,10,16,.72)"></div>
+              <!-- sheet -->
+              <div style="position:absolute;left:0;right:0;bottom:0;background:#141C28;border-radius:28px 28px 0 0;border-top:1px solid rgba(255,255,255,.08);padding:14px 20px 28px;box-shadow:0 -20px 50px rgba(0,0,0,.5)">
+                <div style="width:44px;height:5px;border-radius:3px;background:rgba(255,255,255,.2);margin:0 auto 20px"></div>
+                <div style="font:700 20px 'Space Grotesk';letter-spacing:-.3px;margin-bottom:6px">Ajout rapide</div>
+                <div style="font:500 13px Manrope;color:#8695A8;margin-bottom:20px">Sur <strong style="color:#EAF0F7">Clio 4</strong> · 112 480 km</div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+                  <div style="background:#17202E;border:1px solid rgba(76,141,255,.3);border-radius:18px;padding:18px 14px"><div style="width:44px;height:44px;border-radius:13px;background:rgba(76,141,255,.16);display:flex;align-items:center;justify-content:center;margin-bottom:12px"><span class="msym" style="font-size:24px;color:#4C8DFF">speed</span></div><div style="font:700 15px Manrope">Relevé km</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">Mettre à jour</div></div>
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:18px 14px"><div style="width:44px;height:44px;border-radius:13px;background:rgba(255,138,61,.16);display:flex;align-items:center;justify-content:center;margin-bottom:12px"><span class="msym" style="font-size:24px;color:#FF8A3D">build</span></div><div style="font:700 15px Manrope">Réparation</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">Intervention + facture</div></div>
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:18px 14px"><div style="width:44px;height:44px;border-radius:13px;background:rgba(53,200,138,.16);display:flex;align-items:center;justify-content:center;margin-bottom:12px"><span class="msym" style="font-size:24px;color:#35C88A">document_scanner</span></div><div style="font:700 15px Manrope">Document</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">Scanner un papier</div></div>
+                  <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:18px 14px"><div style="width:44px;height:44px;border-radius:13px;background:rgba(245,178,61,.16);display:flex;align-items:center;justify-content:center;margin-bottom:12px"><span class="msym" style="font-size:24px;color:#F5B23D">local_gas_station</span></div><div style="font:700 15px Manrope">Plein</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:3px">Carburant / dépense</div></div>
+                </div>
+              </div>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(255,255,255,.28)"></div></div>
+          </div>
+        </div>
+
+        <!-- ===== 08 NOTIFICATIONS ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#0E1520;color:#4C8DFF;display:flex;align-items:center;justify-content:center;font:700 11px 'Space Grotesk'">08</span>Notifications · rappels</div>
+          <div data-screen-label="Notifications" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#0E1520;border:11px solid #0A0F16;box-shadow:0 44px 80px -30px rgba(10,18,30,.65);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#EAF0F7">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span><div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#05090F"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#EAF0F7"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;position:relative;overflow:hidden">
+              <div style="position:absolute;inset:0;overflow:auto;padding:4px 20px 104px">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px"><div style="font:700 24px 'Space Grotesk';letter-spacing:-.4px">Rappels</div><span style="font:600 13px Manrope;color:#4C8DFF">Tout lire</span></div>
+
+                <div style="font:600 12px Manrope;color:#8695A8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Aujourd'hui</div>
+                <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:24px">
+                  <div style="display:flex;gap:13px;background:#241009;border:1px solid rgba(255,93,93,.22);border-radius:16px;padding:14px"><div style="width:40px;height:40px;flex:0 0 auto;border-radius:12px;background:rgba(255,93,93,.16);display:flex;align-items:center;justify-content:center"><span class="msym" style="font-size:22px;color:#FF5D5D">oil_barrel</span></div><div style="flex:1"><div style="display:flex;justify-content:space-between"><span style="font:700 14px Manrope">Vidange à prévoir</span><span style="font:500 11px Manrope;color:#8695A8">2 h</span></div><div style="font:500 13px Manrope;color:#B9C3D0;margin-top:3px">Clio 4 — plus que 320 km avant la vidange moteur.</div></div><span style="width:8px;height:8px;border-radius:50%;background:#FF5D5D;flex:0 0 auto;margin-top:6px"></span></div>
+                  <div style="display:flex;gap:13px;background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px"><div style="width:40px;height:40px;flex:0 0 auto;border-radius:12px;background:rgba(76,141,255,.14);display:flex;align-items:center;justify-content:center"><span class="msym" style="font-size:22px;color:#4C8DFF">speed</span></div><div style="flex:1"><div style="display:flex;justify-content:space-between"><span style="font:700 14px Manrope">Relevé km hebdo</span><span style="font:500 11px Manrope;color:#8695A8">9 h</span></div><div style="font:500 13px Manrope;color:#B9C3D0;margin-top:3px">Pense à noter le kilométrage de tes véhicules.</div></div></div>
+                </div>
+
+                <div style="font:600 12px Manrope;color:#8695A8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Cette semaine</div>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                  <div style="display:flex;gap:13px;background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px"><div style="width:40px;height:40px;flex:0 0 auto;border-radius:12px;background:rgba(245,178,61,.16);display:flex;align-items:center;justify-content:center"><span class="msym" style="font-size:22px;color:#F5B23D">verified_user</span></div><div style="flex:1"><div style="display:flex;justify-content:space-between"><span style="font:700 14px Manrope">Assurance expire bientôt</span><span style="font:500 11px Manrope;color:#8695A8">hier</span></div><div style="font:500 13px Manrope;color:#B9C3D0;margin-top:3px">Golf 7 — l'assurance expire dans 12 jours.</div></div></div>
+                  <div style="display:flex;gap:13px;background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:14px"><div style="width:40px;height:40px;flex:0 0 auto;border-radius:12px;background:rgba(139,149,168,.14);display:flex;align-items:center;justify-content:center"><span class="msym" style="font-size:22px;color:#8695A8">fact_check</span></div><div style="flex:1"><div style="display:flex;justify-content:space-between"><span style="font:700 14px Manrope">Contrôle technique</span><span style="font:500 11px Manrope;color:#8695A8">il y a 3 j</span></div><div style="font:500 13px Manrope;color:#B9C3D0;margin-top:3px">Clio 4 — à prévoir d'ici environ 3 mois.</div></div></div>
+                </div>
+              </div>
+              <div style="position:absolute;left:0;right:0;bottom:0;height:80px;background:#0C121B;border-top:1px solid rgba(255,255,255,.07);display:flex;align-items:flex-start;padding:11px 14px 0">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">home</span><span style="font:500 10px Manrope">Accueil</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">build</span><span style="font:500 10px Manrope">Entretien</span></div>
+                <div style="flex:1"></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#5D6B7E"><span class="msym" style="font-size:24px">description</span><span style="font:500 10px Manrope">Docs</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#4C8DFF"><span class="msym" style="font-size:24px">notifications</span><span style="font:600 10px Manrope">Alertes</span></div>
+              </div>
+              <div style="position:absolute;bottom:44px;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:20px;background:#FF8A3D;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 26px -6px rgba(255,138,61,.65)"><span class="msym" style="font-size:30px;color:#1A0F08">add</span></div>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(255,255,255,.28)"></div></div>
+          </div>
+        </div>
+
+        <!-- ===== 09 PARAMÈTRES ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#0E1520;color:#4C8DFF;display:flex;align-items:center;justify-content:center;font:700 11px 'Space Grotesk'">09</span>Paramètres</div>
+          <div data-screen-label="Paramètres" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#0E1520;border:11px solid #0A0F16;box-shadow:0 44px 80px -30px rgba(10,18,30,.65);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#EAF0F7">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span><div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#05090F"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#EAF0F7"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;overflow:auto;padding:4px 20px 28px">
+              <div style="font:700 24px 'Space Grotesk';letter-spacing:-.4px;margin-bottom:20px">Paramètres</div>
+
+              <div style="display:flex;align-items:center;gap:14px;background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:18px;padding:16px;margin-bottom:22px"><div style="width:52px;height:52px;border-radius:50%;background:#1E2A3A;display:flex;align-items:center;justify-content:center;font:700 17px 'Space Grotesk';color:#4C8DFF">KB</div><div style="flex:1"><div style="font:700 16px Manrope">Karim Benali</div><div style="font:500 13px Manrope;color:#8695A8">karim.b@email.com</div></div><span class="msym" style="font-size:22px;color:#8695A8">chevron_right</span></div>
+
+              <div style="font:600 12px Manrope;color:#8695A8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Véhicules</div>
+              <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:2px 16px;margin-bottom:22px">
+                <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span class="msym" style="font-size:22px;color:#4C8DFF">directions_car</span><span style="flex:1;font:600 15px Manrope">Clio 4</span><span style="font:500 12px Manrope;color:#8695A8">AB-123-CD</span></div>
+                <div style="display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.06)"><span class="msym" style="font-size:22px;color:#4C8DFF">directions_car</span><span style="flex:1;font:600 15px Manrope">Golf 7</span><span style="font:500 12px Manrope;color:#8695A8">CD-456-EF</span></div>
+                <div style="display:flex;align-items:center;gap:12px;padding:13px 0;color:#4C8DFF"><span class="msym" style="font-size:22px">add_circle</span><span style="font:600 15px Manrope">Ajouter un véhicule</span></div>
+              </div>
+
+              <div style="font:600 12px Manrope;color:#8695A8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Alertes &amp; seuils</div>
+              <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:4px 16px;margin-bottom:22px">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06)"><div><div style="font:600 15px Manrope">Seuil kilométrique</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:2px">Alerter sous ce reste</div></div><span style="font:700 14px 'Space Grotesk';color:#4C8DFF;background:#0E1520;padding:6px 12px;border-radius:9px">500 km</span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06)"><div><div style="font:600 15px Manrope">Seuil échéance</div><div style="font:500 12px Manrope;color:#8695A8;margin-top:2px">Papiers &amp; visites</div></div><span style="font:700 14px 'Space Grotesk';color:#4C8DFF;background:#0E1520;padding:6px 12px;border-radius:9px">30 jours</span></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0"><div style="font:600 15px Manrope">Notifications push</div><div style="width:46px;height:26px;border-radius:99px;background:#4C8DFF;position:relative"><div style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff"></div></div></div>
+              </div>
+
+              <div style="font:600 12px Manrope;color:#8695A8;text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Préférences</div>
+              <div style="background:#17202E;border:1px solid rgba(255,255,255,.07);border-radius:16px;padding:4px 16px;margin-bottom:22px">
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid rgba(255,255,255,.06)"><div style="font:600 15px Manrope">Unité de distance</div><div style="display:flex;gap:4px;background:#0E1520;padding:3px;border-radius:9px"><span style="padding:5px 12px;border-radius:7px;background:#4C8DFF;color:#fff;font:700 12px Manrope">km</span><span style="padding:5px 12px;font:600 12px Manrope;color:#8695A8">miles</span></div></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;padding:14px 0"><div style="font:600 15px Manrope">Thème sombre</div><div style="width:46px;height:26px;border-radius:99px;background:#4C8DFF;position:relative"><div style="position:absolute;top:3px;right:3px;width:20px;height:20px;border-radius:50%;background:#fff"></div></div></div>
+              </div>
+
+              <button style="width:100%;height:52px;border-radius:15px;background:transparent;border:1px solid rgba(255,93,93,.3);color:#FF6B6B;font:700 15px Manrope;display:flex;align-items:center;justify-content:center;gap:9px"><span class="msym" style="font-size:20px">logout</span>Se déconnecter</button>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(255,255,255,.28)"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+    <section style="display:flex;flex-direction:column;gap:28px">
+      <div style="display:flex;align-items:baseline;gap:14px">
+        <h2 style="font:700 20px/1 'Space Grotesk';color:#141C28;margin:0;letter-spacing:-.3px">Variante — thème clair</h2>
+        <span style="font:500 13px/1 Manrope;color:#5A6678">Même système, fond gris clair &amp; surfaces blanches</span>
+      </div>
+      <div style="display:flex;gap:56px;flex-wrap:wrap">
+
+        <!-- ===== L1 ACCUEIL CLAIR ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#2F72E8;color:#fff;display:flex;align-items:center;justify-content:center;font:700 10px 'Space Grotesk'">CLAIR</span>Accueil</div>
+          <div data-screen-label="Accueil (clair)" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#EEF1F6;border:11px solid #D3D9E3;box-shadow:0 44px 80px -30px rgba(60,72,92,.4);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#16202E">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span><div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#0A0F16"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#16202E"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;position:relative;overflow:hidden">
+              <div style="position:absolute;inset:0;overflow:auto;padding:8px 20px 104px">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:22px">
+                  <div><div style="font:500 14px Manrope;color:#5E6B7D">Bonjour Karim</div><div style="font:700 24px/1.1 'Space Grotesk';letter-spacing:-.4px;margin-top:3px">Mes véhicules</div></div>
+                  <div style="width:44px;height:44px;border-radius:50%;background:#fff;border:1px solid rgba(18,28,42,.08);display:flex;align-items:center;justify-content:center;font:700 15px 'Space Grotesk';color:#2F72E8;box-shadow:0 4px 12px -6px rgba(60,72,92,.4)">KB</div>
+                </div>
+
+                <div style="border-radius:20px;background:#FFF4EC;border:1px solid rgba(226,113,42,.28);padding:16px 16px 8px;margin-bottom:22px">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px"><span class="msym" style="font-size:20px;color:#E8722A">warning</span><span style="font:700 14px Manrope;color:#C25A17">2 alertes prioritaires</span></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid rgba(226,113,42,.15)"><span style="width:9px;height:9px;border-radius:50%;background:#E23B3B;flex:0 0 auto;box-shadow:0 0 0 4px rgba(226,59,59,.14)"></span><div style="flex:1"><div style="font:600 14px Manrope">Vidange — Clio 4</div><div style="font:500 12px Manrope;color:#7B8798">Dépassement imminent</div></div><div style="font:700 13px 'Space Grotesk';color:#E23B3B;text-align:right">dans<br>320 km</div></div>
+                  <div style="display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid rgba(226,113,42,.15)"><span style="width:9px;height:9px;border-radius:50%;background:#D8961A;flex:0 0 auto;box-shadow:0 0 0 4px rgba(216,150,26,.14)"></span><div style="flex:1"><div style="font:600 14px Manrope">Assurance — Golf 7</div><div style="font:500 12px Manrope;color:#7B8798">Expire bientôt</div></div><div style="font:700 13px 'Space Grotesk';color:#C8871B;text-align:right">dans<br>12 jours</div></div>
+                </div>
+
+                <div style="font:600 13px Manrope;color:#7B8798;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">2 véhicules</div>
+
+                <div style="border-radius:22px;background:#fff;border:1px solid rgba(18,28,42,.07);overflow:hidden;margin-bottom:16px;box-shadow:0 8px 24px -16px rgba(60,72,92,.5)">
+                  <div style="height:118px;background:repeating-linear-gradient(45deg,#E6EAF1,#E6EAF1 9px,#DCE2EC 9px,#DCE2EC 18px);display:flex;align-items:flex-end;justify-content:space-between;padding:12px"><span style="font:400 11px monospace;color:#93A0B0">photo · Clio 4</span><span style="font:600 11px Manrope;color:#16202E;background:rgba(255,255,255,.8);backdrop-filter:blur(6px);padding:5px 10px;border-radius:8px">AB-123-CD</span></div>
+                  <div style="padding:16px"><div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div style="font:700 18px 'Space Grotesk'">Clio 4</div><div style="font:500 13px Manrope;color:#5E6B7D;margin-top:2px">Renault · 2018 · Diesel</div></div><div style="text-align:right"><div style="font:700 22px/1 'Space Grotesk'">112 480</div><div style="font:600 11px Manrope;color:#5E6B7D;margin-top:3px">km · +1 240/mois</div></div></div><div style="display:flex;gap:8px;margin-top:16px"><span style="flex:1;display:flex;align-items:center;gap:6px;background:#FDECEC;border:1px solid rgba(226,59,59,.22);color:#C5302F;font:600 12px Manrope;padding:8px 10px;border-radius:10px"><span class="msym" style="font-size:16px">oil_barrel</span>Vidange · 320 km</span><span style="display:flex;align-items:center;gap:6px;background:#EEF1F6;color:#5E6B7D;font:600 12px Manrope;padding:8px 10px;border-radius:10px"><span class="msym" style="font-size:16px">fact_check</span>CT · 3 mois</span></div></div>
+                </div>
+
+                <div style="border-radius:22px;background:#fff;border:1px solid rgba(18,28,42,.07);overflow:hidden;box-shadow:0 8px 24px -16px rgba(60,72,92,.5)">
+                  <div style="height:118px;background:repeating-linear-gradient(45deg,#E6EAF1,#E6EAF1 9px,#DCE2EC 9px,#DCE2EC 18px);display:flex;align-items:flex-end;justify-content:space-between;padding:12px"><span style="font:400 11px monospace;color:#93A0B0">photo · Golf 7</span><span style="font:600 11px Manrope;color:#16202E;background:rgba(255,255,255,.8);backdrop-filter:blur(6px);padding:5px 10px;border-radius:8px">CD-456-EF</span></div>
+                  <div style="padding:16px"><div style="display:flex;align-items:flex-start;justify-content:space-between"><div><div style="font:700 18px 'Space Grotesk'">Golf 7</div><div style="font:500 13px Manrope;color:#5E6B7D;margin-top:2px">Volkswagen · 2016 · Essence</div></div><div style="text-align:right"><div style="font:700 22px/1 'Space Grotesk'">98 200</div><div style="font:600 11px Manrope;color:#5E6B7D;margin-top:3px">km · +820/mois</div></div></div><div style="display:flex;gap:8px;margin-top:16px"><span style="flex:1;display:flex;align-items:center;gap:6px;background:#FBF2E0;border:1px solid rgba(200,135,27,.28);color:#A56E10;font:600 12px Manrope;padding:8px 10px;border-radius:10px"><span class="msym" style="font-size:16px">verified_user</span>Assurance · 12 j</span><span style="display:flex;align-items:center;gap:6px;background:#E5F4EC;color:#1B8A5E;font:600 12px Manrope;padding:8px 10px;border-radius:10px"><span class="msym" style="font-size:16px">check_circle</span>À jour</span></div></div>
+                </div>
+              </div>
+              <div style="position:absolute;left:0;right:0;bottom:0;height:80px;background:#fff;border-top:1px solid rgba(18,28,42,.08);display:flex;align-items:flex-start;padding:11px 14px 0">
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#2F72E8"><span class="msym" style="font-size:24px">home</span><span style="font:600 10px Manrope">Accueil</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#93A0B0"><span class="msym" style="font-size:24px">build</span><span style="font:500 10px Manrope">Entretien</span></div>
+                <div style="flex:1"></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#93A0B0"><span class="msym" style="font-size:24px">description</span><span style="font:500 10px Manrope">Docs</span></div>
+                <div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;color:#93A0B0;position:relative"><span class="msym" style="font-size:24px">notifications</span><span style="position:absolute;top:-2px;right:26px;width:8px;height:8px;border-radius:50%;background:#E23B3B;border:2px solid #fff"></span><span style="font:500 10px Manrope">Alertes</span></div>
+              </div>
+              <div style="position:absolute;bottom:44px;left:50%;transform:translateX(-50%);width:60px;height:60px;border-radius:20px;background:#F2732A;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 26px -6px rgba(242,115,42,.6)"><span class="msym" style="font-size:30px;color:#fff">add</span></div>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(18,28,42,.35)"></div></div>
+          </div>
+        </div>
+
+        <!-- ===== L2 DÉTAIL CLAIR ===== -->
+        <div style="display:flex;flex-direction:column;gap:16px;align-items:flex-start">
+          <div style="display:flex;gap:10px;align-items:center;font:600 13px/1 Manrope;color:#3A4657"><span style="width:24px;height:24px;border-radius:7px;background:#2F72E8;color:#fff;display:flex;align-items:center;justify-content:center;font:700 10px 'Space Grotesk'">CLAIR</span>Détail véhicule</div>
+          <div data-screen-label="Détail véhicule (clair)" style="width:392px;height:812px;flex:0 0 auto;border-radius:46px;background:#EEF1F6;border:11px solid #D3D9E3;box-shadow:0 44px 80px -30px rgba(60,72,92,.4);overflow:hidden;position:relative;display:flex;flex-direction:column;font-family:Manrope,system-ui,sans-serif;color:#16202E">
+            <div style="height:42px;flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;padding:0 24px;position:relative;font-size:13px;font-weight:600;letter-spacing:.3px">
+              <span>9:41</span><div style="position:absolute;left:50%;top:12px;transform:translateX(-50%);width:11px;height:11px;border-radius:50%;background:#0A0F16"></div>
+              <div style="display:flex;gap:7px;align-items:center;font-family:'Material Symbols Outlined';font-size:16px;color:#16202E"><span>network_cell</span><span>wifi</span><span>battery_full</span></div>
+            </div>
+            <div style="flex:1;overflow:auto;padding:4px 20px 28px">
+              <div style="display:flex;align-items:center;gap:14px;margin-bottom:22px"><span class="msym" style="font-size:26px;color:#5E6B7D">arrow_back</span><div style="flex:1"><div style="font:700 20px 'Space Grotesk'">Clio 4</div><div style="font:500 13px Manrope;color:#5E6B7D">Renault · 2018 · AB-123-CD</div></div><span class="msym" style="font-size:24px;color:#5E6B7D">edit</span></div>
+
+              <div style="display:flex;flex-direction:column;align-items:center;padding:8px 0 20px">
+                <div style="width:206px;height:206px;border-radius:50%;background:conic-gradient(#2F72E8 0turn .62turn,#DDE3EC .62turn 1turn);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px -14px rgba(47,114,232,.5)">
+                  <div style="width:168px;height:168px;border-radius:50%;background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px"><div style="font:500 12px Manrope;color:#7B8798;letter-spacing:.4px">KILOMÉTRAGE</div><div style="font:700 34px/1 'Space Grotesk';letter-spacing:-.5px">112 480</div><div style="font:600 13px Manrope;color:#2F72E8;margin-top:2px">+1 240 km / mois</div></div>
+                </div>
+                <button style="margin-top:22px;height:50px;padding:0 26px;border:none;border-radius:14px;background:#2F72E8;color:#fff;font:700 15px Manrope;display:flex;align-items:center;gap:9px;box-shadow:0 12px 24px -10px rgba(47,114,232,.6)"><span class="msym" style="font-size:20px">speed</span>Mettre à jour le km</button>
+              </div>
+
+              <div style="display:flex;gap:10px;margin-bottom:22px">
+                <div style="flex:1;background:#fff;border:1px solid rgba(18,28,42,.07);border-radius:16px;padding:14px;box-shadow:0 6px 18px -14px rgba(60,72,92,.5)"><div style="font:700 20px 'Space Grotesk'">1 214 €</div><div style="font:500 12px Manrope;color:#5E6B7D;margin-top:3px">entretien total</div></div>
+                <div style="flex:1;background:#fff;border:1px solid rgba(18,28,42,.07);border-radius:16px;padding:14px;box-shadow:0 6px 18px -14px rgba(60,72,92,.5)"><div style="font:700 20px 'Space Grotesk'">14</div><div style="font:500 12px Manrope;color:#5E6B7D;margin-top:3px">interventions</div></div>
+              </div>
+
+              <div style="font:600 13px Manrope;color:#7B8798;text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px">Prochaines échéances</div>
+              <div style="background:#fff;border:1px solid rgba(18,28,42,.07);border-radius:18px;padding:6px 16px;box-shadow:0 8px 24px -18px rgba(60,72,92,.5)">
+                <div style="padding:14px 0;border-bottom:1px solid rgba(18,28,42,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span class="msym" style="font-size:20px;color:#E23B3B">oil_barrel</span><span style="font:600 15px Manrope">Vidange moteur</span></div><span style="font:700 13px 'Space Grotesk';color:#E23B3B">dans 320 km</span></div><div style="height:7px;border-radius:99px;background:#EEF1F6;overflow:hidden"><div style="width:96%;height:100%;background:#E23B3B"></div></div></div>
+                <div style="padding:14px 0;border-bottom:1px solid rgba(18,28,42,.06)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span class="msym" style="font-size:20px;color:#D8961A">disc_full</span><span style="font:600 15px Manrope">Plaquettes avant</span></div><span style="font:700 13px 'Space Grotesk';color:#C8871B">dans 4 200 km</span></div><div style="height:7px;border-radius:99px;background:#EEF1F6;overflow:hidden"><div style="width:64%;height:100%;background:#E8A82C"></div></div></div>
+                <div style="padding:14px 0"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><div style="display:flex;align-items:center;gap:10px"><span class="msym" style="font-size:20px;color:#1FA971">fact_check</span><span style="font:600 15px Manrope">Contrôle technique</span></div><span style="font:700 13px 'Space Grotesk';color:#1B8A5E">dans 3 mois</span></div><div style="height:7px;border-radius:99px;background:#EEF1F6;overflow:hidden"><div style="width:28%;height:100%;background:#1FA971"></div></div></div>
+              </div>
+            </div>
+            <div style="height:22px;flex:0 0 auto;display:flex;align-items:center;justify-content:center"><div style="width:120px;height:5px;border-radius:3px;background:rgba(18,28,42,.35)"></div></div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </div>
+
+</div>
+</x-dc>
+</body>
+</html>
