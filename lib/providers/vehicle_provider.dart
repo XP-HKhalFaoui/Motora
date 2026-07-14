@@ -27,7 +27,7 @@ class VehiclesNotifier extends AsyncNotifier<List<Vehicle>> {
     return created;
   }
 
-  Future<void> update(String id, Map<String, dynamic> patch) async {
+  Future<void> updateVehicle(String id, Map<String, dynamic> patch) async {
     await ref.read(supabaseServiceProvider).updateVehicle(id, patch);
     await refresh();
   }

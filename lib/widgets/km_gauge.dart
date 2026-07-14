@@ -2,91 +2,130 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
-import '../core/formatters.dart';
+import '../core/app_text.dart';
 import '../core/theme.dart';
 
-/// Circular gauge showing the current km reading. Optionally overlays a
-/// small "next due" hint below the value.
+/// Circular km gauge (screen 03 "Détail véhicule"): conic-gradient ring,
+/// value + monthly average centered inside, per PROMPT-claude-code.md §5
+/// ("anneau circulaire (conic gradient, ~206px)").
 class KmGauge extends StatelessWidget {
   const KmGauge({
     super.key,
     required this.currentKm,
     this.subtitle,
-    this.size = 180,
+    this.size = 206,
+    this.progress = 0.62,
   });
 
   final int currentKm;
   final String? subtitle;
   final double size;
 
+  /// Fraction (0..1) of the ring drawn in the primary color; decorative,
+  /// mirrors the fixed ~62% sweep in the design mock.
+  final double progress;
+
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return SizedBox(
       width: size,
       height: size,
       child: CustomPaint(
-        painter: _GaugePainter(),
+        painter: _GaugePainter(
+          primary: p.primary,
+          track: p.surfaceElevated,
+          progress: progress.clamp(0.0, 1.0),
+        ),
         child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                Fmt.km(currentKm),
-                style: const TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.w800,
-                  color: AppColors.textPrimary,
+          child: Container(
+            width: size * .815,
+            height: size * .815,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: p.background,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('KILOMÉTRAGE',
+                    style: AppText.sectionLabel(p.textSecondary, size: 11)),
+                const SizedBox(height: 4),
+                Text(
+                  _formatKm(currentKm),
+                  style: AppText.odometer(p.textPrimary, size: 32),
                 ),
-              ),
-              const SizedBox(height: 2),
-              const Text('au compteur',
-                  style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
-              if (subtitle != null) ...[
-                const SizedBox(height: 6),
-                Text(subtitle!,
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                        color: AppColors.accent,
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600)),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(subtitle!,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          color: p.primary,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600)),
+                ],
               ],
-            ],
+            ),
           ),
         ),
       ),
     );
   }
+
+  String _formatKm(int km) {
+    final s = km.toString();
+    final buf = StringBuffer();
+    for (var i = 0; i < s.length; i++) {
+      if (i > 0 && (s.length - i) % 3 == 0) buf.write(' ');
+      buf.write(s[i]);
+    }
+    return buf.toString();
+  }
 }
 
 class _GaugePainter extends CustomPainter {
+  _GaugePainter({
+    required this.primary,
+    required this.track,
+    required this.progress,
+  });
+
+  final Color primary;
+  final Color track;
+  final double progress;
+
   @override
   void paint(Canvas canvas, Size size) {
     final center = size.center(Offset.zero);
-    final radius = size.width / 2 - 8;
-    const start = math.pi * 0.75;
-    const sweep = math.pi * 1.5;
+    final radius = size.width / 2;
+    const start = -math.pi / 2;
+    final sweep = math.pi * 2 * progress;
 
-    final track = Paint()
-      ..color = AppColors.surfaceAlt
+    final trackPaint = Paint()
+      ..color = track
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 12
-      ..strokeCap = StrokeCap.round;
-    final arc = Paint()
-      ..shader = const SweepGradient(
-        startAngle: start,
-        endAngle: start + sweep,
-        colors: [AppColors.primary, AppColors.accent],
-      ).createShader(Rect.fromCircle(center: center, radius: radius))
+      ..strokeWidth = size.width * .085;
+    final progressPaint = Paint()
+      ..color = primary
       ..style = PaintingStyle.stroke
-      ..strokeWidth = 12
-      ..strokeCap = StrokeCap.round;
+      ..strokeWidth = size.width * .085;
 
-    canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius), start, sweep, false, track);
-    canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius), start, sweep, false, arc);
+    canvas.drawArc(Rect.fromCircle(center: center, radius: radius - trackPaint.strokeWidth / 2),
+        0, math.pi * 2, false, trackPaint);
+    if (progress > 0) {
+      canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius - progressPaint.strokeWidth / 2),
+          start,
+          sweep,
+          false,
+          progressPaint);
+    }
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _GaugePainter oldDelegate) =>
+      oldDelegate.primary != primary ||
+      oldDelegate.track != track ||
+      oldDelegate.progress != progress;
 }

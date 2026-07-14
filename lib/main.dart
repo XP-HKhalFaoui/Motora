@@ -6,9 +6,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/constants.dart';
 import 'core/theme.dart';
 import 'providers/auth_provider.dart';
+import 'providers/settings_provider.dart';
 import 'screens/auth/login_screen.dart';
-import 'screens/home/home_screen.dart';
 import 'screens/misconfigured_screen.dart';
+import 'screens/shell/app_shell.dart';
 import 'services/notification_service.dart';
 
 Future<void> main() async {
@@ -23,18 +24,23 @@ Future<void> main() async {
     await NotificationService.instance.init();
   }
 
-  runApp(const ProviderScope(child: CarnetAutoApp()));
+  runApp(const ProviderScope(child: MotoraApp()));
 }
 
-class CarnetAutoApp extends StatelessWidget {
-  const CarnetAutoApp({super.key});
+class MotoraApp extends ConsumerWidget {
+  const MotoraApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final themeMode =
+        ref.watch(settingsProvider).value?.themeMode ?? ThemeMode.dark;
+
     return MaterialApp(
-      title: 'Carnet Auto',
+      title: 'Motora',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.dark,
+      theme: AppTheme.light,
+      darkTheme: AppTheme.dark,
+      themeMode: themeMode,
       home: AppConfig.isConfigured
           ? const _AuthGate()
           : const MisconfiguredScreen(),
@@ -42,13 +48,13 @@ class CarnetAutoApp extends StatelessWidget {
   }
 }
 
-/// Shows login or home depending on the Supabase session.
+/// Shows login or the app shell depending on the Supabase session.
 class _AuthGate extends ConsumerWidget {
   const _AuthGate();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final user = ref.watch(currentUserProvider);
-    return user == null ? const LoginScreen() : const HomeScreen();
+    return user == null ? const LoginScreen() : const AppShell();
   }
 }

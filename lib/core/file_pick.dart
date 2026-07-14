@@ -13,7 +13,7 @@ import 'theme.dart';
 Future<File?> pickAttachment(BuildContext context) async {
   final source = await showModalBottomSheet<_Source>(
     context: context,
-    backgroundColor: AppColors.surface,
+    backgroundColor: context.palette.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
@@ -50,26 +50,24 @@ class _SourcePicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final accent = context.palette.accent;
     return SafeArea(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           const SizedBox(height: 8),
           ListTile(
-            leading: const Icon(Icons.photo_camera_outlined,
-                color: AppColors.accent),
+            leading: Icon(Icons.photo_camera_outlined, color: accent),
             title: const Text('Prendre une photo'),
             onTap: () => Navigator.pop(context, _Source.camera),
           ),
           ListTile(
-            leading:
-                const Icon(Icons.photo_library_outlined, color: AppColors.accent),
+            leading: Icon(Icons.photo_library_outlined, color: accent),
             title: const Text('Choisir dans la galerie'),
             onTap: () => Navigator.pop(context, _Source.gallery),
           ),
           ListTile(
-            leading: const Icon(Icons.picture_as_pdf_outlined,
-                color: AppColors.accent),
+            leading: Icon(Icons.picture_as_pdf_outlined, color: accent),
             title: const Text('Sélectionner un PDF'),
             onTap: () => Navigator.pop(context, _Source.pdf),
           ),

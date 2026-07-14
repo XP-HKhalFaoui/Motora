@@ -24,8 +24,15 @@ class AuthController {
     await Db.auth.signInWithPassword(email: email, password: password);
   }
 
-  Future<void> signUp(String email, String password) async {
-    await Db.auth.signUp(email: email, password: password);
+  /// Returns true if the account needs email confirmation before it can
+  /// sign in (no session was created yet).
+  Future<bool> signUp(String email, String password) async {
+    final res = await Db.auth.signUp(email: email, password: password);
+    return res.session == null;
+  }
+
+  Future<void> signInWithMagicLink(String email) async {
+    await Db.auth.signInWithOtp(email: email);
   }
 
   Future<void> signOut() async {

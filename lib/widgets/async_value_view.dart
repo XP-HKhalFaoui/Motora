@@ -18,6 +18,7 @@ class AsyncValueView<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return value.when(
       data: data,
       loading: () => const Center(
@@ -32,12 +33,11 @@ class AsyncValueView<T> extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.error_outline,
-                  color: AppColors.danger, size: 40),
+              Icon(Icons.error_outline, color: p.danger, size: 40),
               const SizedBox(height: 12),
               Text('Erreur : $e',
                   textAlign: TextAlign.center,
-                  style: const TextStyle(color: AppColors.textMuted)),
+                  style: TextStyle(color: p.textMuted)),
               if (onRetry != null) ...[
                 const SizedBox(height: 16),
                 OutlinedButton(
@@ -59,17 +59,18 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(32),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon, size: 48, color: AppColors.textMuted),
+            Icon(icon, size: 48, color: p.textMuted),
             const SizedBox(height: 12),
             Text(message,
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.textMuted)),
+                style: TextStyle(color: p.textMuted)),
           ],
         ),
       ),

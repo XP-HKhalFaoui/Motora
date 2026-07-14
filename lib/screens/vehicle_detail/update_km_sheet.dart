@@ -6,14 +6,16 @@ import '../../core/formatters.dart';
 import '../../core/theme.dart';
 import '../../providers/vehicle_provider.dart';
 
-/// Bottom sheet to record a new odometer reading.
+/// Bottom sheet to record a new odometer reading (also reachable from the
+/// Ajout rapide grid — screen 07 "Relevé km").
 Future<void> showUpdateKmSheet(BuildContext context, String vehicleId) {
+  final p = context.palette;
   return showModalBottomSheet(
     context: context,
     isScrollControlled: true,
-    backgroundColor: AppColors.surface,
+    backgroundColor: p.surface,
     shape: const RoundedRectangleBorder(
-      borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
     builder: (_) => _UpdateKmSheet(vehicleId: vehicleId),
   );
@@ -74,6 +76,7 @@ class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
 
   @override
   Widget build(BuildContext context) {
+    final p = context.palette;
     final vehicle = ref.watch(vehicleByIdProvider(widget.vehicleId));
     final currentKm = vehicle?.currentKm ?? 0;
 
@@ -81,41 +84,57 @@ class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
-        top: 20,
-        bottom: MediaQuery.of(context).viewInsets.bottom + 20,
+        top: 14,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Nouveau relevé kilométrique',
-              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700)),
+          Center(
+            child: Container(
+              width: 44,
+              height: 5,
+              margin: const EdgeInsets.only(bottom: 18),
+              decoration: BoxDecoration(
+                color: p.border,
+                borderRadius: BorderRadius.circular(3),
+              ),
+            ),
+          ),
+          Text('Nouveau relevé kilométrique',
+              style: TextStyle(
+                  color: p.textPrimary,
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700)),
           const SizedBox(height: 4),
           Text('Relevé actuel : ${Fmt.km(currentKm)}',
-              style: const TextStyle(color: AppColors.textMuted)),
+              style: TextStyle(color: p.textSecondary)),
           const SizedBox(height: 16),
           TextField(
             controller: _km,
             autofocus: true,
             keyboardType: TextInputType.number,
+            style: TextStyle(color: p.textPrimary),
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               labelText: 'Kilométrage',
-              prefixIcon: Icon(Icons.speed),
+              prefixIcon: Icon(Icons.speed, color: p.textMuted),
               suffixText: 'km',
             ),
           ),
           const SizedBox(height: 12),
           TextField(
             controller: _note,
-            decoration: const InputDecoration(
+            style: TextStyle(color: p.textPrimary),
+            decoration: InputDecoration(
               labelText: 'Note (optionnel)',
-              prefixIcon: Icon(Icons.notes),
+              prefixIcon: Icon(Icons.notes, color: p.textMuted),
             ),
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),
-            Text(_error!, style: const TextStyle(color: AppColors.danger)),
+            Text(_error!, style: TextStyle(color: p.danger)),
           ],
           const SizedBox(height: 20),
           ElevatedButton.icon(
@@ -124,7 +143,8 @@ class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
                 ? const SizedBox(
                     height: 18,
                     width: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2))
+                    child: CircularProgressIndicator(
+                        strokeWidth: 2, color: Colors.white))
                 : const Icon(Icons.check),
             label: const Text('Enregistrer'),
           ),

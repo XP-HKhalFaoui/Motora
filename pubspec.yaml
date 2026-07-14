@@ -30,6 +30,10 @@ dependencies:
 
   # Utils
   intl: ^0.19.0
+  shared_preferences: ^2.3.2
+
+  # Design system
+  google_fonts: ^6.2.1
 
 dev_dependencies:
   flutter_test:
