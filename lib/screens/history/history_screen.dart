@@ -9,149 +9,359 @@ import '../../models/maintenance_history.dart';
 import '../../providers/maintenance_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../../services/fuel_service.dart';
+import '../../services/history_filter.dart';
 import '../../widgets/async_value_view.dart';
 import '../files/file_viewer_screen.dart';
 import '../quick_add/add_history_sheet.dart';
 
-/// Historique réparations (screen 05): 2 stats + vertical timeline.
-class HistoryScreen extends ConsumerWidget {
+/// Historique réparations (screen 05): search + filters over a vertical
+/// timeline of every intervention and fill-up.
+///
+/// The list is a SliverList.builder: it used to build every card eagerly
+/// through `children: history.map(...)`, which after a few years of
+/// fill-ups means hundreds of widgets constructed to show ten.
+class HistoryScreen extends ConsumerStatefulWidget {
   const HistoryScreen({super.key, required this.vehicleId});
   final String vehicleId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends ConsumerState<HistoryScreen> {
+  final _search = TextEditingController();
+  var _filter = const HistoryFilter();
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final p = context.palette;
-    final vehicle = ref.watch(vehicleByIdProvider(vehicleId));
-    final historyAsync = ref.watch(maintenanceHistoryProvider(vehicleId));
+    final vehicle = ref.watch(vehicleByIdProvider(widget.vehicleId));
+    final historyAsync =
+        ref.watch(maintenanceHistoryProvider(widget.vehicleId));
 
     return Scaffold(
       backgroundColor: p.background,
       body: SafeArea(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  icon: Icon(Icons.arrow_back, color: p.textSecondary),
-                  onPressed: () => Navigator.pop(context),
+        child: historyAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (_, __) => AsyncValueView(
+            value: historyAsync,
+            onRetry: () => ref
+                .invalidate(maintenanceHistoryProvider(widget.vehicleId)),
+            data: (_) => const SizedBox(),
+          ),
+          data: (history) {
+            final filtered = _filter.apply(history);
+            final garages = history
+                .map((h) => h.garageName)
+                .whereType<String>()
+                .toSet()
+                .toList()
+              ..sort();
+            final consumption =
+                FuelService.consumptionByEntryId(history);
+            final total =
+                filtered.fold<double>(0, (s, h) => s + (h.cost ?? 0));
+
+            return CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(20, 4, 20, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            IconButton(
+                              icon: Icon(Icons.arrow_back,
+                                  color: p.textSecondary),
+                              onPressed: () => Navigator.pop(context),
+                            ),
+                            Expanded(
+                              child: Text(
+                                  'Historique · ${vehicle?.name ?? ''}',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: AppText.screenTitle(p.textPrimary,
+                                      size: 20)),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        _SearchField(
+                          controller: _search,
+                          onChanged: (v) => setState(
+                              () => _filter = _filter.copyWith(query: v)),
+                        ),
+                        const SizedBox(height: 12),
+                        _Filters(
+                          filter: _filter,
+                          garages: garages,
+                          onChanged: (f) => setState(() => _filter = f),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: _StatTile(
+                                value: Fmt.money(total),
+                                label: _filter.isEmpty
+                                    ? 'coût total'
+                                    : 'coût filtré',
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: _StatTile(
+                                value: '${filtered.length}',
+                                label: filtered.length == 1
+                                    ? 'entrée'
+                                    : 'entrées',
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                      ],
+                    ),
+                  ),
                 ),
-                Expanded(
-                  child: Text('Historique · ${vehicle?.name ?? ''}',
-                      overflow: TextOverflow.ellipsis,
-                      style: AppText.screenTitle(p.textPrimary, size: 20)),
-                ),
+                if (filtered.isEmpty)
+                  SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 40),
+                      child: EmptyState(
+                        icon: history.isEmpty
+                            ? Icons.build_outlined
+                            : Icons.search_off,
+                        message: history.isEmpty
+                            ? 'Aucune intervention enregistrée.'
+                            : 'Aucun résultat pour cette recherche.',
+                      ),
+                    ),
+                  )
+                else
+                  SliverPadding(
+                    padding: const EdgeInsets.fromLTRB(46, 0, 20, 32),
+                    sliver: SliverList.builder(
+                      itemCount: filtered.length,
+                      itemBuilder: (context, i) => _TimelineRow(
+                        vehicleId: widget.vehicleId,
+                        entry: filtered[i],
+                        consumptionPer100km: consumption[filtered[i].id],
+                        isFirst: i == 0,
+                        isLast: i == filtered.length - 1,
+                      ),
+                    ),
+                  ),
               ],
-            ),
-            const SizedBox(height: 18),
-            AsyncValueView(
-              value: historyAsync,
-              onRetry: () =>
-                  ref.invalidate(maintenanceHistoryProvider(vehicleId)),
-              data: (history) => _Body(vehicleId: vehicleId, history: history),
-            ),
-          ],
+            );
+          },
         ),
       ),
     );
   }
 }
 
-class _Body extends StatelessWidget {
-  const _Body({required this.vehicleId, required this.history});
-  final String vehicleId;
-  final List<MaintenanceHistory> history;
+class _SearchField extends StatelessWidget {
+  const _SearchField({required this.controller, required this.onChanged});
+  final TextEditingController controller;
+  final ValueChanged<String> onChanged;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final yearAgo = DateTime.now().subtract(const Duration(days: 365));
-    final last12mo = history.where((h) => h.doneAt.isAfter(yearAgo));
-    final total = last12mo.fold<double>(0, (s, h) => s + (h.cost ?? 0));
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          children: [
-            Expanded(
-              child:
-                  _StatTile(value: Fmt.money(total), label: '12 derniers mois'),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child:
-                  _StatTile(value: '${history.length}', label: 'interventions'),
-            ),
-          ],
-        ),
-        const SizedBox(height: 24),
-        if (history.isEmpty)
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 30),
-            child: Center(
-                child: Text('Aucune intervention enregistrée.',
-                    style: TextStyle(color: p.textMuted))),
-          )
-        else
-          _Timeline(vehicleId: vehicleId, history: history),
-      ],
+    return TextField(
+      controller: controller,
+      onChanged: onChanged,
+      style: TextStyle(color: p.textPrimary),
+      textInputAction: TextInputAction.search,
+      decoration: InputDecoration(
+        hintText: 'Rechercher une intervention, un garage…',
+        prefixIcon: Icon(Icons.search, color: p.textMuted, size: 20),
+        suffixIcon: controller.text.isEmpty
+            ? null
+            : IconButton(
+                tooltip: 'Effacer',
+                icon: Icon(Icons.close, color: p.textMuted, size: 18),
+                onPressed: () {
+                  controller.clear();
+                  onChanged('');
+                },
+              ),
+      ),
     );
   }
 }
 
-class _Timeline extends StatelessWidget {
-  const _Timeline({required this.vehicleId, required this.history});
-  final String vehicleId;
-  final List<MaintenanceHistory> history;
+class _Filters extends StatelessWidget {
+  const _Filters({
+    required this.filter,
+    required this.garages,
+    required this.onChanged,
+  });
+
+  final HistoryFilter filter;
+  final List<String> garages;
+  final ValueChanged<HistoryFilter> onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      clipBehavior: Clip.none,
+      child: Row(
+        children: [
+          _Pill(
+            label: 'Entretien',
+            selected: filter.kind == HistoryKind.maintenance,
+            onTap: () => onChanged(filter.copyWith(
+              kind: filter.kind == HistoryKind.maintenance
+                  ? HistoryKind.all
+                  : HistoryKind.maintenance,
+            )),
+          ),
+          _Pill(
+            label: 'Carburant',
+            selected: filter.kind == HistoryKind.fuel,
+            onTap: () => onChanged(filter.copyWith(
+              kind: filter.kind == HistoryKind.fuel
+                  ? HistoryKind.all
+                  : HistoryKind.fuel,
+            )),
+          ),
+          _Pill(
+            label: '12 mois',
+            selected: filter.period == HistoryPeriod.last12Months,
+            onTap: () => onChanged(filter.copyWith(
+              period: filter.period == HistoryPeriod.last12Months
+                  ? HistoryPeriod.all
+                  : HistoryPeriod.last12Months,
+            )),
+          ),
+          _Pill(
+            label: 'Cette année',
+            selected: filter.period == HistoryPeriod.thisYear,
+            onTap: () => onChanged(filter.copyWith(
+              period: filter.period == HistoryPeriod.thisYear
+                  ? HistoryPeriod.all
+                  : HistoryPeriod.thisYear,
+            )),
+          ),
+          for (final garage in garages)
+            _Pill(
+              label: garage,
+              selected: filter.garageName == garage,
+              onTap: () => onChanged(filter.copyWith(
+                garageName: filter.garageName == garage ? null : garage,
+              )),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _Pill extends StatelessWidget {
+  const _Pill({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final consumption = FuelService.consumptionByEntryId(history);
     return Padding(
-      padding: const EdgeInsets.only(left: 26),
+      padding: const EdgeInsets.only(right: 8),
+      child: Material(
+        color: selected ? p.primary : p.surface,
+        borderRadius: BorderRadius.circular(99),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Container(
+            constraints: const BoxConstraints(minHeight: 40),
+            alignment: Alignment.center,
+            padding: const EdgeInsets.symmetric(horizontal: 14),
+            decoration: BoxDecoration(
+              border: Border.all(color: selected ? p.primary : p.border),
+              borderRadius: BorderRadius.circular(99),
+            ),
+            child: Text(label,
+                style: TextStyle(
+                    color: selected ? Colors.white : p.textSecondary,
+                    fontSize: 12.5,
+                    fontWeight: FontWeight.w600)),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// One timeline entry: the connector line and dot are drawn per row rather
+/// than as one Positioned line behind the whole list, so the list can be
+/// built lazily and still look continuous.
+class _TimelineRow extends StatelessWidget {
+  const _TimelineRow({
+    required this.vehicleId,
+    required this.entry,
+    required this.isFirst,
+    required this.isLast,
+    this.consumptionPer100km,
+  });
+
+  final String vehicleId;
+  final MaintenanceHistory entry;
+  final bool isFirst;
+  final bool isLast;
+  final double? consumptionPer100km;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return IntrinsicHeight(
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           Positioned(
             left: -20,
-            top: 6,
-            bottom: 6,
+            top: isFirst ? 13 : 0,
+            bottom: isLast ? null : 0,
+            height: isLast ? 0 : null,
             child: Container(width: 2, color: p.border),
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: history.asMap().entries.map((entry) {
-              final i = entry.key;
-              final h = entry.value;
-              return Padding(
-                padding:
-                    EdgeInsets.only(bottom: i == history.length - 1 ? 0 : 16),
-                child: Stack(
-                  clipBehavior: Clip.none,
-                  children: [
-                    Positioned(
-                      left: -26,
-                      top: 6,
-                      child: Container(
-                        width: 14,
-                        height: 14,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: i == 0 ? p.primary : p.surfaceElevated,
-                          border: Border.all(color: p.background, width: 3),
-                        ),
-                      ),
-                    ),
-                    _HistoryCard(
-                      vehicleId: vehicleId,
-                      h: h,
-                      consumptionPer100km: consumption[h.id],
-                    ),
-                  ],
-                ),
-              );
-            }).toList(),
+          Positioned(
+            left: -26,
+            top: 6,
+            child: Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: isFirst ? p.primary : p.surfaceElevated,
+                border: Border.all(color: p.background, width: 3),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
+            child: _HistoryCard(
+              vehicleId: vehicleId,
+              h: entry,
+              consumptionPer100km: consumptionPer100km,
+            ),
           ),
         ],
       ),
@@ -243,7 +453,8 @@ class _HistoryCard extends StatelessWidget {
                   if (h.liters != null)
                     _Chip(
                         icon: Icons.local_gas_station,
-                        label: '${h.liters!.toStringAsFixed(1)} L',
+                        label: '${h.liters!.toStringAsFixed(1)} L'
+                            '${h.isFullTank ? '' : ' (appoint)'}',
                         color: p.warn),
                   if (consumptionPer100km != null)
                     _Chip(
