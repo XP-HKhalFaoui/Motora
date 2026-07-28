@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import '../core/app_text.dart';
 import '../core/theme.dart';
 
-/// Circular km gauge (screen 03 "Détail véhicule"): conic-gradient ring,
-/// value + monthly average centered inside, per PROMPT-claude-code.md §5
-/// ("anneau circulaire (conic gradient, ~206px)").
+/// Circular km gauge shown on the vehicle hub's Aperçu section:
+/// conic-gradient ring, value + monthly average centered inside, per
+/// PROMPT-claude-code.md §5 ("anneau circulaire (conic gradient, ~206px)").
 class KmGauge extends StatelessWidget {
   const KmGauge({
     super.key,

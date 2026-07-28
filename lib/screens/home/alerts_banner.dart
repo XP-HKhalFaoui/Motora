@@ -8,7 +8,7 @@ import '../notifications/notifications_screen.dart';
 
 /// Slim priority-alert strip at the top of Accueil: one tappable line
 /// summarising the most urgent reminder across all vehicles. Tapping it
-/// switches the shell to the Alertes tab for the full list.
+/// pushes [NotificationsScreen] for the full list.
 class AlertsBanner extends ConsumerWidget {
   const AlertsBanner({super.key});
 

@@ -8,7 +8,6 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.background,
     required this.surface,
     required this.surfaceElevated,
-    required this.navBar,
     required this.textPrimary,
     required this.textSecondary,
     required this.textMuted,
@@ -23,7 +22,6 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color background;
   final Color surface;
   final Color surfaceElevated;
-  final Color navBar;
   final Color textPrimary;
   final Color textSecondary;
   final Color textMuted;
@@ -38,7 +36,6 @@ class AppPalette extends ThemeExtension<AppPalette> {
     background: Color(0xFF0E1520),
     surface: Color(0xFF17202E),
     surfaceElevated: Color(0xFF1E2A3A),
-    navBar: Color(0xFF0C121B),
     textPrimary: Color(0xFFEAF0F7),
     textSecondary: Color(0xFF8695A8),
     textMuted: Color(0xFF5D6B7E),
@@ -54,7 +51,6 @@ class AppPalette extends ThemeExtension<AppPalette> {
     background: Color(0xFFEEF1F6),
     surface: Color(0xFFFFFFFF),
     surfaceElevated: Color(0xFFE6EAF1),
-    navBar: Color(0xFFFFFFFF),
     textPrimary: Color(0xFF16202E),
     textSecondary: Color(0xFF5E6B7D),
     textMuted: Color(0xFF93A0B0),
@@ -71,7 +67,6 @@ class AppPalette extends ThemeExtension<AppPalette> {
     Color? background,
     Color? surface,
     Color? surfaceElevated,
-    Color? navBar,
     Color? textPrimary,
     Color? textSecondary,
     Color? textMuted,
@@ -86,7 +81,6 @@ class AppPalette extends ThemeExtension<AppPalette> {
       background: background ?? this.background,
       surface: surface ?? this.surface,
       surfaceElevated: surfaceElevated ?? this.surfaceElevated,
-      navBar: navBar ?? this.navBar,
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
       textMuted: textMuted ?? this.textMuted,
@@ -106,7 +100,6 @@ class AppPalette extends ThemeExtension<AppPalette> {
       background: Color.lerp(background, other.background, t)!,
       surface: Color.lerp(surface, other.surface, t)!,
       surfaceElevated: Color.lerp(surfaceElevated, other.surfaceElevated, t)!,
-      navBar: Color.lerp(navBar, other.navBar, t)!,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       textMuted: Color.lerp(textMuted, other.textMuted, t)!,
