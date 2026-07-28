@@ -9,6 +9,7 @@ import 'core/theme.dart';
 import 'providers/auth_provider.dart';
 import 'providers/settings_provider.dart';
 import 'screens/auth/login_screen.dart';
+import 'screens/auth/new_password_screen.dart';
 import 'screens/misconfigured_screen.dart';
 import 'screens/shell/app_shell.dart';
 import 'services/notification_service.dart';
@@ -61,13 +62,40 @@ class MotoraApp extends ConsumerWidget {
   }
 }
 
-/// Shows login or the app shell depending on the Supabase session.
-class _AuthGate extends ConsumerWidget {
+/// Shows login, the new-password prompt, or the app shell depending on the
+/// Supabase session.
+class _AuthGate extends ConsumerStatefulWidget {
   const _AuthGate();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_AuthGate> createState() => _AuthGateState();
+}
+
+class _AuthGateState extends ConsumerState<_AuthGate> {
+  /// Set when a password-reset link reopens the app. Supabase has already
+  /// created a session by then, so without this the user would be dropped
+  /// straight into the app and never get to set the password they asked
+  /// to reset.
+  bool _recovering = false;
+
+  @override
+  Widget build(BuildContext context) {
+    ref.listen(authStateProvider, (_, next) {
+      final event = next.value?.event;
+      if (event == AuthChangeEvent.passwordRecovery) {
+        setState(() => _recovering = true);
+      } else if (event == AuthChangeEvent.signedOut) {
+        setState(() => _recovering = false);
+      }
+    });
+
     final user = ref.watch(currentUserProvider);
-    return user == null ? const LoginScreen() : const AppShell();
+    if (user == null) return const LoginScreen();
+    if (_recovering) {
+      return NewPasswordScreen(
+        onDone: () => setState(() => _recovering = false),
+      );
+    }
+    return const AppShell();
   }
 }

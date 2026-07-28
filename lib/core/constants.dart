@@ -12,6 +12,13 @@ class AppConfig {
 
   static bool get isConfigured =>
       supabaseUrl.isNotEmpty && supabaseAnonKey.isNotEmpty;
+
+  /// Where Supabase sends the user back after a password-reset or
+  /// magic-link email. Must match the intent-filter in AndroidManifest.xml,
+  /// CFBundleURLTypes in ios/Runner/Info.plist, **and** the redirect
+  /// allow-list in the Supabase dashboard (Authentication > URL
+  /// Configuration) — the email link is refused otherwise.
+  static const authRedirect = 'com.motora.app://auth-callback';
 }
 
 /// Storage bucket ids (mirror supabase/storage_buckets.sql).

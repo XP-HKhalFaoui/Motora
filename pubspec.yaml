@@ -41,6 +41,9 @@ dependencies:
   intl: ^0.20.2
   shared_preferences: ^2.3.2
   url_launcher: ^6.3.1
+  # Version shown in Réglages > À propos, read from the build rather than
+  # duplicated as a constant that would drift from pubspec.
+  package_info_plus: ^8.0.2
 
   # Design system
   google_fonts: ^6.2.1

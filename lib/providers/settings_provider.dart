@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../core/constants.dart';
@@ -52,6 +53,12 @@ const _kPushEnabled = 'settings.pushEnabled';
 
 final settingsProvider =
     AsyncNotifierProvider<SettingsNotifier, AppSettings>(SettingsNotifier.new);
+
+/// "1.0.0 (1)" — shown in Réglages > À propos.
+final appVersionProvider = FutureProvider<String>((ref) async {
+  final info = await PackageInfo.fromPlatform();
+  return '${info.version} (${info.buildNumber})';
+});
 
 class SettingsNotifier extends AsyncNotifier<AppSettings> {
   late SharedPreferences _prefs;

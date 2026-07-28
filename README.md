@@ -32,6 +32,19 @@ Applique les migrations de `supabase/migrations/` dans l'ordre, puis
 supabase db push
 ```
 
+Déploie aussi l'Edge Function de suppression de compte — exigée par Apple et
+Google, et impossible côté client (effacer une ligne de `auth.users` demande
+la clé `service_role`, qui ne doit jamais être embarquée dans l'app) :
+
+```bash
+supabase functions deploy delete-account
+```
+
+Enfin, dans le dashboard Supabase → **Authentication → URL Configuration**,
+ajoute `com.motora.app://auth-callback` aux *Redirect URLs*. Sans ça, les
+liens de réinitialisation de mot de passe et les liens magiques sont refusés
+et ne rouvrent jamais l'app.
+
 ## Vérifier
 
 ```bash

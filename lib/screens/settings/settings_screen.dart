@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_text.dart';
+import '../../core/errors.dart';
 import '../../core/theme.dart';
 import '../../models/vehicle.dart';
 import '../../providers/auth_provider.dart';
@@ -164,6 +165,16 @@ class SettingsScreen extends ConsumerWidget {
                     ref.read(settingsProvider.notifier).setThemeMode(m),
               ),
             ]),
+            const SizedBox(height: 22),
+            _SectionLabel('À PROPOS'),
+            _Group(children: [
+              _ValueRow(
+                label: 'Version',
+                sublabel: 'Motora',
+                value: ref.watch(appVersionProvider).value ?? '…',
+                onTap: null,
+              ),
+            ]),
             const SizedBox(height: 26),
             OutlinedButton.icon(
               onPressed: () => ref.read(sessionControllerProvider).signOut(),
@@ -172,10 +183,41 @@ class SettingsScreen extends ConsumerWidget {
               style: OutlinedButton.styleFrom(
                   side: BorderSide(color: p.danger.withValues(alpha: .3))),
             ),
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: () => _confirmDeleteAccount(context, ref),
+              child: Text('Supprimer mon compte',
+                  style: TextStyle(
+                      color: p.textMuted,
+                      decoration: TextDecoration.underline,
+                      decorationColor: p.textMuted)),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  /// Account deletion is irreversible and server-side, so it asks for the
+  /// word to be typed rather than relying on a single tap.
+  Future<void> _confirmDeleteAccount(
+      BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => const _DeleteAccountDialog(),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    try {
+      await ref.read(sessionControllerProvider).deleteAccount();
+      // _AuthGate swaps to the login screen on its own once the session
+      // is gone; this just leaves the settings page behind it.
+      navigator.popUntil((r) => r.isFirst);
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(friendlyError(e))));
+    }
   }
 
   Future<void> _confirmDeleteVehicle(
@@ -327,6 +369,75 @@ class _Row extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Confirms account deletion by requiring the word to be typed out.
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog();
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  static const _word = 'SUPPRIMER';
+  final _controller = TextEditingController();
+  var _busy = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final matches = _controller.text.trim().toUpperCase() == _word;
+
+    return AlertDialog(
+      title: const Text('Supprimer votre compte ?'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Vos véhicules, entretiens, relevés, documents, garages et '
+            'fichiers seront définitivement effacés. Cette action est '
+            'irréversible et ne peut pas être annulée.',
+          ),
+          const SizedBox(height: 16),
+          Text('Tapez « $_word » pour confirmer.',
+              style: TextStyle(color: p.textSecondary, fontSize: 13)),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.characters,
+            onChanged: (_) => setState(() {}),
+            decoration: const InputDecoration(hintText: _word),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _busy ? null : () => Navigator.pop(context, false),
+          child: const Text('Annuler'),
+        ),
+        TextButton(
+          onPressed: matches && !_busy
+              ? () {
+                  setState(() => _busy = true);
+                  Navigator.pop(context, true);
+                }
+              : null,
+          child: Text('Supprimer définitivement',
+              style: TextStyle(
+                  color: matches ? p.danger : p.textMuted)),
+        ),
+      ],
     );
   }
 }

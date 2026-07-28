@@ -35,6 +35,22 @@
 		<string>Motora accède à vos photos pour joindre une image de compteur, une facture ou un document à votre carnet.</string>
 		<key>NSPhotoLibraryAddUsageDescription</key>
 		<string>Motora enregistre dans vos photos les documents que vous exportez.</string>
+		<!-- Supabase auth callback: password-reset and magic-link emails
+		     redirect here so the session lands in the app instead of
+		     dead-ending in a browser tab. -->
+		<key>CFBundleURLTypes</key>
+		<array>
+			<dict>
+				<key>CFBundleTypeRole</key>
+				<string>Editor</string>
+				<key>CFBundleURLName</key>
+				<string>com.motora.app</string>
+				<key>CFBundleURLSchemes</key>
+				<array>
+					<string>com.motora.app</string>
+				</array>
+			</dict>
+		</array>
 		<key>LSRequiresIPhoneOS</key>
 		<true/>
 		<key>UILaunchStoryboardName</key>

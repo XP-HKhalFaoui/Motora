@@ -29,6 +29,21 @@ class SessionController {
     resetUserScopedData();
   }
 
+  /// Deletes the account server-side, then tears down the local session
+  /// exactly as a sign-out would.
+  Future<void> deleteAccount() async {
+    await ref.read(authControllerProvider).deleteAccount();
+    // The JWT is dead once the user row is gone, so signOut() may well
+    // fail against the server; the local session still has to go.
+    try {
+      await ref.read(authControllerProvider).signOut();
+    } catch (_) {
+      // Already unusable — nothing to recover.
+    }
+    await NotificationService.instance.cancelAll();
+    resetUserScopedData();
+  }
+
   /// Drops every cached provider that holds rows belonging to one account.
   ///
   /// Passing a family provider invalidates all of its instances, so this

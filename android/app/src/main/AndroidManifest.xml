@@ -36,6 +36,15 @@
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+            <!-- Supabase auth callback: password-reset and magic-link
+                 emails redirect here so the session lands in the app
+                 instead of dead-ending in a browser tab. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="com.motora.app" android:host="auth-callback"/>
+            </intent-filter>
         </activity>
         <!-- Re-arms the scheduled reminders after a reboot or an app update. -->
         <receiver
