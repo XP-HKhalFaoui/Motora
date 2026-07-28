@@ -82,6 +82,7 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
   late final _garage =
       TextEditingController(text: widget.existing?.garageName ?? '');
   late String? _garageId = widget.existing?.garageId;
+  late bool _isFullTank = widget.existing?.isFullTank ?? true;
   late DateTime _doneAt = widget.existing?.doneAt ?? DateTime.now();
   File? _newInvoice;
   late final _existingInvoiceUrl = widget.existing?.invoiceUrl;
@@ -174,6 +175,7 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
         doneAt: _doneAt,
         invoiceUrl: invoiceUrl,
         isFuel: _isFuel,
+        isFullTank: _isFuel ? _isFullTank : true,
         liters: _isFuel
             ? double.tryParse(_liters.text.trim().replaceAll(',', '.'))
             : null,
@@ -330,6 +332,21 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
               style: TextStyle(color: p.textPrimary),
               decoration:
                   const InputDecoration(labelText: 'Litres', suffixText: 'L'),
+            ),
+            // Consumption is only measurable between two brimmed tanks; a
+            // partial fill's litres are carried into the next full one.
+            SwitchListTile(
+              value: _isFullTank,
+              onChanged: (v) => setState(() => _isFullTank = v),
+              contentPadding: EdgeInsets.zero,
+              title: Text('Plein complet',
+                  style: TextStyle(color: p.textPrimary, fontSize: 14)),
+              subtitle: Text(
+                _isFullTank
+                    ? 'Réservoir rempli à ras bord'
+                    : "Appoint — compté dans le prochain plein complet",
+                style: TextStyle(color: p.textMuted, fontSize: 12),
+              ),
             ),
           ],
           const SizedBox(height: 12),

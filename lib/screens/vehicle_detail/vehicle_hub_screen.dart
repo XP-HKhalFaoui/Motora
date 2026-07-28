@@ -15,6 +15,7 @@ import '../../widgets/storage_image.dart';
 import '../../widgets/striped_placeholder.dart';
 import '../home/vehicle_form_screen.dart';
 import 'sections/documents_section.dart';
+import 'sections/fuel_section.dart';
 import 'sections/maintenance_section.dart';
 import 'sections/mileage_section.dart';
 import 'sections/overview_section.dart';
@@ -40,7 +41,13 @@ class VehicleHubScreen extends ConsumerStatefulWidget {
 class _VehicleHubScreenState extends ConsumerState<VehicleHubScreen> {
   late int _section = widget.initialSection;
 
-  static const _segments = ['Aperçu', 'Entretien', 'Docs', 'Km'];
+  static const _segments = [
+    'Aperçu',
+    'Entretien',
+    'Docs',
+    'Km',
+    'Carburant',
+  ];
 
   @override
   void initState() {
@@ -67,6 +74,8 @@ class _VehicleHubScreenState extends ConsumerState<VehicleHubScreen> {
         return DocumentsSection(vehicleId: widget.vehicleId);
       case 3:
         return MileageSection(vehicleId: widget.vehicleId);
+      case 4:
+        return FuelSection(vehicleId: widget.vehicleId);
       case 0:
       default:
         return OverviewSection(
@@ -349,15 +358,28 @@ class _SegmentedControl extends StatelessWidget {
                         child: SizedBox(
                           height: 40,
                           child: Center(
-                            child: Text(
-                              segments[i],
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                color: active ? Colors.white : p.textSecondary,
-                                fontSize: 13,
-                                fontWeight:
-                                    active ? FontWeight.w700 : FontWeight.w600,
+                            // Scales down rather than ellipsising: with five
+                            // segments on a narrow phone "Entretien" and
+                            // "Carburant" no longer fit at 13px, and "Entr…"
+                            // is worse than slightly smaller type.
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 3),
+                                child: Text(
+                                  segments[i],
+                                  maxLines: 1,
+                                  style: TextStyle(
+                                    color: active
+                                        ? Colors.white
+                                        : p.textSecondary,
+                                    fontSize: 13,
+                                    fontWeight: active
+                                        ? FontWeight.w700
+                                        : FontWeight.w600,
+                                  ),
+                                ),
                               ),
                             ),
                           ),

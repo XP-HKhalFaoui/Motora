@@ -14,6 +14,12 @@ class MaintenanceHistory {
   final String? invoiceUrl;
   final bool isFuel;
   final double? liters;
+
+  /// Whether the tank was brimmed. Only the stretch between two full tanks
+  /// yields a meaningful L/100km, so partial fills are accumulated rather
+  /// than measured (see [FuelService]).
+  final bool isFullTank;
+
   final DateTime? createdAt;
 
   const MaintenanceHistory({
@@ -30,6 +36,7 @@ class MaintenanceHistory {
     this.invoiceUrl,
     this.isFuel = false,
     this.liters,
+    this.isFullTank = true,
     this.createdAt,
   });
 
@@ -48,6 +55,7 @@ class MaintenanceHistory {
         invoiceUrl: j['invoice_url'] as String?,
         isFuel: j['is_fuel'] as bool? ?? false,
         liters: (j['liters'] as num?)?.toDouble(),
+        isFullTank: j['is_full_tank'] as bool? ?? true,
         createdAt: j['created_at'] == null
             ? null
             : DateTime.parse(j['created_at'] as String).toLocal(),
@@ -66,5 +74,6 @@ class MaintenanceHistory {
         'invoice_url': invoiceUrl,
         'is_fuel': isFuel,
         'liters': liters,
+        'is_full_tank': isFullTank,
       };
 }

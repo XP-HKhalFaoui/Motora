@@ -77,10 +77,20 @@ class OverviewSection extends ConsumerWidget {
           label: const Text('Mettre à jour le km'),
         ),
         const SizedBox(height: 8),
-        TextButton.icon(
-          onPressed: () => onOpenSection(3),
-          icon: const Icon(Icons.show_chart, size: 18),
-          label: const Text('Historique kilométrique'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextButton.icon(
+              onPressed: () => onOpenSection(3),
+              icon: const Icon(Icons.show_chart, size: 18),
+              label: const Text('Historique km'),
+            ),
+            TextButton.icon(
+              onPressed: () => onOpenSection(4),
+              icon: const Icon(Icons.local_gas_station, size: 18),
+              label: const Text('Carburant'),
+            ),
+          ],
         ),
         const SizedBox(height: 18),
         Row(
