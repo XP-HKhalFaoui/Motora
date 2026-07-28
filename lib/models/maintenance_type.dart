@@ -1,3 +1,5 @@
+import '../core/formatters.dart';
+
 class MaintenanceType {
   final String id;
   final String vehicleId;
@@ -38,7 +40,7 @@ class MaintenanceType {
         'interval_km': intervalKm,
         'interval_months': intervalMonths,
         'last_done_km': lastDoneKm,
-        'last_done_date': lastDoneDate?.toIso8601String(),
+        'last_done_date': Fmt.isoDate(lastDoneDate),
         'icon': icon,
       };
 

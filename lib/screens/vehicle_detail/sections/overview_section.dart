@@ -7,6 +7,7 @@ import '../../../core/theme.dart';
 import '../../../providers/document_provider.dart';
 import '../../../providers/maintenance_provider.dart';
 import '../../../providers/vehicle_provider.dart';
+import '../../../services/prediction_service.dart';
 import '../../../widgets/document_card.dart';
 import '../../../widgets/km_gauge.dart';
 import '../../../widgets/maintenance_card.dart';
@@ -35,13 +36,20 @@ class OverviewSection extends ConsumerWidget {
     final docs = ref.watch(documentsProvider(vehicleId)).value ?? const [];
 
     final totalCost = history.fold<double>(0, (s, h) => s + (h.cost ?? 0));
-    final topUrgency = predictions.fold<double>(
+    // The gauge tracks the worst *forecastable* échéance; a type awaiting
+    // its last-intervention anchor has urgency 0 meaning "unknown", not
+    // "fresh", so it must not drive the ring.
+    final forecastable = predictions.where((pr) => !pr.needsSetup).toList();
+    final topUrgency = forecastable.fold<double>(
         0, (max, pr) => pr.urgency > max ? pr.urgency : max);
-    final kmPerMonth = predictions.isEmpty ? 0.0 : predictions.first.kmPerMonth;
 
-    final sortedPreds = [...predictions]
-      ..sort((a, b) => b.urgency.compareTo(a.urgency));
-    final topPreds = sortedPreds.take(3).toList();
+    // The km/month average lives on the mileage logs, not on the
+    // predictions — reading it off `predictions.first` showed "+0 km/mois"
+    // for any vehicle with no maintenance type configured.
+    final logs = ref.watch(mileageLogsProvider(vehicleId)).value ?? const [];
+    final kmPerMonth = PredictionService.measuredMonthlyKmAverage(logs);
+
+    final topPreds = predictions.take(3).toList();
 
     final sortedDocs = [...docs]
       ..sort((a, b) => a.daysToExpiry.compareTo(b.daysToExpiry));
@@ -56,8 +64,10 @@ class OverviewSection extends ConsumerWidget {
         Center(
           child: KmGauge(
             currentKm: currentKm,
-            subtitle: '+${kmPerMonth.round()} km / mois',
-            progress: topUrgency == 0 ? 0.62 : topUrgency,
+            subtitle: kmPerMonth == null
+                ? 'moyenne mensuelle à venir'
+                : '+${kmPerMonth.round()} km / mois',
+            progress: topUrgency.clamp(0.0, 1.0),
           ),
         ),
         const SizedBox(height: 22),

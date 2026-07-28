@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/constants.dart';
 import '../models/maintenance_history.dart';
 import '../models/maintenance_prediction.dart';
 import '../models/maintenance_type.dart';
@@ -32,15 +33,23 @@ final predictionsProvider =
   final logs = await ref.watch(mileageLogsProvider(vehicleId).future);
   if (vehicle == null) return const [];
 
-  final kmPerMonth = PredictionService.monthlyKmAverage(logs);
+  final measured = PredictionService.measuredMonthlyKmAverage(logs);
+  final kmPerMonth = measured ?? Thresholds.fallbackKmPerMonth;
+  // Types that can't be forecast yet sort last: they carry urgency 0 but
+  // "unknown" is not the same as "fresh", so they shouldn't outrank a
+  // healthy échéance either.
   final preds = types
       .map((t) => PredictionService.predict(
             type: t,
             vehicle: vehicle,
             kmPerMonth: kmPerMonth,
+            kmPerMonthIsEstimated: measured == null,
           ))
       .toList()
-    ..sort((a, b) => b.urgency.compareTo(a.urgency));
+    ..sort((a, b) {
+      if (a.needsSetup != b.needsSetup) return a.needsSetup ? 1 : -1;
+      return b.urgency.compareTo(a.urgency);
+    });
   return preds;
 });
 

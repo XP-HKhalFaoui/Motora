@@ -14,15 +14,17 @@ class KmGauge extends StatelessWidget {
     required this.currentKm,
     this.subtitle,
     this.size = 206,
-    this.progress = 0.62,
+    this.progress = 0,
   });
 
   final int currentKm;
   final String? subtitle;
   final double size;
 
-  /// Fraction (0..1) of the ring drawn in the primary color; decorative,
-  /// mirrors the fixed ~62% sweep in the design mock.
+  /// Fraction (0..1) of the ring drawn in the primary color — how far the
+  /// most urgent échéance has consumed its interval. The design mock shows
+  /// a fixed ~62% sweep; that is a mock value, not a default, so an empty
+  /// ring here means "nothing due" rather than a fabricated 62%.
   final double progress;
 
   @override

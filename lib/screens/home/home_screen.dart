@@ -214,23 +214,34 @@ class _VehicleCard extends ConsumerWidget {
     final predictions =
         ref.watch(predictionsProvider(vehicle.id)).value ?? const [];
     final logsAsync = ref.watch(mileageLogsProvider(vehicle.id));
+    // Only a *measured* average is shown; with fewer than two readings
+    // there is nothing to average and inventing a figure would read as
+    // real data.
     final kmPerMonth = logsAsync.value == null
         ? null
-        : PredictionService.monthlyKmAverage(logsAsync.value!);
+        : PredictionService.measuredMonthlyKmAverage(logsAsync.value!);
 
     // "Santé" is a holistic score — the average of every échéance's
     // remaining headroom — so a single overdue item dents it without
     // zeroing an otherwise-healthy car. The worst item is still surfaced
-    // in the action strip below.
-    final avgUrgency = predictions.isEmpty
-        ? 0.0
-        : predictions.fold<double>(0, (s, pr) => s + pr.urgency) /
-            predictions.length;
-    final health = ((1 - avgUrgency) * 100).round().clamp(0, 100);
+    // in the action strip below. Types with no recorded last intervention
+    // are excluded: they carry urgency 0 but that means "unknown", and
+    // counting them would inflate the score towards a false 100%.
+    final forecastable = predictions.where((pr) => !pr.needsSetup).toList();
+    final int? health;
+    if (forecastable.isEmpty) {
+      health = null;
+    } else {
+      final avgUrgency =
+          forecastable.fold<double>(0, (s, pr) => s + pr.urgency) /
+              forecastable.length;
+      health = ((1 - avgUrgency) * 100).round().clamp(0, 100);
+    }
     MaintenancePrediction? worst;
-    for (final pr in predictions) {
+    for (final pr in forecastable) {
       if (worst == null || pr.urgency > worst.urgency) worst = pr;
     }
+    final toConfigure = predictions.length - forecastable.length;
 
     final subtitleParts = [
       if (vehicle.brand != null) vehicle.brand,
@@ -271,6 +282,26 @@ class _VehicleCard extends ConsumerWidget {
                       right: 10,
                       child: _HealthRing(percent: health),
                     ),
+                    if (toConfigure > 0)
+                      Positioned(
+                        top: 10,
+                        left: 12,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 8, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: .55),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Text(
+                            '$toConfigure à configurer',
+                            style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 10.5,
+                                fontWeight: FontWeight.w600),
+                          ),
+                        ),
+                      ),
                     if (vehicle.plateNumber != null)
                       Positioned(
                         left: 12,
@@ -336,7 +367,7 @@ class _VehicleCard extends ConsumerWidget {
                       ],
                     ),
                     const SizedBox(height: 14),
-                    _ActionStrip(worst: worst),
+                    _ActionStrip(worst: worst, toConfigure: toConfigure),
                   ],
                 ),
               ),
@@ -351,12 +382,27 @@ class _VehicleCard extends ConsumerWidget {
 /// The single most-urgent next action for a vehicle — or an "à jour" state
 /// when nothing is due. Colored by urgency.
 class _ActionStrip extends StatelessWidget {
-  const _ActionStrip({required this.worst});
+  const _ActionStrip({required this.worst, this.toConfigure = 0});
+
+  /// Most urgent *forecastable* échéance, or null when none can be
+  /// forecast yet.
   final MaintenancePrediction? worst;
+
+  /// How many types are waiting on a last-intervention anchor.
+  final int toConfigure;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
+
+    if (worst == null && toConfigure > 0) {
+      return _strip(
+        color: p.textSecondary,
+        icon: Icons.info_outline,
+        label: 'Entretiens à configurer',
+        trailing: '$toConfigure en attente',
+      );
+    }
 
     if (worst == null || worst!.urgency < 0.6) {
       return _strip(
@@ -417,14 +463,34 @@ class _ActionStrip extends StatelessWidget {
   }
 }
 
-/// Compact circular "santé" ring overlaid on the vehicle photo.
+/// Compact circular "santé" ring overlaid on the vehicle photo. A null
+/// [percent] means there is nothing to score yet (no forecastable
+/// échéance) and renders an empty neutral ring rather than a green 100%.
 class _HealthRing extends StatelessWidget {
   const _HealthRing({required this.percent});
-  final int percent;
+  final int? percent;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
+    final percent = this.percent;
+    if (percent == null) {
+      return Container(
+        width: 52,
+        height: 52,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: p.surface.withValues(alpha: .92),
+        ),
+        child: CustomPaint(
+          painter: _RingPainter(
+              progress: 0, color: p.textMuted, track: p.border),
+          child: Center(
+            child: Text('—', style: AppText.odometer(p.textMuted, size: 16)),
+          ),
+        ),
+      );
+    }
     final urgency = 1 - percent / 100;
     final color = statusColorFor(p, urgency);
     return Container(

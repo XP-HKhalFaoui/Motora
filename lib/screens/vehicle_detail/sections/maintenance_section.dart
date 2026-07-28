@@ -36,10 +36,15 @@ class _Body extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.palette;
-    final urgent = predictions.where((p) => p.urgency >= 0.85).length;
-    final watch =
-        predictions.where((p) => p.urgency >= 0.6 && p.urgency < 0.85).length;
-    final ok = predictions.where((p) => p.urgency < 0.6).length;
+    // Types with no recorded last intervention can't be scored at all, so
+    // they get their own counter instead of silently padding the "OK" one.
+    final forecastable = predictions.where((pr) => !pr.needsSetup);
+    final urgent = forecastable.where((pr) => pr.urgency >= 0.85).length;
+    final watch = forecastable
+        .where((pr) => pr.urgency >= 0.6 && pr.urgency < 0.85)
+        .length;
+    final ok = forecastable.where((pr) => pr.urgency < 0.6).length;
+    final toConfigure = predictions.where((pr) => pr.needsSetup).length;
 
     return Column(
       children: [
@@ -53,6 +58,14 @@ class _Body extends ConsumerWidget {
                     count: watch, label: 'à surveiller', color: p.warn)),
             const SizedBox(width: 8),
             Expanded(child: _CountTile(count: ok, label: 'OK', color: p.ok)),
+            if (toConfigure > 0) ...[
+              const SizedBox(width: 8),
+              Expanded(
+                  child: _CountTile(
+                      count: toConfigure,
+                      label: 'à configurer',
+                      color: p.textSecondary)),
+            ],
           ],
         ),
         const SizedBox(height: 18),

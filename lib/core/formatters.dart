@@ -16,6 +16,17 @@ class Fmt {
   static String km(num? v) => v == null ? '—' : '${_km.format(v)} km';
   static String money(num? v) => v == null ? '—' : _money.format(v);
 
+  /// `yyyy-MM-dd` for Postgres `date` columns.
+  ///
+  /// The calendar day is taken from the *local* date. Sending a full
+  /// ISO-8601 timestamp instead lets Postgres truncate it after a UTC
+  /// conversion, so an entry made at 23:30 local lands on the next day.
+  static String? isoDate(DateTime? d) => d == null
+      ? null
+      : '${d.year.toString().padLeft(4, '0')}-'
+          '${d.month.toString().padLeft(2, '0')}-'
+          '${d.day.toString().padLeft(2, '0')}';
+
   /// "dans 2 mois", "dans 12 jours", "en retard" for a future/past date.
   static String relative(DateTime? target) {
     if (target == null) return '—';

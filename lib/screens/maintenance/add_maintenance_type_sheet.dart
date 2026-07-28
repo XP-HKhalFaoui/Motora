@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/app_text.dart';
+import '../../core/formatters.dart';
 import '../../core/theme.dart';
 import '../../models/maintenance_type.dart';
 import '../../providers/maintenance_provider.dart';
+import '../../providers/vehicle_provider.dart';
 
 /// Bottom sheet to create or edit a maintenance type (e.g. "Vidange
 /// moteur", "Plaquettes avant") for a vehicle — screen 04 "Entretien".
@@ -60,10 +63,35 @@ class _AddMaintenanceTypeSheetState
       text: widget.existing?.intervalMonths?.toString() ?? '');
   late final _lastDoneKm = TextEditingController(
       text: widget.existing?.lastDoneKm?.toString() ?? '');
+  late DateTime? _lastDoneDate = widget.existing?.lastDoneDate;
   bool _saving = false;
   String? _error;
 
   bool get _isEdit => widget.existing != null;
+
+  @override
+  void initState() {
+    super.initState();
+    // A type with no recorded last intervention cannot be forecast at all
+    // (see PredictionService.predict), so a new one is anchored on "done
+    // now" by default — the user confirms or corrects it. Leaving it empty
+    // used to produce an échéance that could never fall due.
+    if (!_isEdit) {
+      final km = ref.read(vehicleByIdProvider(widget.vehicleId))?.currentKm;
+      if (km != null && km > 0) _lastDoneKm.text = km.toString();
+      _lastDoneDate = DateTime.now();
+    }
+  }
+
+  Future<void> _pickLastDoneDate() async {
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: _lastDoneDate ?? DateTime.now(),
+      firstDate: DateTime(1990),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) setState(() => _lastDoneDate = picked);
+  }
 
   void _applyPreset(_Preset preset) {
     setState(() {
@@ -104,6 +132,7 @@ class _AddMaintenanceTypeSheetState
           'interval_km': intervalKm,
           'interval_months': intervalMonths,
           'last_done_km': int.tryParse(_lastDoneKm.text.trim()),
+          'last_done_date': Fmt.isoDate(_lastDoneDate),
         });
       } else {
         await controller.addType(MaintenanceType(
@@ -113,6 +142,7 @@ class _AddMaintenanceTypeSheetState
           intervalKm: intervalKm,
           intervalMonths: intervalMonths,
           lastDoneKm: int.tryParse(_lastDoneKm.text.trim()),
+          lastDoneDate: _lastDoneDate,
         ));
       }
       if (mounted) Navigator.pop(context);
@@ -249,15 +279,46 @@ class _AddMaintenanceTypeSheetState
               ),
             ),
           ]),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _lastDoneKm,
-            keyboardType: TextInputType.number,
-            style: TextStyle(color: p.textPrimary),
-            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-            decoration: const InputDecoration(
-                labelText: 'Dernier relevé (optionnel)', suffixText: 'km'),
+          const SizedBox(height: 18),
+          Text('DERNIER ENTRETIEN EFFECTUÉ',
+              style: AppText.sectionLabel(p.textSecondary)),
+          const SizedBox(height: 4),
+          Text(
+            "C'est le point de départ du calcul : sans lui, l'échéance ne "
+            'peut pas être estimée.',
+            style: TextStyle(color: p.textMuted, fontSize: 12),
           ),
+          const SizedBox(height: 10),
+          Row(children: [
+            Expanded(
+              child: TextField(
+                controller: _lastDoneKm,
+                keyboardType: TextInputType.number,
+                style: TextStyle(color: p.textPrimary),
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                decoration:
+                    const InputDecoration(labelText: 'à', suffixText: 'km'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: InkWell(
+                onTap: _pickLastDoneDate,
+                child: InputDecorator(
+                  decoration: const InputDecoration(labelText: 'le'),
+                  child: Text(
+                    _lastDoneDate == null
+                        ? '—'
+                        : Fmt.dateShort(_lastDoneDate),
+                    style: TextStyle(
+                        color: _lastDoneDate == null
+                            ? p.textMuted
+                            : p.textPrimary),
+                  ),
+                ),
+              ),
+            ),
+          ]),
           if (_error != null) ...[
             const SizedBox(height: 12),
             Text(_error!, style: TextStyle(color: p.danger)),
