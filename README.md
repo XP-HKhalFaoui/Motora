@@ -38,6 +38,41 @@ supabase db push
 flutter analyze && flutter test
 ```
 
+## Publier (Android)
+
+Le build release retombe sur les clés de debug tant que `android/key.properties`
+est absent — pratique en local, mais un APK signé ainsi est refusé par le
+Play Store. Pour signer pour de vrai, génère un keystore :
+
+```bash
+keytool -genkey -v -keystore ~/motora-release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias motora
+```
+
+Puis crée `android/key.properties` (gitignoré, à ne jamais commiter) :
+
+```properties
+storePassword=…
+keyPassword=…
+keyAlias=motora
+storeFile=/Users/toi/motora-release.jks
+```
+
+```bash
+flutter build appbundle --release --dart-define-from-file=env.json
+```
+
+Garde une sauvegarde du `.jks` : le perdre rend toute mise à jour de l'app
+impossible.
+
+## Icône et splash
+
+L'artwork est provisoire et généré par script. Pour le remplacer, dépose un
+PNG 1024×1024 en `assets/icon/icon.png` puis :
+
+```bash
+dart run flutter_launcher_icons && dart run flutter_native_splash:create
+```
+
 ## Architecture
 
 | Dossier | Rôle |
