@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_text.dart';
 import '../../core/constants.dart';
+import '../../core/errors.dart';
 import '../../core/formatters.dart';
 import '../../core/theme.dart';
 import '../../models/vehicle.dart';
+import '../../providers/carnet_provider.dart';
 import '../../providers/document_provider.dart';
 import '../../providers/maintenance_provider.dart';
 import '../../providers/ui_state_provider.dart';
@@ -210,6 +212,8 @@ class _Hero extends ConsumerWidget {
                   onTap: () => Navigator.pop(context),
                 ),
                 const Spacer(),
+                _ExportButton(vehicleId: vehicle.id),
+                const SizedBox(width: 8),
                 _CircleButton(
                   icon: Icons.edit_outlined,
                   onTap: () => Navigator.push(
@@ -278,14 +282,73 @@ class _Hero extends ConsumerWidget {
   }
 }
 
-class _CircleButton extends StatelessWidget {
-  const _CircleButton({required this.icon, required this.onTap});
-  final IconData icon;
-  final VoidCallback onTap;
+/// Builds and shares the carnet PDF. Gathers every section, including ones
+/// the user hasn't opened, so it spins while the data loads.
+class _ExportButton extends ConsumerStatefulWidget {
+  const _ExportButton({required this.vehicleId});
+  final String vehicleId;
+
+  @override
+  ConsumerState<_ExportButton> createState() => _ExportButtonState();
+}
+
+class _ExportButtonState extends ConsumerState<_ExportButton> {
+  bool _busy = false;
+
+  Future<void> _export() async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(carnetExporterProvider).share(widget.vehicleId);
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(friendlyError(e))));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
+    if (_busy) {
+      return Container(
+        width: 40,
+        height: 40,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.black.withValues(alpha: .35),
+          shape: BoxShape.circle,
+        ),
+        child: const SizedBox(
+          width: 18,
+          height: 18,
+          child:
+              CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+        ),
+      );
+    }
+    return _CircleButton(
+      icon: Icons.ios_share,
+      tooltip: "Exporter le carnet d'entretien",
+      onTap: _export,
+    );
+  }
+}
+
+class _CircleButton extends StatelessWidget {
+  const _CircleButton({
+    required this.icon,
+    required this.onTap,
+    this.tooltip,
+  });
+
+  final IconData icon;
+  final VoidCallback onTap;
+  final String? tooltip;
+
+  @override
+  Widget build(BuildContext context) {
+    final button = Material(
       color: Colors.black.withValues(alpha: .35),
       shape: const CircleBorder(),
       clipBehavior: Clip.antiAlias,
@@ -298,6 +361,8 @@ class _CircleButton extends StatelessWidget {
         ),
       ),
     );
+    if (tooltip == null) return button;
+    return Tooltip(message: tooltip!, child: button);
   }
 }
 

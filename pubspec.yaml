@@ -36,6 +36,10 @@ dependencies:
   # Charts
   fl_chart: ^0.68.0
 
+  # Carnet d'entretien PDF export (printing also handles the share sheet)
+  pdf: ^3.11.1
+  printing: ^5.13.2
+
   # Utils
   # Pinned by flutter_localizations, which requires ^0.20.2.
   intl: ^0.20.2
