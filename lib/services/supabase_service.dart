@@ -196,6 +196,16 @@ class SupabaseService {
     return AdminDocument.fromJson(row);
   }
 
+  Future<AdminDocument> updateDocument(AdminDocument d) async {
+    final row = await _c
+        .from('admin_documents')
+        .update(d.toInsert())
+        .eq('id', d.id)
+        .select()
+        .single();
+    return AdminDocument.fromJson(row);
+  }
+
   Future<void> deleteDocument(String id) async {
     await _c.from('admin_documents').delete().eq('id', id);
   }

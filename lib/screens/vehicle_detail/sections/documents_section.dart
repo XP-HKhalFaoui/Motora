@@ -93,7 +93,13 @@ class _Body extends StatelessWidget {
         else
           ...filtered.map((d) => Padding(
                 padding: const EdgeInsets.only(bottom: 14),
-                child: DocumentCard(doc: d),
+                child: DocumentCard(
+                  doc: d,
+                  // Tapping a document did nothing at all before: there was
+                  // no edit path, and no way to delete one either.
+                  onTap: () =>
+                      showAddDocumentSheet(context, vehicleId, existing: d),
+                ),
               )),
         const SizedBox(height: 6),
         OutlinedButton.icon(

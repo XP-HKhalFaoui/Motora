@@ -15,6 +15,7 @@ import '../../providers/garage_provider.dart';
 import '../../providers/maintenance_provider.dart';
 import '../../providers/service_providers.dart';
 import '../../providers/vehicle_provider.dart';
+import '../files/file_viewer_screen.dart';
 import '../garages/garage_form_sheet.dart';
 
 /// Bottom sheet to log a repair/intervention (screen 07 "Réparation") or,
@@ -214,7 +215,8 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
     try {
       await ref
           .read(maintenanceControllerProvider)
-          .deleteHistory(widget.vehicleId, widget.existing!.id);
+          .deleteHistory(widget.vehicleId, widget.existing!.id,
+              invoiceUrl: _existingInvoiceUrl);
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
@@ -356,8 +358,27 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
             onPressed: _pickInvoice,
             icon: Icon(hasInvoice ? Icons.check_circle : Icons.receipt_long,
                 color: hasInvoice ? p.ok : p.textMuted),
-            label: Text(hasInvoice ? 'Facture ajoutée' : 'Ajouter une facture'),
+            label: Text(_newInvoice != null
+                ? 'Nouvelle facture sélectionnée'
+                : hasInvoice
+                    ? 'Remplacer la facture'
+                    : 'Ajouter une facture'),
           ),
+          if (_existingInvoiceUrl != null && _newInvoice == null) ...[
+            const SizedBox(height: 8),
+            TextButton.icon(
+              onPressed: () => FileViewerScreen.open(
+                context,
+                bucket: Buckets.invoices,
+                reference: _existingInvoiceUrl,
+                title: _title.text.trim().isEmpty
+                    ? 'Facture'
+                    : _title.text.trim(),
+              ),
+              icon: const Icon(Icons.visibility_outlined, size: 18),
+              label: const Text('Voir la facture'),
+            ),
+          ],
           if (_error != null) ...[
             const SizedBox(height: 12),
             Text(_error!, style: TextStyle(color: p.danger)),

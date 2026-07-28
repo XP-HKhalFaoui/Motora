@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_text.dart';
+import '../../core/constants.dart';
 import '../../core/formatters.dart';
 import '../../core/theme.dart';
 import '../../models/maintenance_history.dart';
@@ -9,6 +10,7 @@ import '../../providers/maintenance_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../../services/fuel_service.dart';
 import '../../widgets/async_value_view.dart';
+import '../files/file_viewer_screen.dart';
 import '../quick_add/add_history_sheet.dart';
 
 /// Historique réparations (screen 05): 2 stats + vertical timeline.
@@ -226,9 +228,18 @@ class _HistoryCard extends StatelessWidget {
                         color: p.textSecondary),
                   if (h.invoiceUrl != null)
                     _Chip(
-                        icon: Icons.receipt_long,
-                        label: 'Facture',
-                        color: p.ok),
+                      icon: Icons.receipt_long,
+                      label: 'Facture',
+                      color: p.ok,
+                      // The invoice was uploaded and then unreachable —
+                      // this chip was pure decoration.
+                      onTap: () => FileViewerScreen.open(
+                        context,
+                        bucket: Buckets.invoices,
+                        reference: h.invoiceUrl!,
+                        title: h.title,
+                      ),
+                    ),
                   if (h.liters != null)
                     _Chip(
                         icon: Icons.local_gas_station,
@@ -251,20 +262,24 @@ class _HistoryCard extends StatelessWidget {
 }
 
 class _Chip extends StatelessWidget {
-  const _Chip({required this.icon, required this.label, required this.color});
+  const _Chip({
+    required this.icon,
+    required this.label,
+    required this.color,
+    this.onTap,
+  });
+
   final IconData icon;
   final String label;
   final Color color;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-      decoration: BoxDecoration(
-        color: p.background,
-        borderRadius: BorderRadius.circular(8),
-      ),
+    final body = Padding(
+      padding: EdgeInsets.symmetric(
+          horizontal: 9, vertical: onTap == null ? 5 : 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -273,8 +288,28 @@ class _Chip extends StatelessWidget {
           Text(label,
               style: TextStyle(
                   color: color, fontSize: 11, fontWeight: FontWeight.w600)),
+          if (onTap != null) ...[
+            const SizedBox(width: 3),
+            Icon(Icons.chevron_right, size: 14, color: color),
+          ],
         ],
       ),
+    );
+
+    if (onTap == null) {
+      return Container(
+        decoration: BoxDecoration(
+          color: p.background,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: body,
+      );
+    }
+    return Material(
+      color: p.background,
+      borderRadius: BorderRadius.circular(8),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(onTap: onTap, child: body),
     );
   }
 }

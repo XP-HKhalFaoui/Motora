@@ -6,7 +6,7 @@ import '../core/formatters.dart';
 import '../core/theme.dart';
 import '../models/admin_document.dart';
 import '../providers/settings_provider.dart';
-import 'striped_placeholder.dart';
+import 'storage_image.dart';
 
 /// Document administratif card: scan thumbnail (or placeholder) on the
 /// left, type/status/expiry on the right — screen 06.
@@ -47,15 +47,26 @@ class DocumentCard extends ConsumerWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // The real scan, not a placeholder. This used to render a
+                // StripedPlaceholder labelled "scan" precisely *when* a file
+                // existed, so the uploaded document was never once visible.
                 SizedBox(
                   width: 76,
-                  child: hasFile
-                      ? const StripedPlaceholder(label: 'scan')
-                      : Container(
-                          color: p.background,
-                          child: Icon(Icons.add_a_photo_outlined,
-                              color: p.textMuted, size: 22),
-                        ),
+                  child: StorageImage(
+                    bucket: Buckets.adminDocuments,
+                    reference: doc.fileUrl,
+                    fallback: Container(
+                      color: p.background,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        hasFile
+                            ? Icons.description_outlined
+                            : Icons.add_a_photo_outlined,
+                        color: p.textMuted,
+                        size: 22,
+                      ),
+                    ),
+                  ),
                 ),
                 Expanded(
                   child: Padding(

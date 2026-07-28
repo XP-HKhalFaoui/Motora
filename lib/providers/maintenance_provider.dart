@@ -105,8 +105,13 @@ class MaintenanceController {
     _invalidateHistory(h.vehicleId);
   }
 
-  Future<void> deleteHistory(String vehicleId, String id) async {
-    await ref.read(supabaseServiceProvider).deleteHistory(id);
+  Future<void> deleteHistory(String vehicleId, String id,
+      {String? invoiceUrl}) async {
+    final service = ref.read(supabaseServiceProvider);
+    await service.deleteHistory(id);
+    // Nothing else points at the invoice, so leaving it behind would
+    // strand it in the bucket for good.
+    await service.deleteFile(Buckets.invoices, invoiceUrl);
     _invalidateHistory(vehicleId);
   }
 
