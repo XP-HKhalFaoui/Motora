@@ -12,7 +12,7 @@
          back the next time the app is opened. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application
-        android:label="carnet_auto"
+        android:label="Motora"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -1,5 +1,9 @@
 name: carnet_auto
-description: "Carnet Auto — suivi d'entretien automobile (Flutter + Supabase)."
+# The Dart package name stays `carnet_auto`: renaming it would rewrite
+# every `package:carnet_auto/...` import for no user-visible gain. The
+# names users actually see — launcher label, bundle display name, in-app
+# wordmark — are all Motora.
+description: "Motora — suivi d'entretien automobile (Flutter + Supabase)."
 publish_to: "none"
 version: 1.0.0+1
 
