@@ -326,11 +326,11 @@ class _AddMaintenanceTypeSheetState
           ElevatedButton.icon(
             onPressed: _saving ? null : _save,
             icon: _saving
-                ? const SizedBox(
+                ? SizedBox(
                     height: 18,
                     width: 18,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white))
+                        strokeWidth: 2, color: p.onPrimary))
                 : const Icon(Icons.check),
             label: const Text('Enregistrer'),
           ),

@@ -599,7 +599,7 @@ class _SegmentRow<T> extends StatelessWidget {
           ),
           child: Text(label,
               style: TextStyle(
-                  color: active ? Colors.white : p.textSecondary,
+                  color: active ? p.onPrimary : p.textSecondary,
                   fontSize: 12,
                   fontWeight: FontWeight.w700)),
         ),

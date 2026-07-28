@@ -296,7 +296,7 @@ class _Pill extends StatelessWidget {
             ),
             child: Text(label,
                 style: TextStyle(
-                    color: selected ? Colors.white : p.textSecondary,
+                    color: selected ? p.onPrimary : p.textSecondary,
                     fontSize: 12.5,
                     fontWeight: FontWeight.w600)),
           ),

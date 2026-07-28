@@ -78,7 +78,7 @@ class _Body extends StatelessWidget {
                 ),
                 child: Text('$y',
                     style: AppText.technical(
-                        active ? Colors.white : p.textSecondary,
+                        active ? p.onPrimary : p.textSecondary,
                         size: 14)),
               ),
             );

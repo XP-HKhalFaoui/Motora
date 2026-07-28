@@ -436,7 +436,7 @@ class _SegmentedControl extends StatelessWidget {
                                   maxLines: 1,
                                   style: TextStyle(
                                     color:
-                                        active ? Colors.white : p.textSecondary,
+                                        active ? p.onPrimary : p.textSecondary,
                                     fontSize: 13,
                                     fontWeight: active
                                         ? FontWeight.w700

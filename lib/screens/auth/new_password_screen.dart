@@ -115,11 +115,11 @@ class _NewPasswordScreenState extends ConsumerState<NewPasswordScreen> {
                 ElevatedButton(
                   onPressed: _saving ? null : _save,
                   child: _saving
-                      ? const SizedBox(
+                      ? SizedBox(
                           height: 18,
                           width: 18,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white))
+                              strokeWidth: 2, color: p.onPrimary))
                       : const Text('Enregistrer'),
                 ),
               ],

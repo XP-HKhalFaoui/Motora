@@ -112,7 +112,7 @@ class _QuickAddSheetState extends ConsumerState<_QuickAddSheet> {
                             v.name,
                             style: TextStyle(
                               color: v.id == vehicleId
-                                  ? Colors.white
+                                  ? p.onPrimary
                                   : p.textSecondary,
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
