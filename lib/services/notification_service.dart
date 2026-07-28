@@ -1,12 +1,11 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest_all.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 
 /// Local reminders via flutter_local_notifications (section 4.3).
 ///
-/// Reminders are recomputed and re-scheduled each time the app opens
-/// (see [rescheduleAll]); there is no server component required.
+/// Reminders are recomputed and re-scheduled whenever the reminder list
+/// changes (see `ReminderScheduler`); there is no server component.
 class NotificationService {
   NotificationService._();
   static final NotificationService instance = NotificationService._();
@@ -15,6 +14,13 @@ class NotificationService {
       FlutterLocalNotificationsPlugin();
   bool _ready = false;
 
+  /// Vehicle id carried by a notification the user tapped while the app was
+  /// not running. Consumed once by the shell on first frame.
+  String? _launchVehicleId;
+
+  /// Called when the user taps a reminder while the app is running.
+  void Function(String vehicleId)? _onOpenVehicle;
+
   static const _channel = AndroidNotificationChannel(
     'carnet_auto_reminders',
     'Rappels entretien',
@@ -22,14 +28,17 @@ class NotificationService {
     importance: Importance.high,
   );
 
-  Future<void> init() async {
+  Future<void> init({void Function(String vehicleId)? onOpenVehicle}) async {
     if (_ready) return;
+    _onOpenVehicle = onOpenVehicle;
+
+    // tz.local stays UTC on purpose: we never schedule a "wall clock" time
+    // in a named zone, only absolute instants. A Dart local DateTime such
+    // as DateTime(y, m, d, 9) already resolves to the right instant for
+    // that date's UTC offset, TZDateTime.from preserves that instant, and
+    // UILocalNotificationDateInterpretation.absoluteTime tells the plugin
+    // to honour it — so no device-timezone lookup is needed.
     tz.initializeTimeZones();
-    try {
-      tz.setLocalLocation(tz.getLocation(await _deviceTimeZone()));
-    } catch (_) {
-      // Fall back to UTC if the platform name isn't in the tz database.
-    }
 
     const android = AndroidInitializationSettings('@mipmap/ic_launcher');
     const ios = DarwinInitializationSettings(
@@ -39,7 +48,21 @@ class NotificationService {
     );
     await _plugin.initialize(
       const InitializationSettings(android: android, iOS: ios),
+      onDidReceiveNotificationResponse: (response) {
+        final payload = response.payload;
+        if (payload != null && payload.isNotEmpty) {
+          _onOpenVehicle?.call(payload);
+        }
+      },
     );
+
+    // A tap that launched the app cold doesn't go through the callback
+    // above; it arrives here instead.
+    final launch = await _plugin.getNotificationAppLaunchDetails();
+    if (launch?.didNotificationLaunchApp ?? false) {
+      final payload = launch?.notificationResponse?.payload;
+      if (payload != null && payload.isNotEmpty) _launchVehicleId = payload;
+    }
 
     await _plugin
         .resolvePlatformSpecificImplementation<
@@ -48,6 +71,18 @@ class NotificationService {
 
     await requestPermissions();
     _ready = true;
+  }
+
+  /// Registers the tap handler after [init] (the app shell knows how to
+  /// navigate; main() does not).
+  set onOpenVehicle(void Function(String vehicleId) handler) =>
+      _onOpenVehicle = handler;
+
+  /// Returns — once — the vehicle whose notification launched the app.
+  String? takeLaunchVehicleId() {
+    final id = _launchVehicleId;
+    _launchVehicleId = null;
+    return id;
   }
 
   Future<void> requestPermissions() async {
@@ -61,24 +96,27 @@ class NotificationService {
         ?.requestPermissions(alert: true, badge: true, sound: true);
   }
 
-  /// A reminder to schedule.
+  /// Schedules one reminder for [when].
+  ///
+  /// A time in the past is **skipped**, not fired immediately. The previous
+  /// behaviour rewrote it to `now + 5s`, which — because every reminder is
+  /// by construction already inside its alert window — turned the whole
+  /// list into a burst of notifications on each app launch.
   Future<void> schedule({
     required int id,
     required String title,
     required String body,
     required DateTime when,
+    String? payload,
   }) async {
     if (!_ready) await init();
-    // Don't schedule dates in the past.
-    final target = when.isBefore(DateTime.now())
-        ? DateTime.now().add(const Duration(seconds: 5))
-        : when;
+    if (!when.isAfter(DateTime.now())) return;
 
     await _plugin.zonedSchedule(
       id,
       title,
       body,
-      tz.TZDateTime.from(target, tz.local),
+      tz.TZDateTime.from(when, tz.local),
       NotificationDetails(
         android: AndroidNotificationDetails(
           _channel.id,
@@ -89,23 +127,12 @@ class NotificationService {
         ),
         iOS: const DarwinNotificationDetails(),
       ),
+      payload: payload,
       uiLocalNotificationDateInterpretation:
           UILocalNotificationDateInterpretation.absoluteTime,
       androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: null,
     );
   }
 
   Future<void> cancelAll() => _plugin.cancelAll();
-
-  Future<List<PendingNotificationRequest>> pending() =>
-      _plugin.pendingNotificationRequests();
-
-  Future<String> _deviceTimeZone() async {
-    // A light heuristic; on device the OS timezone is used by the plugin.
-    // Kept simple to avoid an extra native dependency.
-    if (kIsWeb) return 'UTC';
-    final offset = DateTime.now().timeZoneName;
-    return offset.isEmpty ? 'UTC' : 'UTC';
-  }
 }
