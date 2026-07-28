@@ -5,6 +5,7 @@ import '../../core/app_text.dart';
 import '../../core/theme.dart';
 import '../../models/vehicle.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/session_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../../widgets/async_value_view.dart';
@@ -164,7 +165,7 @@ class SettingsScreen extends ConsumerWidget {
             ]),
             const SizedBox(height: 26),
             OutlinedButton.icon(
-              onPressed: () => ref.read(authControllerProvider).signOut(),
+              onPressed: () => ref.read(sessionControllerProvider).signOut(),
               icon: Icon(Icons.logout, color: p.danger),
               label: Text('Se déconnecter', style: TextStyle(color: p.danger)),
               style: OutlinedButton.styleFrom(
