@@ -150,16 +150,16 @@ class SettingsScreen extends ConsumerWidget {
             const SizedBox(height: 22),
             _SectionLabel('PRÉFÉRENCES'),
             _Group(children: [
-              _UnitRow(
-                unit: settings.distanceUnit,
-                onChanged: (u) =>
-                    ref.read(settingsProvider.notifier).setDistanceUnit(u),
-              ),
-              _SwitchRow(
-                label: 'Thème sombre',
-                value: settings.themeMode == ThemeMode.dark,
-                onChanged: (v) =>
-                    ref.read(settingsProvider.notifier).toggleDarkMode(v),
+              _SegmentRow<ThemeMode>(
+                label: 'Thème',
+                value: settings.themeMode,
+                options: const {
+                  ThemeMode.system: 'Système',
+                  ThemeMode.light: 'Clair',
+                  ThemeMode.dark: 'Sombre',
+                },
+                onChanged: (m) =>
+                    ref.read(settingsProvider.notifier).setThemeMode(m),
               ),
             ]),
             const SizedBox(height: 26),
@@ -413,20 +413,29 @@ class _SwitchRow extends StatelessWidget {
   }
 }
 
-class _UnitRow extends StatelessWidget {
-  const _UnitRow({required this.unit, required this.onChanged});
-  final DistanceUnit unit;
-  final ValueChanged<DistanceUnit> onChanged;
+/// A labelled row of mutually-exclusive pill options (unit, theme…).
+class _SegmentRow<T> extends StatelessWidget {
+  const _SegmentRow({
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final String label;
+  final T value;
+  final Map<T, String> options;
+  final ValueChanged<T> onChanged;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 13),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
           Expanded(
-            child: Text('Unité de distance',
+            child: Text(label,
                 style: TextStyle(
                     color: p.textPrimary,
                     fontSize: 15,
@@ -439,9 +448,10 @@ class _UnitRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(9),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _unitTab(context, 'km', DistanceUnit.km),
-                _unitTab(context, 'miles', DistanceUnit.miles),
+                for (final entry in options.entries)
+                  _tab(context, entry.value, entry.key),
               ],
             ),
           ),
@@ -450,22 +460,32 @@ class _UnitRow extends StatelessWidget {
     );
   }
 
-  Widget _unitTab(BuildContext context, String label, DistanceUnit value) {
+  Widget _tab(BuildContext context, String label, T optionValue) {
     final p = context.palette;
-    final active = unit == value;
-    return GestureDetector(
-      onTap: () => onChanged(value),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-        decoration: BoxDecoration(
-          color: active ? p.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(7),
+    final active = value == optionValue;
+    return Semantics(
+      selected: active,
+      button: true,
+      label: label,
+      child: InkWell(
+        onTap: () => onChanged(optionValue),
+        borderRadius: BorderRadius.circular(7),
+        child: Container(
+          // 44dp min height keeps the pill a usable tap target; the old
+          // 5px vertical padding made it about 27dp.
+          constraints: const BoxConstraints(minHeight: 44),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: active ? p.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(7),
+          ),
+          child: Text(label,
+              style: TextStyle(
+                  color: active ? Colors.white : p.textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700)),
         ),
-        child: Text(label,
-            style: TextStyle(
-                color: active ? Colors.white : p.textSecondary,
-                fontSize: 12,
-                fontWeight: FontWeight.w700)),
       ),
     );
   }

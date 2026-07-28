@@ -32,8 +32,10 @@ class MotoraApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // While settings load, follow the OS rather than assuming dark — a
+    // light-mode user used to get a dark flash on every cold start.
     final themeMode =
-        ref.watch(settingsProvider).value?.themeMode ?? ThemeMode.dark;
+        ref.watch(settingsProvider).value?.themeMode ?? ThemeMode.system;
 
     return MaterialApp(
       title: 'Motora',

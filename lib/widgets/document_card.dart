@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/constants.dart';
 import '../core/formatters.dart';
 import '../core/theme.dart';
 import '../models/admin_document.dart';
+import '../providers/settings_provider.dart';
 import 'striped_placeholder.dart';
 
 /// Document administratif card: scan thumbnail (or placeholder) on the
 /// left, type/status/expiry on the right — screen 06.
-class DocumentCard extends StatelessWidget {
+class DocumentCard extends ConsumerWidget {
   const DocumentCard({
     super.key,
     required this.doc,
@@ -19,12 +21,16 @@ class DocumentCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final p = context.palette;
     final days = doc.daysToExpiry;
+    // The user's own "alerte échéance" setting, not the compile-time
+    // default — the Réglages screen let you change it but nothing read it.
+    final alertDays = ref.watch(settingsProvider).value?.daysAlertThreshold ??
+        Thresholds.daysAlert;
     final urgency = doc.isExpired
         ? 1.0
-        : (1 - (days / (Thresholds.daysAlert * 2))).clamp(0.0, 1.0);
+        : (1 - (days / (alertDays * 2))).clamp(0.0, 1.0);
     final color = statusColorFor(p, urgency);
     final hasFile = doc.fileUrl != null;
 
@@ -76,7 +82,8 @@ class DocumentCard extends StatelessWidget {
                                 color: color.withValues(alpha: .14),
                                 borderRadius: BorderRadius.circular(7),
                               ),
-                              child: Text(_statusLabel(days, hasFile),
+                              child: Text(
+                                  _statusLabel(days, hasFile, alertDays),
                                   style: TextStyle(
                                       color: color,
                                       fontSize: 11,
@@ -110,10 +117,10 @@ class DocumentCard extends StatelessWidget {
     );
   }
 
-  String _statusLabel(int days, bool hasFile) {
+  String _statusLabel(int days, bool hasFile, int alertDays) {
     if (doc.isExpired) return 'EXPIRÉ';
     if (!hasFile) return 'À FAIRE';
-    if (days < Thresholds.daysAlert) return 'EXPIRE $days J';
+    if (days < alertDays) return 'EXPIRE $days J';
     return 'VALIDE';
   }
 
