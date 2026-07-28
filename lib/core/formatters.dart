@@ -6,7 +6,15 @@ class Fmt {
   static final _dateShort = DateFormat('dd/MM/yyyy', 'fr_FR');
   static final _monthYear = DateFormat('MMM yyyy', 'fr_FR');
   static final _km = NumberFormat.decimalPattern('fr_FR');
-  static final _money = NumberFormat.currency(locale: 'fr_FR', symbol: '€');
+
+  /// Algerian dinar. The app is used in Algeria — plates, vignette, carte
+  /// grise, and fuel priced around 30 DA/L — but this used to print € on
+  /// every amount, so a 1 000 DA tank read as 1 000 €.
+  ///
+  /// "DA" rather than "د.ج" on purpose: it stays inside Latin-1, which the
+  /// PDF export's built-in font can actually render.
+  static final _money =
+      NumberFormat.currency(locale: 'fr_FR', symbol: 'DA', decimalDigits: 2);
 
   static String date(DateTime? d) => d == null ? '—' : _date.format(d);
   static String dateShort(DateTime? d) =>

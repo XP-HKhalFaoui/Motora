@@ -38,6 +38,44 @@ class CarnetData {
 /// Builds the shareable "carnet d'entretien" — the document that gives the
 /// whole app its resale value.
 class CarnetPdfService {
+  /// Rewrites a string into what the PDF's built-in font can actually draw.
+  ///
+  /// The `pdf` package's standard Helvetica is limited to Latin-1, and it
+  /// does **not** throw on a character it lacks — it silently draws an
+  /// empty box. Accents are fine (they're Latin-1) but typographic
+  /// punctuation is not, and neither was the euro sign: the first export
+  /// off a real device came out with a box wherever an amount or a dash
+  /// appeared.
+  ///
+  /// Known substitutes are mapped to their ASCII equivalent; anything else
+  /// outside Latin-1 (Arabic garage names, for instance) becomes '?', which
+  /// at least reads as missing rather than as a mysterious rectangle.
+  static String pdfSafe(String input) {
+    const substitutes = {
+      0x2014: '-', // — em dash
+      0x2013: '-', // – en dash
+      0x2026: '...', // … ellipsis
+      0x2019: "'", // ’ right single quote
+      0x2018: "'", // ‘ left single quote
+      0x201C: '"', // “
+      0x201D: '"', // ”
+      0x202F: ' ', // narrow no-break space — fr_FR thousands separator
+      0x2009: ' ', // thin space
+      0x20AC: 'EUR', // € euro sign
+      0x2192: '->', // → arrow
+    };
+
+    final buffer = StringBuffer();
+    for (final rune in input.runes) {
+      if (rune <= 0xFF) {
+        buffer.writeCharCode(rune);
+      } else {
+        buffer.write(substitutes[rune] ?? '?');
+      }
+    }
+    return buffer.toString();
+  }
+
   static const _ink = PdfColor.fromInt(0xFF16202E);
   static const _muted = PdfColor.fromInt(0xFF5E6B7D);
   static const _accent = PdfColor.fromInt(0xFF2F72E8);
@@ -105,7 +143,7 @@ class CarnetPdfService {
                     fontWeight: pw.FontWeight.bold,
                     color: _ink)),
             pw.SizedBox(height: 2),
-            pw.Text(data.vehicle.name,
+            pw.Text(pdfSafe(data.vehicle.name),
                 style: const pw.TextStyle(fontSize: 14, color: _muted)),
           ],
         ),
@@ -129,7 +167,7 @@ class CarnetPdfService {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Text('Carnet d\'entretien — ${data.vehicle.name}',
+          pw.Text(pdfSafe('Carnet d\'entretien — ${data.vehicle.name}'),
               style: const pw.TextStyle(fontSize: 9, color: _muted)),
           pw.Text('MOTORA',
               style: pw.TextStyle(
@@ -145,7 +183,7 @@ class CarnetPdfService {
       child: pw.Row(
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
-          pw.Text('Généré le ${Fmt.date(data.generatedAt)}',
+          pw.Text(pdfSafe('Généré le ${Fmt.date(data.generatedAt)}'),
               style: const pw.TextStyle(fontSize: 8, color: _muted)),
           pw.Text('${context.pageNumber} / ${context.pagesCount}',
               style: const pw.TextStyle(fontSize: 8, color: _muted)),
@@ -172,10 +210,10 @@ class CarnetPdfService {
           .map((r) => pw.RichText(
                 text: pw.TextSpan(children: [
                   pw.TextSpan(
-                      text: '${r[0]} : ',
+                      text: pdfSafe('${r[0]} : '),
                       style: const pw.TextStyle(fontSize: 10, color: _muted)),
                   pw.TextSpan(
-                      text: r[1],
+                      text: pdfSafe(r[1]),
                       style: pw.TextStyle(
                           fontSize: 10,
                           color: _ink,
@@ -213,13 +251,13 @@ class CarnetPdfService {
                   child: pw.Column(
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
-                      pw.Text(t[1],
+                      pw.Text(pdfSafe(t[1]),
                           style: pw.TextStyle(
                               fontSize: 13,
                               fontWeight: pw.FontWeight.bold,
                               color: _ink)),
                       pw.SizedBox(height: 2),
-                      pw.Text(t[0],
+                      pw.Text(pdfSafe(t[0]),
                           style:
                               const pw.TextStyle(fontSize: 8, color: _muted)),
                     ],
@@ -342,7 +380,7 @@ class CarnetPdfService {
 
   static pw.Widget _empty(String text) => pw.Padding(
         padding: const pw.EdgeInsets.symmetric(vertical: 6),
-        child: pw.Text(text,
+        child: pw.Text(pdfSafe(text),
             style: pw.TextStyle(
                 fontSize: 10, color: _muted, fontStyle: pw.FontStyle.italic)),
       );
@@ -356,7 +394,7 @@ class CarnetPdfService {
       return pw.Padding(
         padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 5),
         child: pw.Text(
-          text,
+          pdfSafe(text),
           textAlign: alignRightLast && last
               ? pw.TextAlign.right
               : pw.TextAlign.left,

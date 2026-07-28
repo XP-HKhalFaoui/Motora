@@ -1,3 +1,4 @@
+import 'package:carnet_auto/core/formatters.dart';
 import 'package:carnet_auto/models/admin_document.dart';
 import 'package:carnet_auto/models/maintenance_history.dart';
 import 'package:carnet_auto/models/maintenance_prediction.dart';
@@ -121,9 +122,63 @@ void main() {
     expect(bytes.length, greaterThan(2000));
   });
 
-  test('renders accents and the euro sign without throwing', () async {
-    // The built-in Helvetica uses WinAnsi encoding; French accents and €
-    // are in it, but a character outside it would throw at save() time.
+  group('pdfSafe', () {
+    // The regression this exists for: the first export off a real device
+    // printed an empty box wherever an amount or a dash appeared. The pdf
+    // package's built-in Helvetica is Latin-1 only, and it does *not*
+    // throw on a glyph it lacks — it silently draws a rectangle. Asserting
+    // that build() completes therefore proves nothing about the output,
+    // which is exactly why this bug shipped past the earlier test.
+    test('keeps Latin-1 text, accents included, untouched', () {
+      const text = 'Réparation embrayage — pièces àéèôç';
+      expect(CarnetPdfService.pdfSafe('Réparation embrayage pièces àéèôç'),
+          'Réparation embrayage pièces àéèôç');
+      expect(CarnetPdfService.pdfSafe(text), isNot(contains('—')));
+    });
+
+    test('replaces the punctuation Helvetica cannot draw', () {
+      expect(CarnetPdfService.pdfSafe('a — b'), 'a - b');
+      expect(CarnetPdfService.pdfSafe('a – b'), 'a - b');
+      expect(CarnetPdfService.pdfSafe('suite…'), 'suite...');
+      expect(CarnetPdfService.pdfSafe('l’huile'), "l'huile");
+    });
+
+    test('replaces the narrow no-break space in French numbers', () {
+      // Fmt.km separates thousands with U+202F, which is not Latin-1.
+      final formatted = Fmt.km(569265);
+      expect(formatted.runes.any((r) => r > 0xFF), isTrue,
+          reason: 'guards the premise: the raw output is not Latin-1');
+      final safe = CarnetPdfService.pdfSafe(formatted);
+      expect(safe.runes.every((r) => r <= 0xFF), isTrue);
+      expect(safe, '569 265 km');
+    });
+
+    test('degrades unmappable text to a visible marker, not a mystery box',
+        () {
+      // e.g. an Arabic garage name — wrong, but legibly wrong.
+      expect(CarnetPdfService.pdfSafe('كراج'), '????');
+    });
+
+    test('everything the formatters emit survives the round trip', () {
+      for (final value in [
+        Fmt.money(48300),
+        Fmt.km(569265),
+        Fmt.date(_now),
+        Fmt.dateShort(_now),
+        Fmt.relative(_now.add(const Duration(days: 90))),
+      ]) {
+        final safe = CarnetPdfService.pdfSafe(value);
+        expect(safe.runes.every((r) => r <= 0xFF), isTrue,
+            reason: 'unrenderable character left in "$value"');
+        expect(safe, isNot(contains('?')),
+            reason: 'formatter output should map cleanly, not degrade: '
+                '"$value"');
+      }
+    });
+  });
+
+  test('renders accents and amounts without unrenderable characters',
+      () async {
     final bytes = await CarnetPdfService.build(_data(
       history: [
         MaintenanceHistory(
