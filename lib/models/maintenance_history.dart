@@ -1,3 +1,5 @@
+import '../core/formatters.dart';
+
 class MaintenanceHistory {
   final String id;
   final String vehicleId;
@@ -60,7 +62,7 @@ class MaintenanceHistory {
         'cost': cost,
         'garage_name': garageName,
         'garage_id': garageId,
-        'done_at': doneAt.toIso8601String(),
+        'done_at': Fmt.isoDate(doneAt),
         'invoice_url': invoiceUrl,
         'is_fuel': isFuel,
         'liters': liters,

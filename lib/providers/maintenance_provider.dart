@@ -5,6 +5,7 @@ import '../models/maintenance_history.dart';
 import '../models/maintenance_prediction.dart';
 import '../models/maintenance_type.dart';
 import '../services/prediction_service.dart';
+import 'garage_provider.dart';
 import 'service_providers.dart';
 import 'vehicle_provider.dart';
 
@@ -92,8 +93,7 @@ class MaintenanceController {
             note: h.title,
           );
     }
-    _invalidate(h.vehicleId);
-    ref.invalidate(maintenanceHistoryProvider(h.vehicleId));
+    _invalidateHistory(h.vehicleId);
   }
 
   /// Edits an existing intervention. Unlike [addHistory], this doesn't
@@ -102,17 +102,26 @@ class MaintenanceController {
   /// entry (that already happened when the intervention was first saved).
   Future<void> updateHistory(MaintenanceHistory h) async {
     await ref.read(supabaseServiceProvider).updateHistory(h);
-    _invalidate(h.vehicleId);
-    ref.invalidate(maintenanceHistoryProvider(h.vehicleId));
+    _invalidateHistory(h.vehicleId);
   }
 
   Future<void> deleteHistory(String vehicleId, String id) async {
     await ref.read(supabaseServiceProvider).deleteHistory(id);
-    ref.invalidate(maintenanceHistoryProvider(vehicleId));
+    _invalidateHistory(vehicleId);
   }
 
   void _invalidate(String vehicleId) {
     ref.invalidate(maintenanceTypesProvider(vehicleId));
     ref.invalidate(predictionsProvider(vehicleId));
+  }
+
+  /// Anything that touches an intervention also moves the linked type's
+  /// anchor (recomputed by the DB trigger) and the per-garage intervention
+  /// counts, so those caches have to go too. deleteHistory used to refresh
+  /// only the history list, leaving stale predictions behind.
+  void _invalidateHistory(String vehicleId) {
+    _invalidate(vehicleId);
+    ref.invalidate(maintenanceHistoryProvider(vehicleId));
+    ref.invalidate(garageCountsProvider);
   }
 }

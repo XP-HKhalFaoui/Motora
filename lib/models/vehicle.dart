@@ -1,3 +1,5 @@
+import '../core/formatters.dart';
+
 class Vehicle {
   final String id;
   final String userId;
@@ -52,7 +54,7 @@ class Vehicle {
         'year': year,
         'plate_number': plateNumber,
         'current_km': currentKm,
-        'purchase_date': purchaseDate?.toIso8601String(),
+        'purchase_date': Fmt.isoDate(purchaseDate),
         'photo_url': photoUrl,
       };
 

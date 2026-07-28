@@ -1,3 +1,5 @@
+import '../core/formatters.dart';
+
 class AdminDocument {
   final String id;
   final String vehicleId;
@@ -49,8 +51,8 @@ class AdminDocument {
         'vehicle_id': vehicleId,
         'doc_type': docType,
         'year': year,
-        'issued_date': issuedDate?.toIso8601String(),
-        'expiry_date': expiryDate.toIso8601String(),
+        'issued_date': Fmt.isoDate(issuedDate),
+        'expiry_date': Fmt.isoDate(expiryDate),
         'file_url': fileUrl,
         'status': status,
       };

@@ -113,26 +113,21 @@ class SupabaseService {
     return (rows as List).map((e) => MaintenanceHistory.fromJson(e)).toList();
   }
 
+  /// Records an intervention.
+  ///
+  /// The linked maintenance type's `last_done_km` / `last_done_date` are
+  /// recomputed from the history by a DB trigger (migration 0005), not
+  /// written here: a second client write was neither atomic nor correct
+  /// when a more recent intervention already existed.
   Future<MaintenanceHistory> addHistory(MaintenanceHistory h) async {
     final row = await _c
         .from('maintenance_history')
         .insert(h.toInsert())
         .select()
         .single();
-
-    // Advance the linked maintenance type's "last done" markers.
-    if (h.maintenanceTypeId != null) {
-      await _c.from('maintenance_types').update({
-        'last_done_km': h.km,
-        'last_done_date': h.doneAt.toIso8601String(),
-      }).eq('id', h.maintenanceTypeId!);
-    }
     return MaintenanceHistory.fromJson(row);
   }
 
-  /// Updates an intervention. If it's linked to a maintenance type, also
-  /// re-syncs that type's "last done" markers to the (possibly edited)
-  /// km/date, same as [addHistory] does on create.
   Future<MaintenanceHistory> updateHistory(MaintenanceHistory h) async {
     final row = await _c
         .from('maintenance_history')
@@ -140,13 +135,6 @@ class SupabaseService {
         .eq('id', h.id)
         .select()
         .single();
-
-    if (h.maintenanceTypeId != null) {
-      await _c.from('maintenance_types').update({
-        'last_done_km': h.km,
-        'last_done_date': h.doneAt.toIso8601String(),
-      }).eq('id', h.maintenanceTypeId!);
-    }
     return MaintenanceHistory.fromJson(row);
   }
 
