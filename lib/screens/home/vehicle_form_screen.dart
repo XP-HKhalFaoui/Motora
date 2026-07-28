@@ -11,6 +11,7 @@ import '../../core/theme.dart';
 import '../../models/vehicle.dart';
 import '../../providers/service_providers.dart';
 import '../../providers/vehicle_provider.dart';
+import '../../widgets/storage_image.dart';
 import '../../widgets/striped_placeholder.dart';
 
 /// Create (or edit, when [existing] is provided) a vehicle.
@@ -146,16 +147,15 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                   children: [
                     if (_pendingPhoto != null)
                       Image.file(_pendingPhoto!, fit: BoxFit.cover)
-                    else if (_photoUrl != null)
-                      Image.network(
-                        _photoUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => const StripedPlaceholder(
-                            icon: Icons.directions_car_outlined),
-                      )
                     else
-                      const StripedPlaceholder(
-                          icon: Icons.add_a_photo_outlined),
+                      StorageImage(
+                        bucket: Buckets.vehiclePhotos,
+                        reference: _photoUrl,
+                        fallback: StripedPlaceholder(
+                            icon: _photoUrl == null
+                                ? Icons.add_a_photo_outlined
+                                : Icons.directions_car_outlined),
+                      ),
                     if (_uploadingPhoto)
                       Container(
                         color: Colors.black.withValues(alpha: .4),

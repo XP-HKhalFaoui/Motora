@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/supabase_client.dart';
 import '../models/admin_document.dart';
+import '../core/storage_paths.dart';
 import '../models/garage.dart';
 import '../models/maintenance_history.dart';
 import '../models/maintenance_type.dart';
@@ -201,7 +202,14 @@ class SupabaseService {
 
   // ---------------- Storage ------------------------------------------
 
-  /// Uploads [file] to <bucket>/<uid>/<filename> and returns a signed URL.
+  /// Uploads [file] to `<bucket>/<uid>/<filename>` and returns the object
+  /// **path**, which is what gets persisted.
+  ///
+  /// It used to return a signed URL valid for a year and store that. The
+  /// buckets are private, so those URLs stop working after 365 days and
+  /// nothing anywhere refreshed them: every photo, invoice and scan in the
+  /// app would silently break, permanently. The path never expires, and
+  /// [resolveUrl] mints a short-lived URL at display time instead.
   Future<String> uploadFile({
     required String bucket,
     required File file,
@@ -213,7 +221,26 @@ class SupabaseService {
           file,
           fileOptions: const FileOptions(upsert: true),
         );
-    // Signed URL valid for a year — buckets are private.
-    return _c.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24 * 365);
+    return path;
+  }
+
+  /// Turns a stored reference into a URL usable right now.
+  ///
+  /// Rows written before the change above hold a full signed URL rather
+  /// than a path; those are passed through unchanged. They may already
+  /// have expired, but re-signing them is impossible — the path can be
+  /// recovered from the URL, which is what [_pathFromLegacyUrl] does.
+  Future<String?> resolveUrl(String bucket, String? reference) async {
+    final path = storagePathFor(bucket, reference);
+    // Unparseable legacy URL: hand it back as-is rather than showing
+    // nothing — it may still be within its original year.
+    if (path == null) return reference;
+    return _c.storage.from(bucket).createSignedUrl(path, 60 * 60);
+  }
+
+  Future<void> deleteFile(String bucket, String? reference) async {
+    final path = storagePathFor(bucket, reference);
+    if (path == null) return;
+    await _c.storage.from(bucket).remove([path]);
   }
 }

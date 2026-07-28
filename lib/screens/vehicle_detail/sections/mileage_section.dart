@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/app_text.dart';
+import '../../../core/constants.dart';
 import '../../../core/formatters.dart';
 import '../../../core/theme.dart';
 import '../../../models/mileage_log.dart';
 import '../../../providers/vehicle_provider.dart';
 import '../../../services/prediction_service.dart';
 import '../../../widgets/async_value_view.dart';
+import '../../../widgets/storage_image.dart';
 import '../update_km_sheet.dart';
 
 /// "Km" section of the vehicle hub: a km-over-time chart plus a
@@ -243,23 +245,25 @@ class _LogTile extends StatelessWidget {
       ),
       child: Row(
         children: [
-          if (log.photoUrl != null)
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: Image.network(log.photoUrl!,
-                  width: 44, height: 44, fit: BoxFit.cover),
-            )
-          else
-            Container(
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: StorageImage(
+              bucket: Buckets.mileagePhotos,
+              reference: log.photoUrl,
               width: 44,
               height: 44,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: p.background,
-                borderRadius: BorderRadius.circular(8),
+              fallback: Container(
+                width: 44,
+                height: 44,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  color: p.background,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(Icons.edit_note, color: p.textMuted, size: 22),
               ),
-              child: Icon(Icons.edit_note, color: p.textMuted, size: 22),
             ),
+          ),
           const SizedBox(width: 12),
           Expanded(
             child: Column(

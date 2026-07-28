@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_text.dart';
+import '../../core/constants.dart';
 import '../../core/formatters.dart';
 import '../../core/theme.dart';
 import '../../models/vehicle.dart';
@@ -10,6 +11,7 @@ import '../../providers/maintenance_provider.dart';
 import '../../providers/ui_state_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../../widgets/async_value_view.dart';
+import '../../widgets/storage_image.dart';
 import '../../widgets/striped_placeholder.dart';
 import '../home/vehicle_form_screen.dart';
 import 'sections/documents_section.dart';
@@ -168,15 +170,11 @@ class _Hero extends ConsumerWidget {
       child: Stack(
         fit: StackFit.expand,
         children: [
-          if (vehicle.photoUrl != null)
-            Image.network(
-              vehicle.photoUrl!,
-              fit: BoxFit.cover,
-              errorBuilder: (_, __, ___) =>
-                  StripedPlaceholder(label: 'photo · ${vehicle.name}'),
-            )
-          else
-            StripedPlaceholder(label: 'photo · ${vehicle.name}'),
+          StorageImage(
+            bucket: Buckets.vehiclePhotos,
+            reference: vehicle.photoUrl,
+            fallback: StripedPlaceholder(label: 'photo · ${vehicle.name}'),
+          ),
           // Scrim so white controls and text stay legible over any photo.
           DecoratedBox(
             decoration: BoxDecoration(

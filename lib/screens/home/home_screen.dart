@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_text.dart';
+import '../../core/constants.dart';
 import '../../core/formatters.dart';
 import '../../core/maintenance_icons.dart';
 import '../../core/theme.dart';
@@ -15,6 +16,7 @@ import '../../providers/notification_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../../services/prediction_service.dart';
 import '../../widgets/async_value_view.dart';
+import '../../widgets/storage_image.dart';
 import '../../widgets/striped_placeholder.dart';
 import '../notifications/notifications_screen.dart';
 import '../settings/settings_screen.dart';
@@ -268,15 +270,12 @@ class _VehicleCard extends ConsumerWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    if (vehicle.photoUrl != null)
-                      Image.network(
-                        vehicle.photoUrl!,
-                        fit: BoxFit.cover,
-                        errorBuilder: (_, __, ___) => StripedPlaceholder(
-                            label: 'photo · ${vehicle.name}'),
-                      )
-                    else
-                      StripedPlaceholder(label: 'photo · ${vehicle.name}'),
+                    StorageImage(
+                      bucket: Buckets.vehiclePhotos,
+                      reference: vehicle.photoUrl,
+                      fallback:
+                          StripedPlaceholder(label: 'photo · ${vehicle.name}'),
+                    ),
                     Positioned(
                       top: 10,
                       right: 10,
