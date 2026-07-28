@@ -13,6 +13,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Supplies the French strings for Material's own widgets (date picker
+  # buttons, text-selection menu). The app's own copy is hardcoded French.
+  flutter_localizations:
+    sdk: flutter
   cupertino_icons: ^1.0.6
 
   # Backend
@@ -33,7 +37,8 @@ dependencies:
   fl_chart: ^0.68.0
 
   # Utils
-  intl: ^0.19.0
+  # Pinned by flutter_localizations, which requires ^0.20.2.
+  intl: ^0.20.2
   shared_preferences: ^2.3.2
   url_launcher: ^6.3.1
 
