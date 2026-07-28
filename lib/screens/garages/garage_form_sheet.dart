@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/errors.dart';
 import '../../core/theme.dart';
 import '../../models/garage.dart';
 import '../../providers/garage_provider.dart';
@@ -94,7 +95,7 @@ class _GarageFormSheetState extends ConsumerState<_GarageFormSheet> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Erreur : $e';
+          _error = friendlyError(e);
           _saving = false;
         });
       }
@@ -129,7 +130,7 @@ class _GarageFormSheetState extends ConsumerState<_GarageFormSheet> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Erreur : $e';
+          _error = friendlyError(e);
           _saving = false;
         });
       }

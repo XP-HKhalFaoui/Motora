@@ -29,6 +29,7 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('Paramètres')),
       body: AsyncValueView(
         value: settingsAsync,
+        onRetry: () => ref.invalidate(settingsProvider),
         data: (settings) => ListView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
           children: [

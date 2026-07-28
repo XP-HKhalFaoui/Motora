@@ -9,6 +9,7 @@ import '../../providers/document_provider.dart';
 import '../../providers/maintenance_provider.dart';
 import '../../providers/ui_state_provider.dart';
 import '../../providers/vehicle_provider.dart';
+import '../../widgets/async_value_view.dart';
 import '../../widgets/striped_placeholder.dart';
 import '../home/vehicle_form_screen.dart';
 import 'sections/documents_section.dart';
@@ -79,9 +80,23 @@ class _VehicleHubScreenState extends ConsumerState<VehicleHubScreen> {
     final vehicle = ref.watch(vehicleByIdProvider(widget.vehicleId));
 
     if (vehicle == null) {
+      // vehicleByIdProvider is derived from the vehicle list, so a null
+      // here means either "still loading" or "no such vehicle" — the
+      // latter used to spin forever with no way out.
+      final vehicles = ref.watch(vehiclesProvider);
       return Scaffold(
         backgroundColor: p.background,
-        body: const Center(child: CircularProgressIndicator()),
+        appBar: AppBar(backgroundColor: p.background, elevation: 0),
+        body: vehicles.isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : AsyncValueView(
+                value: vehicles,
+                onRetry: () => ref.read(vehiclesProvider.notifier).refresh(),
+                data: (_) => const EmptyState(
+                  icon: Icons.directions_car_outlined,
+                  message: "Ce véhicule n'existe plus.",
+                ),
+              ),
       );
     }
 

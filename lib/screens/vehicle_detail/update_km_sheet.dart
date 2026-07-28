@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants.dart';
+import '../../core/errors.dart';
 import '../../core/file_pick.dart';
 import '../../core/formatters.dart';
 import '../../core/theme.dart';
@@ -80,7 +81,7 @@ class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Erreur : $e';
+          _error = friendlyError(e);
           _saving = false;
         });
       }

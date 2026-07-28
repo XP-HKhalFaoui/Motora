@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants.dart';
+import '../../core/errors.dart';
 import '../../core/file_pick.dart';
 import '../../core/theme.dart';
 import '../../models/vehicle.dart';
@@ -70,7 +71,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur photo : $e')));
+            .showSnackBar(SnackBar(content: Text(friendlyError(e))));
       }
     } finally {
       if (mounted) setState(() => _uploadingPhoto = false);
@@ -110,7 +111,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Erreur : $e')));
+            .showSnackBar(SnackBar(content: Text(friendlyError(e))));
         setState(() => _saving = false);
       }
     }

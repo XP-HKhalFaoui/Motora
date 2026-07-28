@@ -26,6 +26,7 @@ class _DocumentsSectionState extends ConsumerState<DocumentsSection> {
   Widget build(BuildContext context) {
     return AsyncValueView(
       value: ref.watch(documentsProvider(widget.vehicleId)),
+      onRetry: () => ref.invalidate(documentsProvider(widget.vehicleId)),
       data: (docs) => _Body(
         vehicleId: widget.vehicleId,
         docs: docs,

@@ -22,6 +22,7 @@ class MileageSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AsyncValueView(
       value: ref.watch(mileageLogsProvider(vehicleId)),
+      onRetry: () => ref.invalidate(mileageLogsProvider(vehicleId)),
       data: (logs) => _Body(vehicleId: vehicleId, logs: logs),
     );
   }

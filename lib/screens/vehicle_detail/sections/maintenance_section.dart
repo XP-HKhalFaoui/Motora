@@ -22,6 +22,7 @@ class MaintenanceSection extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return AsyncValueView(
       value: ref.watch(predictionsProvider(vehicleId)),
+      onRetry: () => ref.invalidate(predictionsProvider(vehicleId)),
       data: (predictions) =>
           _Body(vehicleId: vehicleId, predictions: predictions),
     );

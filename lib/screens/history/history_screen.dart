@@ -44,6 +44,8 @@ class HistoryScreen extends ConsumerWidget {
             const SizedBox(height: 18),
             AsyncValueView(
               value: historyAsync,
+              onRetry: () =>
+                  ref.invalidate(maintenanceHistoryProvider(vehicleId)),
               data: (history) => _Body(vehicleId: vehicleId, history: history),
             ),
           ],

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_text.dart';
+import '../../core/errors.dart';
 import '../../core/formatters.dart';
 import '../../core/theme.dart';
 import '../../models/maintenance_type.dart';
@@ -147,7 +148,7 @@ class _AddMaintenanceTypeSheetState
       }
       if (mounted) Navigator.pop(context);
     } catch (e) {
-      if (mounted) setState(() => _error = 'Erreur : $e');
+      if (mounted) setState(() => _error = friendlyError(e));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
@@ -183,7 +184,7 @@ class _AddMaintenanceTypeSheetState
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Erreur : $e';
+          _error = friendlyError(e);
           _saving = false;
         });
       }

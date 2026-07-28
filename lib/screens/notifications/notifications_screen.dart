@@ -29,6 +29,7 @@ class NotificationsScreen extends ConsumerWidget {
         bottom: false,
         child: AsyncValueView(
           value: remindersAsync,
+          onRetry: () => ref.invalidate(remindersProvider),
           data: (reminders) {
             if (reminders.isEmpty) {
               return ListView(

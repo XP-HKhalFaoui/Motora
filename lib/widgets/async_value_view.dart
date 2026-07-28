@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/errors.dart';
 import '../core/theme.dart';
 
 /// Consistent loading / error / data rendering for AsyncValue.
@@ -19,7 +20,15 @@ class AsyncValueView<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
+
+    // Keep showing the previous data while a refresh is in flight: the
+    // list used to blank out to a spinner on every mutation, because
+    // refresh() sets AsyncLoading before refetching.
+    final previous = value.valueOrNull;
+    if (value.isLoading && previous != null) return data(previous);
+
     return value.when(
+      skipLoadingOnRefresh: true,
       data: data,
       loading: () => const Center(
         child: Padding(
@@ -35,7 +44,7 @@ class AsyncValueView<T> extends StatelessWidget {
             children: [
               Icon(Icons.error_outline, color: p.danger, size: 40),
               const SizedBox(height: 12),
-              Text('Erreur : $e',
+              Text(friendlyError(e),
                   textAlign: TextAlign.center,
                   style: TextStyle(color: p.textMuted)),
               if (onRetry != null) ...[

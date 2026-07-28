@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants.dart';
+import '../../core/errors.dart';
 import '../../core/file_pick.dart';
 import '../../core/theme.dart';
 import '../../models/admin_document.dart';
@@ -72,7 +73,7 @@ class _AddDocumentSheetState extends ConsumerState<_AddDocumentSheet> {
           ));
       if (mounted) Navigator.pop(context);
     } catch (e) {
-      if (mounted) setState(() => _error = 'Erreur : $e');
+      if (mounted) setState(() => _error = friendlyError(e));
     } finally {
       if (mounted) setState(() => _saving = false);
     }
