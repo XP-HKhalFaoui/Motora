@@ -52,8 +52,9 @@ class CarnetExporter {
         .replaceAll(RegExp('[ôö]'), 'o')
         .replaceAll(RegExp('[ùûü]'), 'u')
         .replaceAll('ç', 'c');
-    final slug =
-        ascii.replaceAll(RegExp(r'[^a-z0-9]+'), '-').replaceAll(RegExp(r'^-|-$'), '');
+    final slug = ascii
+        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
+        .replaceAll(RegExp(r'^-|-$'), '');
     return slug.isEmpty ? 'vehicule' : slug;
   }
 }

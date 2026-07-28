@@ -121,7 +121,8 @@ class FileViewerScreen extends ConsumerWidget {
     );
     if (!ok) {
       messenger.showSnackBar(
-        const SnackBar(content: Text("Aucune application ne peut ouvrir ce fichier.")),
+        const SnackBar(
+            content: Text("Aucune application ne peut ouvrir ce fichier.")),
       );
     }
   }
@@ -181,8 +182,7 @@ class _Message extends StatelessWidget {
             Icon(icon, size: 48, color: color),
             const SizedBox(height: 12),
             Text(text,
-                textAlign: TextAlign.center,
-                style: TextStyle(color: color)),
+                textAlign: TextAlign.center, style: TextStyle(color: color)),
           ],
         ),
       ),

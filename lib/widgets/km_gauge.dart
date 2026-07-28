@@ -113,11 +113,17 @@ class _GaugePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = size.width * .085;
 
-    canvas.drawArc(Rect.fromCircle(center: center, radius: radius - trackPaint.strokeWidth / 2),
-        0, math.pi * 2, false, trackPaint);
+    canvas.drawArc(
+        Rect.fromCircle(
+            center: center, radius: radius - trackPaint.strokeWidth / 2),
+        0,
+        math.pi * 2,
+        false,
+        trackPaint);
     if (progress > 0) {
       canvas.drawArc(
-          Rect.fromCircle(center: center, radius: radius - progressPaint.strokeWidth / 2),
+          Rect.fromCircle(
+              center: center, radius: radius - progressPaint.strokeWidth / 2),
           start,
           sweep,
           false,

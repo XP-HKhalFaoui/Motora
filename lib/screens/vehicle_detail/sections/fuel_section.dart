@@ -81,9 +81,8 @@ class _Body extends StatelessWidget {
             const SizedBox(width: 10),
             Expanded(
               child: _StatTile(
-                value: stats.costPerKm == null
-                    ? '—'
-                    : Fmt.money(stats.costPerKm),
+                value:
+                    stats.costPerKm == null ? '—' : Fmt.money(stats.costPerKm),
                 label: 'coût / km',
               ),
             ),
@@ -95,7 +94,8 @@ class _Body extends StatelessWidget {
             Expanded(
               child: _StatTile(
                 value: '${stats.totalLiters.toStringAsFixed(0)} L',
-                label: stats.fillUps == 1 ? '1 plein' : '${stats.fillUps} pleins',
+                label:
+                    stats.fillUps == 1 ? '1 plein' : '${stats.fillUps} pleins',
               ),
             ),
             const SizedBox(width: 10),
@@ -109,7 +109,7 @@ class _Body extends StatelessWidget {
         ),
         if (stats.averageConsumption == null) ...[
           const SizedBox(height: 14),
-          _Hint(
+          const _Hint(
             text: 'Enregistrez deux pleins complets avec le kilométrage '
                 'pour obtenir une consommation.',
           ),
@@ -212,7 +212,8 @@ class _ConsumptionChart extends StatelessWidget {
               reservedSize: 24,
               // Endpoints only; see the same workaround in MileageSection —
               // fl_chart's interval ticks drift off the true edge.
-              interval: (spots.last.x - spots.first.x).clamp(1, double.infinity),
+              interval:
+                  (spots.last.x - spots.first.x).clamp(1, double.infinity),
               getTitlesWidget: (value, meta) {
                 final onEdge = (value - meta.min).abs() < 1 ||
                     (value - meta.max).abs() < 1;
@@ -286,8 +287,7 @@ class _FillUpTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(14),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
-        onTap: () =>
-            showAddHistorySheet(context, vehicleId, existing: entry),
+        onTap: () => showAddHistorySheet(context, vehicleId, existing: entry),
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(border: Border.all(color: p.border)),

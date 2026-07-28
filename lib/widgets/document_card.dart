@@ -28,9 +28,8 @@ class DocumentCard extends ConsumerWidget {
     // default — the Réglages screen let you change it but nothing read it.
     final alertDays = ref.watch(settingsProvider).value?.daysAlertThreshold ??
         Thresholds.daysAlert;
-    final urgency = doc.isExpired
-        ? 1.0
-        : (1 - (days / (alertDays * 2))).clamp(0.0, 1.0);
+    final urgency =
+        doc.isExpired ? 1.0 : (1 - (days / (alertDays * 2))).clamp(0.0, 1.0);
     final color = statusColorFor(p, urgency);
     final hasFile = doc.fileUrl != null;
 

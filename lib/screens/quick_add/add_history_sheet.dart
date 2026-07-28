@@ -147,8 +147,7 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
       String? garageName;
       String? garageId;
       if (_isFuel) {
-        garageName =
-            _garage.text.trim().isEmpty ? null : _garage.text.trim();
+        garageName = _garage.text.trim().isEmpty ? null : _garage.text.trim();
       } else {
         garageId = _garageId;
         if (_garageId != null) {
@@ -215,10 +214,9 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
     if (confirmed != true) return;
     setState(() => _saving = true);
     try {
-      await ref
-          .read(maintenanceControllerProvider)
-          .deleteHistory(widget.vehicleId, widget.existing!.id,
-              invoiceUrl: _existingInvoiceUrl);
+      await ref.read(maintenanceControllerProvider).deleteHistory(
+          widget.vehicleId, widget.existing!.id,
+          invoiceUrl: _existingInvoiceUrl);
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
@@ -280,7 +278,7 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
                 return Padding(
                   padding: const EdgeInsets.only(bottom: 12),
                   child: DropdownButtonFormField<String?>(
-                    value: _maintenanceTypeId,
+                    initialValue: _maintenanceTypeId,
                     decoration: const InputDecoration(
                         labelText: "Lié à un type d'entretien (optionnel)"),
                     dropdownColor: p.surface,
@@ -354,7 +352,8 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
             TextField(
               controller: _garage,
               style: TextStyle(color: p.textPrimary),
-              decoration: const InputDecoration(labelText: 'Station (optionnel)'),
+              decoration:
+                  const InputDecoration(labelText: 'Station (optionnel)'),
             )
           else
             _GaragePicker(
@@ -388,9 +387,8 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
                 context,
                 bucket: Buckets.invoices,
                 reference: _existingInvoiceUrl,
-                title: _title.text.trim().isEmpty
-                    ? 'Facture'
-                    : _title.text.trim(),
+                title:
+                    _title.text.trim().isEmpty ? 'Facture' : _title.text.trim(),
               ),
               icon: const Icon(Icons.visibility_outlined, size: 18),
               label: const Text('Voir la facture'),
@@ -441,22 +439,21 @@ class _GaragePicker extends ConsumerWidget {
     final garages = ref.watch(garagesProvider).value ?? const <Garage>[];
     // A legacy value that no longer maps to a garage would break the
     // Dropdown's assertion — guard against it.
-    final value =
-        garages.any((g) => g.id == selectedId) ? selectedId : null;
+    final value = garages.any((g) => g.id == selectedId) ? selectedId : null;
 
     return Row(
       children: [
         Expanded(
           child: DropdownButtonFormField<String?>(
-            value: value,
+            initialValue: value,
             isExpanded: true,
             decoration: const InputDecoration(labelText: 'Garage (optionnel)'),
             dropdownColor: p.surface,
             style: TextStyle(color: p.textPrimary),
             items: [
               const DropdownMenuItem(value: null, child: Text('Aucun')),
-              ...garages.map((g) =>
-                  DropdownMenuItem(value: g.id, child: Text(g.name))),
+              ...garages.map(
+                  (g) => DropdownMenuItem(value: g.id, child: Text(g.name))),
             ],
             onChanged: onChanged,
           ),

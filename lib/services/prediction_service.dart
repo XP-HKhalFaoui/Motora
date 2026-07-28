@@ -30,7 +30,9 @@ class PredictionService {
         DateTime(ref.year, ref.month - Thresholds.avgWindowMonths, ref.day);
 
     // Logs within the window, oldest -> newest.
-    final windowed = logs.where((l) => l.recordedAt.isAfter(windowStart)).toList()
+    final windowed = logs
+        .where((l) => l.recordedAt.isAfter(windowStart))
+        .toList()
       ..sort((a, b) => a.recordedAt.compareTo(b.recordedAt));
 
     // Need at least two points spanning some time to compute a rate.
@@ -95,8 +97,8 @@ class PredictionService {
     final intervalMonths = type.intervalMonths;
     final lastDoneDate = type.lastDoneDate;
     if (intervalMonths != null && intervalMonths > 0 && lastDoneDate != null) {
-      timeDueDate = DateTime(
-          lastDoneDate.year, lastDoneDate.month + intervalMonths, lastDoneDate.day);
+      timeDueDate = DateTime(lastDoneDate.year,
+          lastDoneDate.month + intervalMonths, lastDoneDate.day);
       final total = timeDueDate.difference(lastDoneDate).inDays;
       final elapsed = ref.difference(lastDoneDate).inDays;
       if (total > 0) timeProgress = elapsed / total;

@@ -70,8 +70,8 @@ void main() {
 
     expect(find.textContaining('dépassé'), findsWidgets);
     // The bar still renders, clamped.
-    final bar = tester.widget<LinearProgressIndicator>(
-        find.byType(LinearProgressIndicator));
+    final bar = tester
+        .widget<LinearProgressIndicator>(find.byType(LinearProgressIndicator));
     expect(bar.value, 1.0);
   });
 

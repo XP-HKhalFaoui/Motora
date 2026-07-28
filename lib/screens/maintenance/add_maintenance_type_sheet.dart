@@ -308,9 +308,7 @@ class _AddMaintenanceTypeSheetState
                 child: InputDecorator(
                   decoration: const InputDecoration(labelText: 'le'),
                   child: Text(
-                    _lastDoneDate == null
-                        ? '—'
-                        : Fmt.dateShort(_lastDoneDate),
+                    _lastDoneDate == null ? '—' : Fmt.dateShort(_lastDoneDate),
                     style: TextStyle(
                         color: _lastDoneDate == null
                             ? p.textMuted

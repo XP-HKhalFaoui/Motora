@@ -31,8 +31,10 @@ class OverviewSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final predictions = ref.watch(predictionsProvider(vehicleId)).value ?? const [];
-    final history = ref.watch(maintenanceHistoryProvider(vehicleId)).value ?? const [];
+    final predictions =
+        ref.watch(predictionsProvider(vehicleId)).value ?? const [];
+    final history =
+        ref.watch(maintenanceHistoryProvider(vehicleId)).value ?? const [];
     final docs = ref.watch(documentsProvider(vehicleId)).value ?? const [];
 
     final totalCost = history.fold<double>(0, (s, h) => s + (h.cost ?? 0));
@@ -96,11 +98,13 @@ class OverviewSection extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-              child: _StatTile(value: Fmt.money(totalCost), label: 'entretien total'),
+              child: _StatTile(
+                  value: Fmt.money(totalCost), label: 'entretien total'),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _StatTile(value: '${history.length}', label: 'interventions'),
+              child:
+                  _StatTile(value: '${history.length}', label: 'interventions'),
             ),
           ],
         ),
@@ -142,7 +146,8 @@ class OverviewSection extends ConsumerWidget {
         const SizedBox(height: 18),
         _SectionHeader(
           label: 'DOCUMENTS',
-          onSeeAll: docs.length > topDocs.length ? () => onOpenSection(2) : null,
+          onSeeAll:
+              docs.length > topDocs.length ? () => onOpenSection(2) : null,
         ),
         const SizedBox(height: 12),
         if (topDocs.isEmpty)

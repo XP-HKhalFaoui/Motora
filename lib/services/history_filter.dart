@@ -36,9 +36,8 @@ class HistoryFilter {
       HistoryFilter(
         query: query ?? this.query,
         kind: kind ?? this.kind,
-        garageName: garageName == _unset
-            ? this.garageName
-            : garageName as String?,
+        garageName:
+            garageName == _unset ? this.garageName : garageName as String?,
         period: period ?? this.period,
       );
 

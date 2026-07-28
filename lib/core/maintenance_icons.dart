@@ -8,7 +8,9 @@ IconData maintenanceIconFor(String label) {
   if (l.contains('plaquette') || l.contains('frein')) return Icons.disc_full;
   if (l.contains('batterie')) return Icons.battery_charging_full;
   if (l.contains('pneu')) return Icons.tire_repair;
-  if (l.contains('distribution') || l.contains('courroie') || l.contains('kit')) {
+  if (l.contains('distribution') ||
+      l.contains('courroie') ||
+      l.contains('kit')) {
     return Icons.settings_input_component;
   }
   if (l.contains('contrôle') || l.contains('controle') || l.contains('ct')) {

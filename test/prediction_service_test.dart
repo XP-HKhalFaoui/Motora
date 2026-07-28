@@ -52,7 +52,8 @@ void main() {
         _log(1000, _now.subtract(const Duration(days: 60))),
         _log(1000, _now.subtract(const Duration(days: 10))),
       ];
-      expect(PredictionService.measuredMonthlyKmAverage(logs, now: _now), isNull);
+      expect(
+          PredictionService.measuredMonthlyKmAverage(logs, now: _now), isNull);
     });
 
     test('measures a rate from two readings', () {
@@ -127,8 +128,7 @@ void main() {
 
     test('one interval anchored and the other not still forecasts', () {
       final p = PredictionService.predict(
-        type: _type(
-            intervalKm: 10000, lastDoneKm: 95000, intervalMonths: 12),
+        type: _type(intervalKm: 10000, lastDoneKm: 95000, intervalMonths: 12),
         vehicle: _vehicle(currentKm: 100000),
         kmPerMonth: 1000,
         now: _now,
@@ -213,10 +213,10 @@ void main() {
         now: _now,
       );
       // Due 2026-08-20, i.e. 23 days after the fixed "now".
-      expect(
-          PredictionService.needsAlert(p, now: _now, daysThreshold: 10), isFalse);
-      expect(
-          PredictionService.needsAlert(p, now: _now, daysThreshold: 30), isTrue);
+      expect(PredictionService.needsAlert(p, now: _now, daysThreshold: 10),
+          isFalse);
+      expect(PredictionService.needsAlert(p, now: _now, daysThreshold: 30),
+          isTrue);
     });
   });
 }

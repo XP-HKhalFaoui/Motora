@@ -322,8 +322,7 @@ class _ExportButtonState extends ConsumerState<_ExportButton> {
         child: const SizedBox(
           width: 18,
           height: 18,
-          child:
-              CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
         ),
       );
     }
@@ -436,9 +435,8 @@ class _SegmentedControl extends StatelessWidget {
                                   segments[i],
                                   maxLines: 1,
                                   style: TextStyle(
-                                    color: active
-                                        ? Colors.white
-                                        : p.textSecondary,
+                                    color:
+                                        active ? Colors.white : p.textSecondary,
                                     fontSize: 13,
                                     fontWeight: active
                                         ? FontWeight.w700
@@ -474,7 +472,8 @@ class _SegmentBarDelegate extends SliverPersistentHeaderDelegate {
   double get maxExtent => _height;
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return SizedBox(height: _height, child: child);
   }
 

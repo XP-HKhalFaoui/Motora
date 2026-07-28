@@ -110,8 +110,9 @@ class ReminderScheduler {
         (reminder: r, at: _notifyAt(r.when, days, now)),
     ];
 
-    final signature =
-        planned.map((p) => '${p.reminder.id}@${p.at.toIso8601String()}').join('|');
+    final signature = planned
+        .map((p) => '${p.reminder.id}@${p.at.toIso8601String()}')
+        .join('|');
     if (signature == _lastSynced) return;
 
     await svc.cancelAll();

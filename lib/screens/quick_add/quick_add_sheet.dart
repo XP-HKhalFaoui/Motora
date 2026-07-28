@@ -102,13 +102,11 @@ class _QuickAddSheetState extends ConsumerState<_QuickAddSheet> {
                           padding: const EdgeInsets.symmetric(
                               horizontal: 14, vertical: 9),
                           decoration: BoxDecoration(
-                            color:
-                                v.id == vehicleId ? p.primary : p.background,
+                            color: v.id == vehicleId ? p.primary : p.background,
                             borderRadius: BorderRadius.circular(99),
                             border: Border.all(
-                                color: v.id == vehicleId
-                                    ? p.primary
-                                    : p.border),
+                                color:
+                                    v.id == vehicleId ? p.primary : p.border),
                           ),
                           child: Text(
                             v.name,

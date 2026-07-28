@@ -32,8 +32,7 @@ Future<void> showAddDocumentSheet(
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
     ),
-    builder: (_) =>
-        _AddDocumentSheet(vehicleId: vehicleId, existing: existing),
+    builder: (_) => _AddDocumentSheet(vehicleId: vehicleId, existing: existing),
   );
 }
 
@@ -47,8 +46,7 @@ class _AddDocumentSheet extends ConsumerStatefulWidget {
 }
 
 class _AddDocumentSheetState extends ConsumerState<_AddDocumentSheet> {
-  late String _docType =
-      widget.existing?.docType ?? DocTypes.controleTechnique;
+  late String _docType = widget.existing?.docType ?? DocTypes.controleTechnique;
   late int _year = widget.existing?.year ?? DateTime.now().year;
   late DateTime _expiryDate = widget.existing?.expiryDate ??
       DateTime.now().add(const Duration(days: 365));

@@ -220,8 +220,8 @@ class AppTheme {
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          textStyle: GoogleFonts.manrope(
-              fontWeight: FontWeight.w700, fontSize: 16),
+          textStyle:
+              GoogleFonts.manrope(fontWeight: FontWeight.w700, fontSize: 16),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(

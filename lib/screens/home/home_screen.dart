@@ -55,12 +55,13 @@ class HomeScreen extends ConsumerWidget {
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text('Motora', style: AppText.wordmark(p.textPrimary, size: 24)),
+                    Text('Motora',
+                        style: AppText.wordmark(p.textPrimary, size: 24)),
                     const Spacer(),
                     _BellButton(
-                      hasAlerts: (ref.watch(remindersProvider).value ??
-                              const [])
-                          .isNotEmpty,
+                      hasAlerts:
+                          (ref.watch(remindersProvider).value ?? const [])
+                              .isNotEmpty,
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -449,9 +450,7 @@ class _ActionStrip extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
-                      color: color,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700)),
+                      color: color, fontSize: 13, fontWeight: FontWeight.w700)),
             ),
             const SizedBox(width: 8),
             Text(trailing, style: AppText.technical(color, size: 12.5)),
@@ -482,8 +481,8 @@ class _HealthRing extends StatelessWidget {
           color: p.surface.withValues(alpha: .92),
         ),
         child: CustomPaint(
-          painter: _RingPainter(
-              progress: 0, color: p.textMuted, track: p.border),
+          painter:
+              _RingPainter(progress: 0, color: p.textMuted, track: p.border),
           child: Center(
             child: Text('—', style: AppText.odometer(p.textMuted, size: 16)),
           ),
@@ -517,8 +516,7 @@ class _HealthRing extends StatelessWidget {
                         text: '$percent',
                         style: AppText.odometer(color, size: 16)),
                     TextSpan(
-                        text: '%',
-                        style: AppText.technical(color, size: 9)),
+                        text: '%', style: AppText.technical(color, size: 9)),
                   ],
                 ),
               ),

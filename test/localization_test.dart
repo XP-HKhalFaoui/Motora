@@ -19,8 +19,7 @@ void main() {
     );
   });
 
-  testWidgets('the date picker renders in French, not English',
-      (tester) async {
+  testWidgets('the date picker renders in French, not English', (tester) async {
     // The regression this guards: showDatePicker is used for interventions
     // and documents, and without the delegates its buttons read
     // "Cancel"/"OK" in an otherwise French app.

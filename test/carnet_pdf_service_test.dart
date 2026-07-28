@@ -17,7 +17,7 @@ CarnetData _data({
   double? kmPerMonth = 1200,
 }) =>
     CarnetData(
-      vehicle: Vehicle(
+      vehicle: const Vehicle(
         id: 'v1',
         userId: 'u1',
         name: 'Clio IV',
@@ -61,8 +61,8 @@ void main() {
           urgency: 0.47,
         ),
         // The unforecastable case has its own column value.
-        MaintenancePrediction(
-          type: const MaintenanceType(
+        const MaintenancePrediction(
+          type: MaintenanceType(
             id: 't2',
             vehicleId: 'v1',
             label: 'Kit distribution',
@@ -153,8 +153,7 @@ void main() {
       expect(safe, '569 265 km');
     });
 
-    test('degrades unmappable text to a visible marker, not a mystery box',
-        () {
+    test('degrades unmappable text to a visible marker, not a mystery box', () {
       // e.g. an Arabic garage name — wrong, but legibly wrong.
       expect(CarnetPdfService.pdfSafe('كراج'), '????');
     });
@@ -177,8 +176,7 @@ void main() {
     });
   });
 
-  test('renders accents and amounts without unrenderable characters',
-      () async {
+  test('renders accents and amounts without unrenderable characters', () async {
     final bytes = await CarnetPdfService.build(_data(
       history: [
         MaintenanceHistory(

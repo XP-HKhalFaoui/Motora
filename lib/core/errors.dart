@@ -26,7 +26,8 @@ String friendlyError(Object error) {
   }
 
   // --- session ----------------------------------------------------------
-  if (_containsAny(s, const ['JWT expired', 'PGRST301', 'Invalid Refresh Token'])) {
+  if (_containsAny(
+      s, const ['JWT expired', 'PGRST301', 'Invalid Refresh Token'])) {
     return 'Session expirée. Reconnectez-vous.';
   }
   if (s.contains('Invalid login')) return 'Email ou mot de passe incorrect.';

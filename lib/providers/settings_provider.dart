@@ -82,14 +82,14 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
 
   Future<void> setThemeMode(ThemeMode mode) async {
     await _prefs.setString(_kThemeMode, mode.name);
-    state = AsyncData((state.value ?? AppSettings.defaults())
-        .copyWith(themeMode: mode));
+    state = AsyncData(
+        (state.value ?? AppSettings.defaults()).copyWith(themeMode: mode));
   }
 
   Future<void> setKmThreshold(int km) async {
     await _prefs.setInt(_kKmThreshold, km);
-    state = AsyncData((state.value ?? AppSettings.defaults())
-        .copyWith(kmAlertThreshold: km));
+    state = AsyncData(
+        (state.value ?? AppSettings.defaults()).copyWith(kmAlertThreshold: km));
   }
 
   Future<void> setDaysThreshold(int days) async {
@@ -100,7 +100,7 @@ class SettingsNotifier extends AsyncNotifier<AppSettings> {
 
   Future<void> setPushEnabled(bool enabled) async {
     await _prefs.setBool(_kPushEnabled, enabled);
-    state = AsyncData((state.value ?? AppSettings.defaults())
-        .copyWith(pushEnabled: enabled));
+    state = AsyncData(
+        (state.value ?? AppSettings.defaults()).copyWith(pushEnabled: enabled));
   }
 }

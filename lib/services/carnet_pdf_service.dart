@@ -90,8 +90,7 @@ class CarnetPdfService {
 
     final repairs = data.history.where((h) => !h.isFuel).toList();
     final fuel = FuelService.analyze(data.history);
-    final totalCost =
-        data.history.fold<double>(0, (s, h) => s + (h.cost ?? 0));
+    final totalCost = data.history.fold<double>(0, (s, h) => s + (h.cost ?? 0));
 
     doc.addPage(
       pw.MultiPage(
@@ -139,9 +138,7 @@ class CarnetPdfService {
           children: [
             pw.Text('Carnet d\'entretien',
                 style: pw.TextStyle(
-                    fontSize: 24,
-                    fontWeight: pw.FontWeight.bold,
-                    color: _ink)),
+                    fontSize: 24, fontWeight: pw.FontWeight.bold, color: _ink)),
             pw.SizedBox(height: 2),
             pw.Text(pdfSafe(data.vehicle.name),
                 style: const pw.TextStyle(fontSize: 14, color: _muted)),
@@ -170,7 +167,7 @@ class CarnetPdfService {
           pw.Text(pdfSafe('Carnet d\'entretien — ${data.vehicle.name}'),
               style: const pw.TextStyle(fontSize: 9, color: _muted)),
           pw.Text('MOTORA',
-              style: pw.TextStyle(
+              style: const pw.TextStyle(
                   fontSize: 9, color: _accent, letterSpacing: 1.5)),
         ],
       ),
@@ -224,8 +221,7 @@ class CarnetPdfService {
     );
   }
 
-  static pw.Widget _summary(
-      CarnetData data, double totalCost, FuelStats fuel) {
+  static pw.Widget _summary(CarnetData data, double totalCost, FuelStats fuel) {
     final tiles = <List<String>>[
       ['Kilométrage', Fmt.km(data.vehicle.currentKm)],
       [
@@ -395,9 +391,8 @@ class CarnetPdfService {
         padding: const pw.EdgeInsets.symmetric(horizontal: 6, vertical: 5),
         child: pw.Text(
           pdfSafe(text),
-          textAlign: alignRightLast && last
-              ? pw.TextAlign.right
-              : pw.TextAlign.left,
+          textAlign:
+              alignRightLast && last ? pw.TextAlign.right : pw.TextAlign.left,
           style: pw.TextStyle(
             fontSize: 9,
             color: header ? _muted : _ink,
@@ -408,10 +403,11 @@ class CarnetPdfService {
     }
 
     return pw.Table(
-      border: pw.TableBorder(horizontalInside: pw.BorderSide(color: _rule)),
+      border:
+          const pw.TableBorder(horizontalInside: pw.BorderSide(color: _rule)),
       children: [
         pw.TableRow(
-          decoration: pw.BoxDecoration(color: _zebra),
+          decoration: const pw.BoxDecoration(color: _zebra),
           children: [
             for (var i = 0; i < headers.length; i++)
               cell(headers[i], header: true, last: i == headers.length - 1),

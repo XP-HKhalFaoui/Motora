@@ -172,8 +172,8 @@ class _GarageFormSheetState extends ConsumerState<_GarageFormSheet> {
             style: TextStyle(color: p.textPrimary),
             decoration: InputDecoration(
               labelText: 'Nom',
-              prefixIcon: Icon(Icons.store_mall_directory_outlined,
-                  color: p.textMuted),
+              prefixIcon:
+                  Icon(Icons.store_mall_directory_outlined, color: p.textMuted),
             ),
           ),
           const SizedBox(height: 12),

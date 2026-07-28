@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  # A new push to the same branch supersedes the run in flight.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze-and-test:
+    name: Analyze & test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          # Pinned rather than "stable": an unannounced Flutter bump
+          # shouldn't be able to turn the build red on a day nobody
+          # touched the code.
+          flutter-version: 3.38.10
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Verify formatting
+        run: dart format --output=none --set-exit-if-changed .
+
+      - name: Analyze
+        # The project is warning-free today; keep it that way rather than
+        # letting infos pile up until nobody reads the output.
+        run: flutter analyze --fatal-infos
+
+      - name: Test
+        run: flutter test --reporter=github
+
+  build-android:
+    name: Build Android
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: 3.38.10
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      # Credentials are compile-time --dart-define values. CI only needs to
+      # prove the app compiles, so placeholders are enough — and it stays
+      # honest about never needing the real Supabase keys.
+      - name: Build debug APK
+        run: |
+          flutter build apk --debug \
+            --dart-define=SUPABASE_URL=https://ci.example.supabase.co \
+            --dart-define=SUPABASE_ANON_KEY=ci-placeholder

@@ -20,8 +20,8 @@ void main() {
     });
 
     test('tells an expired session apart from a wrong password', () {
-      final expired = friendlyError(
-          Exception('PostgrestException(message: JWT expired, code: PGRST301)'));
+      final expired = friendlyError(Exception(
+          'PostgrestException(message: JWT expired, code: PGRST301)'));
       final wrong =
           friendlyError(Exception('AuthException: Invalid login credentials'));
 

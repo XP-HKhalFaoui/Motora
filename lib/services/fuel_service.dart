@@ -93,9 +93,8 @@ class FuelService {
     final totalCost = fuel.fold<double>(0, (s, h) => s + (h.cost ?? 0));
     final totalLiters = fuel.fold<double>(0, (s, h) => s + (h.liters ?? 0));
 
-    final kmCovered = measurable.length >= 2
-        ? measurable.last.km! - measurable.first.km!
-        : 0;
+    final kmCovered =
+        measurable.length >= 2 ? measurable.last.km! - measurable.first.km! : 0;
 
     // Distance-weighted rather than a mean of the per-stretch figures: a
     // 30 km stretch shouldn't count as much as a 900 km one.

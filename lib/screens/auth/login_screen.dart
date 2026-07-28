@@ -72,7 +72,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await ref
           .read(authControllerProvider)
           .signInWithMagicLink(_email.text.trim());
-      if (mounted) setState(() => _info = 'Lien magique envoyé — vérifiez vos emails.');
+      if (mounted) {
+        setState(() => _info = 'Lien magique envoyé — vérifiez vos emails.');
+      }
     } catch (e) {
       if (mounted) setState(() => _error = friendlyError(e));
     } finally {
@@ -82,8 +84,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   Future<void> _sendPasswordReset() async {
     if (_email.text.trim().isEmpty || !_email.text.contains('@')) {
-      setState(() =>
-          _error = 'Entrez votre email pour recevoir le lien de réinitialisation.');
+      setState(() => _error =
+          'Entrez votre email pour recevoir le lien de réinitialisation.');
       return;
     }
     setState(() {
@@ -154,7 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  SizedBox(
+                  const SizedBox(
                     height: 150,
                     child: StripedPlaceholder(
                       borderRadius: 22,
@@ -263,15 +265,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               fontSize: 14,
                               fontWeight: FontWeight.w500),
                           children: [
-                            TextSpan(text: _isSignUp
-                                ? 'Déjà un compte ? '
-                                : 'Pas encore de compte ? '),
+                            TextSpan(
+                                text: _isSignUp
+                                    ? 'Déjà un compte ? '
+                                    : 'Pas encore de compte ? '),
                             TextSpan(
                               text: _isSignUp
                                   ? 'Se connecter'
                                   : 'Créer un compte',
                               style: TextStyle(
-                                  color: p.primary, fontWeight: FontWeight.w700),
+                                  color: p.primary,
+                                  fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),

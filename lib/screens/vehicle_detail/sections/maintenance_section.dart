@@ -52,7 +52,8 @@ class _Body extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-                child: _CountTile(count: urgent, label: 'urgent', color: p.danger)),
+                child: _CountTile(
+                    count: urgent, label: 'urgent', color: p.danger)),
             const SizedBox(width: 8),
             Expanded(
                 child: _CountTile(

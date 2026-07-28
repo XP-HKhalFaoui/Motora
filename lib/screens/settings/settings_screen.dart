@@ -74,14 +74,15 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 22),
-            _SectionLabel('VÉHICULES'),
+            const _SectionLabel('VÉHICULES'),
             _Group(children: [
               ...vehicles.map((v) => _Row(
                     icon: Icons.directions_car,
                     label: v.name,
                     trailing: v.plateNumber ?? '',
                     trailingAction: IconButton(
-                      icon: Icon(Icons.delete_outline, size: 20, color: p.danger),
+                      icon:
+                          Icon(Icons.delete_outline, size: 20, color: p.danger),
                       visualDensity: VisualDensity.compact,
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -105,7 +106,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ]),
             const SizedBox(height: 22),
-            _SectionLabel('GARAGES'),
+            const _SectionLabel('GARAGES'),
             _Group(children: [
               _Row(
                 icon: Icons.store_mall_directory,
@@ -117,15 +118,15 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ]),
             const SizedBox(height: 22),
-            _SectionLabel('ALERTES & SEUILS'),
+            const _SectionLabel('ALERTES & SEUILS'),
             _Group(children: [
               _ValueRow(
                 label: 'Seuil kilométrique',
                 sublabel: 'Alerter sous ce reste',
                 value: '${settings.kmAlertThreshold} km',
                 onTap: () async {
-                  final v = await _promptNumber(
-                      context, 'Seuil kilométrique (km)', settings.kmAlertThreshold);
+                  final v = await _promptNumber(context,
+                      'Seuil kilométrique (km)', settings.kmAlertThreshold);
                   if (v != null) {
                     await ref.read(settingsProvider.notifier).setKmThreshold(v);
                   }
@@ -136,10 +137,12 @@ class SettingsScreen extends ConsumerWidget {
                 sublabel: 'Papiers & visites',
                 value: '${settings.daysAlertThreshold} jours',
                 onTap: () async {
-                  final v = await _promptNumber(context, 'Seuil échéance (jours)',
-                      settings.daysAlertThreshold);
+                  final v = await _promptNumber(context,
+                      'Seuil échéance (jours)', settings.daysAlertThreshold);
                   if (v != null) {
-                    await ref.read(settingsProvider.notifier).setDaysThreshold(v);
+                    await ref
+                        .read(settingsProvider.notifier)
+                        .setDaysThreshold(v);
                   }
                 },
               ),
@@ -151,7 +154,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ]),
             const SizedBox(height: 22),
-            _SectionLabel('PRÉFÉRENCES'),
+            const _SectionLabel('PRÉFÉRENCES'),
             _Group(children: [
               _SegmentRow<ThemeMode>(
                 label: 'Thème',
@@ -166,7 +169,7 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ]),
             const SizedBox(height: 22),
-            _SectionLabel('À PROPOS'),
+            const _SectionLabel('À PROPOS'),
             _Group(children: [
               _ValueRow(
                 label: 'Version',
@@ -265,7 +268,8 @@ class SettingsScreen extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () =>
                 Navigator.pop(ctx, int.tryParse(controller.text.trim())),
@@ -285,7 +289,8 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Text(text, style: AppText.sectionLabel(context.palette.textSecondary)),
+      child: Text(text,
+          style: AppText.sectionLabel(context.palette.textSecondary)),
     );
   }
 }
@@ -434,8 +439,7 @@ class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
                 }
               : null,
           child: Text('Supprimer définitivement',
-              style: TextStyle(
-                  color: matches ? p.danger : p.textMuted)),
+              style: TextStyle(color: matches ? p.danger : p.textMuted)),
         ),
       ],
     );
@@ -485,8 +489,7 @@ class _ValueRow extends StatelessWidget {
                 color: p.background,
                 borderRadius: BorderRadius.circular(9),
               ),
-              child: Text(value,
-                  style: AppText.technical(p.primary, size: 14)),
+              child: Text(value, style: AppText.technical(p.primary, size: 14)),
             ),
           ],
         ),
@@ -496,7 +499,8 @@ class _ValueRow extends StatelessWidget {
 }
 
 class _SwitchRow extends StatelessWidget {
-  const _SwitchRow({required this.label, required this.value, required this.onChanged});
+  const _SwitchRow(
+      {required this.label, required this.value, required this.onChanged});
   final String label;
   final bool value;
   final ValueChanged<bool> onChanged;
@@ -518,7 +522,7 @@ class _SwitchRow extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: p.primary,
+            activeThumbColor: p.primary,
           ),
         ],
       ),

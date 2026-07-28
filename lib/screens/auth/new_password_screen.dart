@@ -102,8 +102,7 @@ class _NewPasswordScreenState extends ConsumerState<NewPasswordScreen> {
                   controller: _confirm,
                   obscureText: _obscure,
                   style: TextStyle(color: p.textPrimary),
-                  decoration:
-                      const InputDecoration(labelText: 'Confirmer'),
+                  decoration: const InputDecoration(labelText: 'Confirmer'),
                   onSubmitted: (_) => _save(),
                 ),
                 if (_error != null) ...[

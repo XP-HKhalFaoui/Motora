@@ -21,7 +21,11 @@ Future<void> main() async {
   if (AppConfig.isConfigured) {
     await Supabase.initialize(
       url: AppConfig.supabaseUrl,
-      anonKey: AppConfig.supabaseAnonKey,
+      // `anonKey` is deprecated in favour of `publishableKey`. The
+      // --dart-define is still named SUPABASE_ANON_KEY so existing
+      // env.json files and build scripts keep working; only the
+      // parameter changed. Both accept the sb_publishable_… format.
+      publishableKey: AppConfig.supabaseAnonKey,
     );
     await NotificationService.instance.init();
   }

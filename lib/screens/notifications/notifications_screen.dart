@@ -69,21 +69,21 @@ class NotificationsScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: 12),
                 if (today.isNotEmpty) ...[
-                  _GroupLabel("AUJOURD'HUI"),
-                  ...today.map((r) => _ReminderTile(
-                      reminder: r, read: readIds.contains(r.id))),
+                  const _GroupLabel("AUJOURD'HUI"),
+                  ...today.map((r) =>
+                      _ReminderTile(reminder: r, read: readIds.contains(r.id))),
                   const SizedBox(height: 22),
                 ],
                 if (week.isNotEmpty) ...[
-                  _GroupLabel('CETTE SEMAINE'),
-                  ...week.map((r) => _ReminderTile(
-                      reminder: r, read: readIds.contains(r.id))),
+                  const _GroupLabel('CETTE SEMAINE'),
+                  ...week.map((r) =>
+                      _ReminderTile(reminder: r, read: readIds.contains(r.id))),
                   const SizedBox(height: 22),
                 ],
                 if (later.isNotEmpty) ...[
-                  _GroupLabel('PLUS TARD'),
-                  ...later.map((r) => _ReminderTile(
-                      reminder: r, read: readIds.contains(r.id))),
+                  const _GroupLabel('PLUS TARD'),
+                  ...later.map((r) =>
+                      _ReminderTile(reminder: r, read: readIds.contains(r.id))),
                 ],
               ],
             );
@@ -125,7 +125,8 @@ class _GroupLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: Text(text, style: AppText.sectionLabel(context.palette.textSecondary)),
+      child: Text(text,
+          style: AppText.sectionLabel(context.palette.textSecondary)),
     );
   }
 }
@@ -149,7 +150,8 @@ class _ReminderTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: read ? p.surface : color.withValues(alpha: .08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: read ? p.border : color.withValues(alpha: .3)),
+        border:
+            Border.all(color: read ? p.border : color.withValues(alpha: .3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

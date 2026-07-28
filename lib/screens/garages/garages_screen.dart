@@ -118,8 +118,9 @@ class _GarageCard extends StatelessWidget {
                     icon: Icons.phone_outlined,
                     text: garage.phone!,
                     color: p.primary,
-                    onTap: () => _launch(
-                        Uri(scheme: 'tel', path: garage.phone!.replaceAll(' ', ''))),
+                    onTap: () => _launch(Uri(
+                        scheme: 'tel',
+                        path: garage.phone!.replaceAll(' ', ''))),
                   ),
                 if (garage.address != null) ...[
                   if (garage.phone != null) const SizedBox(height: 8),

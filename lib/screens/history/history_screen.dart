@@ -52,8 +52,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (_, __) => AsyncValueView(
             value: historyAsync,
-            onRetry: () => ref
-                .invalidate(maintenanceHistoryProvider(widget.vehicleId)),
+            onRetry: () =>
+                ref.invalidate(maintenanceHistoryProvider(widget.vehicleId)),
             data: (_) => const SizedBox(),
           ),
           data: (history) {
@@ -64,10 +64,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                 .toSet()
                 .toList()
               ..sort();
-            final consumption =
-                FuelService.consumptionByEntryId(history);
-            final total =
-                filtered.fold<double>(0, (s, h) => s + (h.cost ?? 0));
+            final consumption = FuelService.consumptionByEntryId(history);
+            final total = filtered.fold<double>(0, (s, h) => s + (h.cost ?? 0));
 
             return CustomScrollView(
               slivers: [
@@ -85,8 +83,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                               onPressed: () => Navigator.pop(context),
                             ),
                             Expanded(
-                              child: Text(
-                                  'Historique · ${vehicle?.name ?? ''}',
+                              child: Text('Historique · ${vehicle?.name ?? ''}',
                                   overflow: TextOverflow.ellipsis,
                                   style: AppText.screenTitle(p.textPrimary,
                                       size: 20)),
@@ -120,9 +117,8 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                             Expanded(
                               child: _StatTile(
                                 value: '${filtered.length}',
-                                label: filtered.length == 1
-                                    ? 'entrée'
-                                    : 'entrées',
+                                label:
+                                    filtered.length == 1 ? 'entrée' : 'entrées',
                               ),
                             ),
                           ],
@@ -489,8 +485,8 @@ class _Chip extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.palette;
     final body = Padding(
-      padding: EdgeInsets.symmetric(
-          horizontal: 9, vertical: onTap == null ? 5 : 8),
+      padding:
+          EdgeInsets.symmetric(horizontal: 9, vertical: onTap == null ? 5 : 8),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
