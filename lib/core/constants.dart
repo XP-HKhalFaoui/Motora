@@ -19,6 +19,7 @@ class Buckets {
   static const vehiclePhotos = 'vehicle-photos';
   static const invoices = 'invoices';
   static const adminDocuments = 'admin-documents';
+  static const mileagePhotos = 'mileage-photos';
 }
 
 /// Business thresholds used for alerts and predictions.
@@ -41,8 +42,14 @@ class DocTypes {
   static const vignette = 'vignette';
   static const assurance = 'assurance';
   static const controleTechnique = 'controle_technique';
+  static const carteGrise = 'carte_grise';
 
-  static const all = <String>[vignette, assurance, controleTechnique];
+  static const all = <String>[
+    vignette,
+    assurance,
+    controleTechnique,
+    carteGrise,
+  ];
 
   static String label(String type) {
     switch (type) {
@@ -52,6 +59,8 @@ class DocTypes {
         return 'Assurance';
       case controleTechnique:
         return 'Contrôle technique';
+      case carteGrise:
+        return 'Carte grise';
       default:
         return type;
     }

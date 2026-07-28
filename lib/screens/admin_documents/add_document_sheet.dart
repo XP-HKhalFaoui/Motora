@@ -57,7 +57,8 @@ class _AddDocumentSheetState extends ConsumerState<_AddDocumentSheet> {
         fileUrl = await ref.read(supabaseServiceProvider).uploadFile(
               bucket: Buckets.adminDocuments,
               file: _file!,
-              filename: buildUploadName('$_docType-${widget.vehicleId}', _file!),
+              filename:
+                  buildUploadName('$_docType-${widget.vehicleId}', _file!),
             );
       }
       await ref.read(documentControllerProvider).add(AdminDocument(
@@ -90,7 +91,7 @@ class _AddDocumentSheetState extends ConsumerState<_AddDocumentSheet> {
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    return Padding(
+    return SingleChildScrollView(
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -149,10 +150,10 @@ class _AddDocumentSheetState extends ConsumerState<_AddDocumentSheet> {
           const SizedBox(height: 12),
           OutlinedButton.icon(
             onPressed: _pickFile,
-            icon: Icon(
-                _file == null ? Icons.upload_file : Icons.check_circle,
+            icon: Icon(_file == null ? Icons.upload_file : Icons.check_circle,
                 color: _file == null ? p.textMuted : p.ok),
-            label: Text(_file == null ? 'Scanner un document' : 'Fichier sélectionné'),
+            label: Text(
+                _file == null ? 'Scanner un document' : 'Fichier sélectionné'),
           ),
           if (_error != null) ...[
             const SizedBox(height: 12),

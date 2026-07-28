@@ -68,8 +68,31 @@ class MaintenanceController {
     _invalidate(vehicleId);
   }
 
+  /// Records the intervention and, if a km reading was entered, feeds it
+  /// into mileage_logs too — so the vehicle's current km (and the km/month
+  /// average used for predictions) stays centralized no matter which entry
+  /// point (entretien, carburant, or the dedicated km-update sheet) it came
+  /// from. The DB trigger only ever raises current_km (GREATEST), so a
+  /// back-filled reading from an older, lower-km intervention is safe.
   Future<void> addHistory(MaintenanceHistory h) async {
     await ref.read(supabaseServiceProvider).addHistory(h);
+    if (h.km != null) {
+      await ref.read(vehiclesProvider.notifier).addMileage(
+            h.vehicleId,
+            h.km!,
+            note: h.title,
+          );
+    }
+    _invalidate(h.vehicleId);
+    ref.invalidate(maintenanceHistoryProvider(h.vehicleId));
+  }
+
+  /// Edits an existing intervention. Unlike [addHistory], this doesn't
+  /// touch mileage_logs — an edit is a correction to an already-recorded
+  /// event, not a new odometer reading, so it shouldn't add another log
+  /// entry (that already happened when the intervention was first saved).
+  Future<void> updateHistory(MaintenanceHistory h) async {
+    await ref.read(supabaseServiceProvider).updateHistory(h);
     _invalidate(h.vehicleId);
     ref.invalidate(maintenanceHistoryProvider(h.vehicleId));
   }

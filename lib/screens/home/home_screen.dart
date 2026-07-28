@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -9,17 +11,20 @@ import '../../models/maintenance_prediction.dart';
 import '../../models/vehicle.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/maintenance_provider.dart';
+import '../../providers/notification_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../../services/prediction_service.dart';
 import '../../widgets/async_value_view.dart';
 import '../../widgets/striped_placeholder.dart';
+import '../notifications/notifications_screen.dart';
 import '../settings/settings_screen.dart';
-import '../vehicle_detail/vehicle_detail_screen.dart';
+import '../vehicle_detail/vehicle_hub_screen.dart';
 import 'alerts_banner.dart';
 import 'vehicle_form_screen.dart';
 
-/// Accueil (screen 02): greeting + avatar, priority-alerts card, vehicle
-/// cards. Lives inside [AppShell] — no own Scaffold/AppBar.
+/// Accueil (screen 02) — the "garage": a compact branded header, a slim
+/// priority-alert strip, then one health-ringed card per vehicle. Lives
+/// inside [AppShell] — no own Scaffold/AppBar.
 class HomeScreen extends ConsumerWidget {
   const HomeScreen({super.key});
 
@@ -37,36 +42,37 @@ class HomeScreen extends ConsumerWidget {
         bottom: false,
         child: RefreshIndicator(
           onRefresh: () => ref.read(vehiclesProvider.notifier).refresh(),
+          color: p.primary,
+          backgroundColor: p.surface,
           child: AsyncValueView<List<Vehicle>>(
             value: vehiclesAsync,
             onRetry: () => ref.read(vehiclesProvider.notifier).refresh(),
             data: (vehicles) => ListView(
-              padding: const EdgeInsets.fromLTRB(20, 8, 20, 130),
+              padding: const EdgeInsets.fromLTRB(20, 10, 20, 100),
               children: [
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Bonjour $displayName',
-                              style: TextStyle(
-                                  color: p.textSecondary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500)),
-                          const SizedBox(height: 3),
-                          Text('Mes véhicules',
-                              style: AppText.screenTitle(p.textPrimary)),
-                        ],
-                      ),
+                    Text('Motora', style: AppText.wordmark(p.textPrimary, size: 24)),
+                    const Spacer(),
+                    _BellButton(
+                      hasAlerts: (ref.watch(remindersProvider).value ??
+                              const [])
+                          .isNotEmpty,
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const NotificationsScreen())),
                     ),
+                    const SizedBox(width: 10),
                     GestureDetector(
-                      onTap: () => Navigator.push(context,
-                          MaterialPageRoute(builder: (_) => const SettingsScreen())),
+                      onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const SettingsScreen())),
                       child: Container(
-                        width: 44,
-                        height: 44,
+                        width: 42,
+                        height: 42,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
@@ -74,12 +80,20 @@ class HomeScreen extends ConsumerWidget {
                           border: Border.all(color: p.border),
                         ),
                         child: Text(initials,
-                            style: AppText.odometer(p.primary, size: 15)),
+                            style: AppText.odometer(p.primary, size: 14)),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 22),
+                if (displayName.isNotEmpty) ...[
+                  const SizedBox(height: 10),
+                  Text('Bonjour $displayName 👋',
+                      style: TextStyle(
+                          color: p.textSecondary,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w500)),
+                ],
+                const SizedBox(height: 20),
                 const AlertsBanner(),
                 if (vehicles.isEmpty)
                   const Padding(
@@ -91,11 +105,18 @@ class HomeScreen extends ConsumerWidget {
                     ),
                   )
                 else ...[
-                  Text(
-                    '${vehicles.length} véhicule${vehicles.length > 1 ? 's' : ''}',
-                    style: AppText.sectionLabel(p.textSecondary),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text('MON GARAGE',
+                          style: AppText.sectionLabel(p.textSecondary)),
+                      Text(
+                        '${vehicles.length} véhicule${vehicles.length > 1 ? 's' : ''}',
+                        style: AppText.sectionLabel(p.textMuted),
+                      ),
+                    ],
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   ...vehicles.map((v) => Padding(
                         padding: const EdgeInsets.only(bottom: 16),
                         child: _VehicleCard(vehicle: v),
@@ -106,7 +127,8 @@ class HomeScreen extends ConsumerWidget {
                   child: TextButton.icon(
                     onPressed: () => Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (_) => const VehicleFormScreen()),
+                      MaterialPageRoute(
+                          builder: (_) => const VehicleFormScreen()),
                     ),
                     icon: const Icon(Icons.add_circle_outline, size: 18),
                     label: const Text('Ajouter un véhicule'),
@@ -138,6 +160,50 @@ class HomeScreen extends ConsumerWidget {
   }
 }
 
+class _BellButton extends StatelessWidget {
+  const _BellButton({required this.hasAlerts, required this.onTap});
+  final bool hasAlerts;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: 42,
+        height: 42,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: p.surfaceElevated,
+          border: Border.all(color: p.border),
+        ),
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Icon(Icons.notifications_rounded, size: 20, color: p.textSecondary),
+            if (hasAlerts)
+              Positioned(
+                top: -3,
+                right: -3,
+                child: Container(
+                  width: 9,
+                  height: 9,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: p.danger,
+                    border: Border.all(color: p.surfaceElevated, width: 1.5),
+                  ),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _VehicleCard extends ConsumerWidget {
   const _VehicleCard({required this.vehicle});
   final Vehicle vehicle;
@@ -145,14 +211,26 @@ class _VehicleCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.palette;
+    final predictions =
+        ref.watch(predictionsProvider(vehicle.id)).value ?? const [];
     final logsAsync = ref.watch(mileageLogsProvider(vehicle.id));
-    final predictionsAsync = ref.watch(predictionsProvider(vehicle.id));
     final kmPerMonth = logsAsync.value == null
         ? null
         : PredictionService.monthlyKmAverage(logsAsync.value!);
-    final topPredictions = (predictionsAsync.value ?? const <MaintenancePrediction>[])
-        .take(2)
-        .toList();
+
+    // "Santé" is a holistic score — the average of every échéance's
+    // remaining headroom — so a single overdue item dents it without
+    // zeroing an otherwise-healthy car. The worst item is still surfaced
+    // in the action strip below.
+    final avgUrgency = predictions.isEmpty
+        ? 0.0
+        : predictions.fold<double>(0, (s, pr) => s + pr.urgency) /
+            predictions.length;
+    final health = ((1 - avgUrgency) * 100).round().clamp(0, 100);
+    MaintenancePrediction? worst;
+    for (final pr in predictions) {
+      if (worst == null || pr.urgency > worst.urgency) worst = pr;
+    }
 
     final subtitleParts = [
       if (vehicle.brand != null) vehicle.brand,
@@ -167,7 +245,7 @@ class _VehicleCard extends ConsumerWidget {
         onTap: () => Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (_) => VehicleDetailScreen(vehicleId: vehicle.id)),
+              builder: (_) => VehicleHubScreen(vehicleId: vehicle.id)),
         ),
         child: Container(
           decoration: BoxDecoration(border: Border.all(color: p.border)),
@@ -179,10 +257,23 @@ class _VehicleCard extends ConsumerWidget {
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    StripedPlaceholder(label: 'photo · ${vehicle.name}'),
+                    if (vehicle.photoUrl != null)
+                      Image.network(
+                        vehicle.photoUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => StripedPlaceholder(
+                            label: 'photo · ${vehicle.name}'),
+                      )
+                    else
+                      StripedPlaceholder(label: 'photo · ${vehicle.name}'),
+                    Positioned(
+                      top: 10,
+                      right: 10,
+                      child: _HealthRing(percent: health),
+                    ),
                     if (vehicle.plateNumber != null)
                       Positioned(
-                        right: 12,
+                        left: 12,
                         bottom: 12,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
@@ -202,7 +293,7 @@ class _VehicleCard extends ConsumerWidget {
                 ),
               ),
               Padding(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.fromLTRB(16, 14, 16, 16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -244,24 +335,8 @@ class _VehicleCard extends ConsumerWidget {
                         ),
                       ],
                     ),
-                    if (topPredictions.isNotEmpty) ...[
-                      const SizedBox(height: 16),
-                      Row(
-                        children: topPredictions
-                            .map((pred) => Expanded(
-                                  child: Padding(
-                                    padding: EdgeInsets.only(
-                                        right:
-                                            pred == topPredictions.first &&
-                                                    topPredictions.length > 1
-                                                ? 8
-                                                : 0),
-                                    child: _EchChip(prediction: pred),
-                                  ),
-                                ))
-                            .toList(),
-                      ),
-                    ],
+                    const SizedBox(height: 14),
+                    _ActionStrip(worst: worst),
                   ],
                 ),
               ),
@@ -273,37 +348,154 @@ class _VehicleCard extends ConsumerWidget {
   }
 }
 
-class _EchChip extends StatelessWidget {
-  const _EchChip({required this.prediction});
-  final MaintenancePrediction prediction;
+/// The single most-urgent next action for a vehicle — or an "à jour" state
+/// when nothing is due. Colored by urgency.
+class _ActionStrip extends StatelessWidget {
+  const _ActionStrip({required this.worst});
+  final MaintenancePrediction? worst;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final color = statusColorFor(p, prediction.urgency);
-    final label = prediction.remainingKm != null
-        ? '${prediction.type.label} · ${prediction.remainingKm! < 0 ? 'dépassé' : '${prediction.remainingKm} km'}'
-        : prediction.type.label;
+
+    if (worst == null || worst!.urgency < 0.6) {
+      return _strip(
+        color: p.ok,
+        icon: Icons.check_circle_rounded,
+        label: 'À jour',
+        trailing: worst == null ? 'aucune échéance' : 'rien d\'urgent',
+      );
+    }
+
+    final color = statusColorFor(p, worst!.urgency);
+    final remaining = worst!.remainingKm;
+    final trailing = remaining != null
+        ? (remaining < 0 ? 'en retard' : 'dans $remaining km')
+        : (worst!.isOverdue ? 'en retard' : 'bientôt');
+
+    return _strip(
+      color: color,
+      icon: maintenanceIconFor(worst!.type.label),
+      label: worst!.type.label,
+      trailing: trailing,
+    );
+  }
+
+  Widget _strip({
+    required Color color,
+    required IconData icon,
+    required String label,
+    required String trailing,
+  }) {
+    return Builder(builder: (context) {
+      return Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: .1),
+          border: Border.all(color: color.withValues(alpha: .3)),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 17, color: color),
+            const SizedBox(width: 8),
+            Expanded(
+              child: Text(label,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      color: color,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w700)),
+            ),
+            const SizedBox(width: 8),
+            Text(trailing, style: AppText.technical(color, size: 12.5)),
+          ],
+        ),
+      );
+    });
+  }
+}
+
+/// Compact circular "santé" ring overlaid on the vehicle photo.
+class _HealthRing extends StatelessWidget {
+  const _HealthRing({required this.percent});
+  final int percent;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final urgency = 1 - percent / 100;
+    final color = statusColorFor(p, urgency);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+      width: 52,
+      height: 52,
       decoration: BoxDecoration(
-        color: color.withValues(alpha: .12),
-        border: Border.all(color: color.withValues(alpha: .3)),
-        borderRadius: BorderRadius.circular(10),
+        shape: BoxShape.circle,
+        color: p.surface.withValues(alpha: .92),
       ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(maintenanceIconFor(prediction.type.label), size: 16, color: color),
-          const SizedBox(width: 6),
-          Flexible(
-            child: Text(label,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(
-                    color: color, fontSize: 12, fontWeight: FontWeight.w600)),
+      child: CustomPaint(
+        painter: _RingPainter(
+          progress: percent / 100,
+          color: color,
+          track: p.border,
+        ),
+        child: Center(
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 6),
+              child: Text.rich(
+                TextSpan(
+                  children: [
+                    TextSpan(
+                        text: '$percent',
+                        style: AppText.odometer(color, size: 16)),
+                    TextSpan(
+                        text: '%',
+                        style: AppText.technical(color, size: 9)),
+                  ],
+                ),
+              ),
+            ),
           ),
-        ],
+        ),
       ),
     );
   }
+}
+
+class _RingPainter extends CustomPainter {
+  _RingPainter(
+      {required this.progress, required this.color, required this.track});
+  final double progress;
+  final Color color;
+  final Color track;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    final radius = size.width / 2 - 4;
+    const start = -math.pi / 2;
+    final trackPaint = Paint()
+      ..color = track
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 4;
+    final arcPaint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 4;
+
+    canvas.drawCircle(center, radius, trackPaint);
+    if (progress > 0) {
+      canvas.drawArc(Rect.fromCircle(center: center, radius: radius), start,
+          math.pi * 2 * progress.clamp(0, 1), false, arcPaint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _RingPainter old) =>
+      old.progress != progress || old.color != color || old.track != track;
 }

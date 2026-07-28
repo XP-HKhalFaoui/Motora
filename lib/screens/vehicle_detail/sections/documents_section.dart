@@ -1,69 +1,36 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/app_text.dart';
-import '../../core/theme.dart';
-import '../../models/admin_document.dart';
-import '../../providers/document_provider.dart';
-import '../../providers/ui_state_provider.dart';
-import '../../providers/vehicle_provider.dart';
-import '../../widgets/async_value_view.dart';
-import '../../widgets/document_card.dart';
-import '../../widgets/vehicle_pill_selector.dart';
-import 'add_document_sheet.dart';
+import '../../../core/app_text.dart';
+import '../../../core/theme.dart';
+import '../../../models/admin_document.dart';
+import '../../../providers/document_provider.dart';
+import '../../../widgets/async_value_view.dart';
+import '../../../widgets/document_card.dart';
+import '../../admin_documents/add_document_sheet.dart';
 
-/// Documents administratifs (screen 06): vehicle selector, year pills,
-/// document cards, "Scanner un document" action.
-class DocumentsScreen extends ConsumerStatefulWidget {
-  const DocumentsScreen({super.key});
+/// "Docs" section of the vehicle hub: year pills, document cards and a
+/// "scan a document" action, scoped to a single [vehicleId].
+class DocumentsSection extends ConsumerStatefulWidget {
+  const DocumentsSection({super.key, required this.vehicleId});
+  final String vehicleId;
 
   @override
-  ConsumerState<DocumentsScreen> createState() => _DocumentsScreenState();
+  ConsumerState<DocumentsSection> createState() => _DocumentsSectionState();
 }
 
-class _DocumentsScreenState extends ConsumerState<DocumentsScreen> {
+class _DocumentsSectionState extends ConsumerState<DocumentsSection> {
   int? _year;
 
   @override
   Widget build(BuildContext context) {
-    final p = context.palette;
-    final vehicles = ref.watch(vehiclesProvider).value ?? const [];
-    final vehicleId = ref.watch(effectiveSelectedVehicleIdProvider);
-    final vehicle = vehicleId == null
-        ? null
-        : ref.watch(vehicleByIdProvider(vehicleId));
-
-    return Container(
-      color: p.background,
-      child: SafeArea(
-        bottom: false,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 130),
-          children: [
-            Text('Documents${vehicle != null ? ' · ${vehicle.name}' : ''}',
-                style: AppText.screenTitle(p.textPrimary)),
-            const SizedBox(height: 16),
-            VehiclePillSelector(vehicles: vehicles),
-            if (vehicleId == null)
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 40),
-                child: Center(
-                  child: Text('Ajoutez un véhicule pour commencer.',
-                      style: TextStyle(color: p.textMuted)),
-                ),
-              )
-            else
-              AsyncValueView(
-                value: ref.watch(documentsProvider(vehicleId)),
-                data: (docs) => _Body(
-                  vehicleId: vehicleId,
-                  docs: docs,
-                  selectedYear: _year,
-                  onYearSelected: (y) => setState(() => _year = y),
-                ),
-              ),
-          ],
-        ),
+    return AsyncValueView(
+      value: ref.watch(documentsProvider(widget.vehicleId)),
+      data: (docs) => _Body(
+        vehicleId: widget.vehicleId,
+        docs: docs,
+        selectedYear: _year,
+        onYearSelected: (y) => setState(() => _year = y),
       ),
     );
   }
@@ -101,7 +68,8 @@ class _Body extends StatelessWidget {
             return GestureDetector(
               onTap: () => onYearSelected(y),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
                   color: active ? p.primary : p.surface,
                   border: Border.all(color: active ? p.primary : p.border),
@@ -132,8 +100,7 @@ class _Body extends StatelessWidget {
           icon: Icon(Icons.upload_file, color: p.textSecondary),
           label: const Text('Scanner un document'),
           style: OutlinedButton.styleFrom(
-            side: BorderSide(
-                color: p.border, style: BorderStyle.solid, width: 1.5),
+            side: BorderSide(color: p.border, width: 1.5),
           ),
         ),
       ],

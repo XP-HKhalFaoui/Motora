@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/supabase_client.dart';
 import '../models/admin_document.dart';
+import '../models/garage.dart';
 import '../models/maintenance_history.dart';
 import '../models/maintenance_type.dart';
 import '../models/mileage_log.dart';
@@ -17,10 +18,8 @@ class SupabaseService {
   // ---------------- Vehicles ----------------------------------------
 
   Future<List<Vehicle>> fetchVehicles() async {
-    final rows = await _c
-        .from('vehicles')
-        .select()
-        .order('created_at', ascending: true);
+    final rows =
+        await _c.from('vehicles').select().order('created_at', ascending: true);
     return (rows as List).map((e) => Vehicle.fromJson(e)).toList();
   }
 
@@ -52,11 +51,17 @@ class SupabaseService {
   }
 
   /// Insert a reading. A DB trigger keeps vehicles.current_km in sync.
+  /// A [photoUrl] marks the reading as "certifié" rather than "déclaratif".
   Future<MileageLog> addMileageLog(String vehicleId, int km,
-      {String? note}) async {
+      {String? note, String? photoUrl}) async {
     final row = await _c
         .from('mileage_logs')
-        .insert({'vehicle_id': vehicleId, 'km': km, if (note != null) 'note': note})
+        .insert({
+          'vehicle_id': vehicleId,
+          'km': km,
+          if (note != null) 'note': note,
+          if (photoUrl != null) 'photo_url': photoUrl,
+        })
         .select()
         .single();
     return MileageLog.fromJson(row);
@@ -125,8 +130,64 @@ class SupabaseService {
     return MaintenanceHistory.fromJson(row);
   }
 
+  /// Updates an intervention. If it's linked to a maintenance type, also
+  /// re-syncs that type's "last done" markers to the (possibly edited)
+  /// km/date, same as [addHistory] does on create.
+  Future<MaintenanceHistory> updateHistory(MaintenanceHistory h) async {
+    final row = await _c
+        .from('maintenance_history')
+        .update(h.toInsert())
+        .eq('id', h.id)
+        .select()
+        .single();
+
+    if (h.maintenanceTypeId != null) {
+      await _c.from('maintenance_types').update({
+        'last_done_km': h.km,
+        'last_done_date': h.doneAt.toIso8601String(),
+      }).eq('id', h.maintenanceTypeId!);
+    }
+    return MaintenanceHistory.fromJson(row);
+  }
+
   Future<void> deleteHistory(String id) async {
     await _c.from('maintenance_history').delete().eq('id', id);
+  }
+
+  // ---------------- Garages ------------------------------------------
+
+  Future<List<Garage>> fetchGarages() async {
+    final rows =
+        await _c.from('garages').select().order('name', ascending: true);
+    return (rows as List).map((e) => Garage.fromJson(e)).toList();
+  }
+
+  Future<Garage> createGarage(Garage g) async {
+    final data = g.toInsert()..['user_id'] = Db.uid;
+    final row = await _c.from('garages').insert(data).select().single();
+    return Garage.fromJson(row);
+  }
+
+  Future<Garage> updateGarage(String id, Map<String, dynamic> patch) async {
+    final row =
+        await _c.from('garages').update(patch).eq('id', id).select().single();
+    return Garage.fromJson(row);
+  }
+
+  Future<void> deleteGarage(String id) async {
+    await _c.from('garages').delete().eq('id', id);
+  }
+
+  /// Number of interventions linked to each garage across all the user's
+  /// vehicles (RLS scopes the rows to the current user). Keyed by garage_id.
+  Future<Map<String, int>> fetchGarageInterventionCounts() async {
+    final rows = await _c.from('maintenance_history').select('garage_id');
+    final counts = <String, int>{};
+    for (final r in (rows as List)) {
+      final id = r['garage_id'] as String?;
+      if (id != null) counts[id] = (counts[id] ?? 0) + 1;
+    }
+    return counts;
   }
 
   // ---------------- Admin documents ----------------------------------
@@ -141,11 +202,8 @@ class SupabaseService {
   }
 
   Future<AdminDocument> addDocument(AdminDocument d) async {
-    final row = await _c
-        .from('admin_documents')
-        .insert(d.toInsert())
-        .select()
-        .single();
+    final row =
+        await _c.from('admin_documents').insert(d.toInsert()).select().single();
     return AdminDocument.fromJson(row);
   }
 

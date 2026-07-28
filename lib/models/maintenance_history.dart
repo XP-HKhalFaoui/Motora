@@ -7,8 +7,11 @@ class MaintenanceHistory {
   final int? km;
   final double? cost;
   final String? garageName;
+  final String? garageId;
   final DateTime doneAt;
   final String? invoiceUrl;
+  final bool isFuel;
+  final double? liters;
   final DateTime? createdAt;
 
   const MaintenanceHistory({
@@ -20,8 +23,11 @@ class MaintenanceHistory {
     this.km,
     this.cost,
     this.garageName,
+    this.garageId,
     required this.doneAt,
     this.invoiceUrl,
+    this.isFuel = false,
+    this.liters,
     this.createdAt,
   });
 
@@ -35,8 +41,11 @@ class MaintenanceHistory {
         km: (j['km'] as num?)?.toInt(),
         cost: (j['cost'] as num?)?.toDouble(),
         garageName: j['garage_name'] as String?,
+        garageId: j['garage_id'] as String?,
         doneAt: DateTime.parse(j['done_at'] as String),
         invoiceUrl: j['invoice_url'] as String?,
+        isFuel: j['is_fuel'] as bool? ?? false,
+        liters: (j['liters'] as num?)?.toDouble(),
         createdAt: j['created_at'] == null
             ? null
             : DateTime.parse(j['created_at'] as String).toLocal(),
@@ -50,7 +59,10 @@ class MaintenanceHistory {
         'km': km,
         'cost': cost,
         'garage_name': garageName,
+        'garage_id': garageId,
         'done_at': doneAt.toIso8601String(),
         'invoice_url': invoiceUrl,
+        'is_fuel': isFuel,
+        'liters': liters,
       };
 }

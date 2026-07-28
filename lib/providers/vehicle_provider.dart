@@ -5,9 +5,8 @@ import '../models/vehicle.dart';
 import 'service_providers.dart';
 
 /// List of the current user's vehicles.
-final vehiclesProvider =
-    AsyncNotifierProvider<VehiclesNotifier, List<Vehicle>>(
-        VehiclesNotifier.new);
+final vehiclesProvider = AsyncNotifierProvider<VehiclesNotifier, List<Vehicle>>(
+    VehiclesNotifier.new);
 
 class VehiclesNotifier extends AsyncNotifier<List<Vehicle>> {
   @override
@@ -38,10 +37,12 @@ class VehiclesNotifier extends AsyncNotifier<List<Vehicle>> {
   }
 
   /// Add a mileage reading; the DB trigger updates current_km, so we refresh.
-  Future<void> addMileage(String vehicleId, int km, {String? note}) async {
+  /// A [photoUrl] marks the reading as "certifié" rather than "déclaratif".
+  Future<void> addMileage(String vehicleId, int km,
+      {String? note, String? photoUrl}) async {
     await ref
         .read(supabaseServiceProvider)
-        .addMileageLog(vehicleId, km, note: note);
+        .addMileageLog(vehicleId, km, note: note, photoUrl: photoUrl);
     await refresh();
     ref.invalidate(mileageLogsProvider(vehicleId));
   }

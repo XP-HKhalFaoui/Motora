@@ -8,6 +8,7 @@ import '../../providers/auth_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../../widgets/async_value_view.dart';
+import '../garages/garages_screen.dart';
 import '../home/vehicle_form_screen.dart';
 
 /// Paramètres (screen 09): profile, vehicles, alert thresholds,
@@ -97,6 +98,18 @@ class SettingsScreen extends ConsumerWidget {
                 onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(builder: (_) => const VehicleFormScreen()),
+                ),
+              ),
+            ]),
+            const SizedBox(height: 22),
+            _SectionLabel('GARAGES'),
+            _Group(children: [
+              _Row(
+                icon: Icons.store_mall_directory,
+                label: 'Mes garages',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GaragesScreen()),
                 ),
               ),
             ]),

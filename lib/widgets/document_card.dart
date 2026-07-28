@@ -125,6 +125,8 @@ class DocumentCard extends StatelessWidget {
         return Icons.verified_user_outlined;
       case DocTypes.controleTechnique:
         return Icons.fact_check_outlined;
+      case DocTypes.carteGrise:
+        return Icons.badge_outlined;
       default:
         return Icons.description_outlined;
     }

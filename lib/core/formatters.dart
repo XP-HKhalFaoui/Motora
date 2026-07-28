@@ -4,11 +4,15 @@ import 'package:intl/intl.dart';
 class Fmt {
   static final _date = DateFormat('d MMM yyyy', 'fr_FR');
   static final _dateShort = DateFormat('dd/MM/yyyy', 'fr_FR');
+  static final _monthYear = DateFormat('MMM yyyy', 'fr_FR');
   static final _km = NumberFormat.decimalPattern('fr_FR');
   static final _money = NumberFormat.currency(locale: 'fr_FR', symbol: '€');
 
   static String date(DateTime? d) => d == null ? '—' : _date.format(d);
-  static String dateShort(DateTime? d) => d == null ? '—' : _dateShort.format(d);
+  static String dateShort(DateTime? d) =>
+      d == null ? '—' : _dateShort.format(d);
+  static String monthYear(DateTime? d) =>
+      d == null ? '—' : _monthYear.format(d);
   static String km(num? v) => v == null ? '—' : '${_km.format(v)} km';
   static String money(num? v) => v == null ? '—' : _money.format(v);
 

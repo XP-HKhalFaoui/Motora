@@ -2,68 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme.dart';
-import '../../providers/notification_provider.dart';
-import '../../widgets/bottom_nav_bar.dart';
-import '../admin_documents/documents_screen.dart';
 import '../home/home_screen.dart';
-import '../maintenance/maintenance_screen.dart';
-import '../notifications/notifications_screen.dart';
 import '../quick_add/quick_add_sheet.dart';
 
-/// Top-level shell: Accueil / Entretien / Docs / Alertes behind a bottom
-/// nav with a center FAB (Ajout rapide), per §5 "Chrome Android". Vehicle
-/// detail, history and settings are pushed on top of this, not part of it.
-class AppShell extends ConsumerStatefulWidget {
+/// Top-level shell. The app is car-first with a single global screen — the
+/// Accueil "garage" — so there is no bottom nav: Alertes and Réglages are
+/// reached from the header, a vehicle's maintenance / documents / km live
+/// inside its hub (pushed on top), and the only persistent chrome is the
+/// Ajout-rapide FAB.
+class AppShell extends ConsumerWidget {
   const AppShell({super.key});
 
   @override
-  ConsumerState<AppShell> createState() => _AppShellState();
-}
-
-class _AppShellState extends ConsumerState<AppShell> {
-  int _index = 0;
-
-  static const _pages = [
-    HomeScreen(),
-    MaintenanceScreen(),
-    DocumentsScreen(),
-    NotificationsScreen(),
-  ];
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final p = context.palette;
-    final hasAlerts = (ref.watch(remindersProvider).value ?? const []).isNotEmpty;
-
     return Scaffold(
       backgroundColor: p.background,
-      body: Stack(
-        children: [
-          IndexedStack(index: _index, children: _pages),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: SafeArea(
-              top: false,
-              child: BottomNavBar(
-                currentIndex: _index,
-                showAlertBadge: hasAlerts,
-                onTap: (i) => setState(() => _index = i),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 44,
-            child: Center(
-              child: _QuickAddFab(
-                onTap: () => showQuickAddSheet(context),
-              ),
-            ),
-          ),
-        ],
+      body: const HomeScreen(),
+      floatingActionButton: _QuickAddFab(
+        onTap: () => showQuickAddSheet(context),
       ),
     );
   }

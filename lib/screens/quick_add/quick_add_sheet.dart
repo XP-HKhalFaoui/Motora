@@ -25,13 +25,26 @@ Future<void> showQuickAddSheet(BuildContext context) {
   );
 }
 
-class _QuickAddSheet extends ConsumerWidget {
+class _QuickAddSheet extends ConsumerStatefulWidget {
   const _QuickAddSheet();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<_QuickAddSheet> createState() => _QuickAddSheetState();
+}
+
+class _QuickAddSheetState extends ConsumerState<_QuickAddSheet> {
+  String? _picked;
+
+  @override
+  Widget build(BuildContext context) {
     final p = context.palette;
-    final vehicleId = ref.watch(effectiveSelectedVehicleIdProvider);
+    final vehicles = ref.watch(vehiclesProvider).value ?? const [];
+    // Honour an explicit pick within the sheet; otherwise fall back to the
+    // app-wide selection (last-opened hub, or the first vehicle).
+    final fallback = ref.watch(effectiveSelectedVehicleIdProvider);
+    final vehicleId = (_picked != null && vehicles.any((v) => v.id == _picked))
+        ? _picked
+        : fallback;
     final vehicle =
         vehicleId == null ? null : ref.watch(vehicleByIdProvider(vehicleId));
 
@@ -73,6 +86,47 @@ class _QuickAddSheet extends ConsumerWidget {
           else
             Text('Ajoutez un véhicule pour commencer.',
                 style: TextStyle(color: p.textMuted, fontSize: 13)),
+          // Vehicle picker — only when there's more than one car to choose.
+          if (vehicles.length > 1) ...[
+            const SizedBox(height: 14),
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                children: [
+                  for (final v in vehicles)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: GestureDetector(
+                        onTap: () => setState(() => _picked = v.id),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 9),
+                          decoration: BoxDecoration(
+                            color:
+                                v.id == vehicleId ? p.primary : p.background,
+                            borderRadius: BorderRadius.circular(99),
+                            border: Border.all(
+                                color: v.id == vehicleId
+                                    ? p.primary
+                                    : p.border),
+                          ),
+                          child: Text(
+                            v.name,
+                            style: TextStyle(
+                              color: v.id == vehicleId
+                                  ? Colors.white
+                                  : p.textSecondary,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ],
           const SizedBox(height: 20),
           if (vehicleId != null)
             GridView.count(
@@ -121,7 +175,7 @@ class _QuickAddSheet extends ConsumerWidget {
                   onTap: () {
                     Navigator.pop(context);
                     showAddHistorySheet(context, vehicleId,
-                        defaultTitle: 'Plein / carburant');
+                        defaultTitle: 'Plein / carburant', isFuel: true);
                   },
                 ),
               ],

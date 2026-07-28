@@ -7,7 +7,9 @@ import '../../core/theme.dart';
 import '../../models/maintenance_history.dart';
 import '../../providers/maintenance_provider.dart';
 import '../../providers/vehicle_provider.dart';
+import '../../services/fuel_service.dart';
 import '../../widgets/async_value_view.dart';
+import '../quick_add/add_history_sheet.dart';
 
 /// Historique réparations (screen 05): 2 stats + vertical timeline.
 class HistoryScreen extends ConsumerWidget {
@@ -32,14 +34,17 @@ class HistoryScreen extends ConsumerWidget {
                   icon: Icon(Icons.arrow_back, color: p.textSecondary),
                   onPressed: () => Navigator.pop(context),
                 ),
-                Text('Historique · ${vehicle?.name ?? ''}',
-                    style: AppText.screenTitle(p.textPrimary, size: 20)),
+                Expanded(
+                  child: Text('Historique · ${vehicle?.name ?? ''}',
+                      overflow: TextOverflow.ellipsis,
+                      style: AppText.screenTitle(p.textPrimary, size: 20)),
+                ),
               ],
             ),
             const SizedBox(height: 18),
             AsyncValueView(
               value: historyAsync,
-              data: (history) => _Body(history: history),
+              data: (history) => _Body(vehicleId: vehicleId, history: history),
             ),
           ],
         ),
@@ -49,7 +54,8 @@ class HistoryScreen extends ConsumerWidget {
 }
 
 class _Body extends StatelessWidget {
-  const _Body({required this.history});
+  const _Body({required this.vehicleId, required this.history});
+  final String vehicleId;
   final List<MaintenanceHistory> history;
 
   @override
@@ -65,13 +71,13 @@ class _Body extends StatelessWidget {
         Row(
           children: [
             Expanded(
-              child: _StatTile(
-                  value: Fmt.money(total), label: '12 derniers mois'),
+              child:
+                  _StatTile(value: Fmt.money(total), label: '12 derniers mois'),
             ),
             const SizedBox(width: 10),
             Expanded(
-              child: _StatTile(
-                  value: '${history.length}', label: 'interventions'),
+              child:
+                  _StatTile(value: '${history.length}', label: 'interventions'),
             ),
           ],
         ),
@@ -84,19 +90,21 @@ class _Body extends StatelessWidget {
                     style: TextStyle(color: p.textMuted))),
           )
         else
-          _Timeline(history: history),
+          _Timeline(vehicleId: vehicleId, history: history),
       ],
     );
   }
 }
 
 class _Timeline extends StatelessWidget {
-  const _Timeline({required this.history});
+  const _Timeline({required this.vehicleId, required this.history});
+  final String vehicleId;
   final List<MaintenanceHistory> history;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
+    final consumption = FuelService.consumptionByEntryId(history);
     return Padding(
       padding: const EdgeInsets.only(left: 26),
       child: Stack(
@@ -113,7 +121,8 @@ class _Timeline extends StatelessWidget {
               final i = entry.key;
               final h = entry.value;
               return Padding(
-                padding: EdgeInsets.only(bottom: i == history.length - 1 ? 0 : 16),
+                padding:
+                    EdgeInsets.only(bottom: i == history.length - 1 ? 0 : 16),
                 child: Stack(
                   clipBehavior: Clip.none,
                   children: [
@@ -130,7 +139,11 @@ class _Timeline extends StatelessWidget {
                         ),
                       ),
                     ),
-                    _HistoryCard(h: h),
+                    _HistoryCard(
+                      vehicleId: vehicleId,
+                      h: h,
+                      consumptionPer100km: consumption[h.id],
+                    ),
                   ],
                 ),
               );
@@ -143,62 +156,93 @@ class _Timeline extends StatelessWidget {
 }
 
 class _HistoryCard extends StatelessWidget {
-  const _HistoryCard({required this.h});
+  const _HistoryCard(
+      {required this.vehicleId, required this.h, this.consumptionPer100km});
+  final String vehicleId;
   final MaintenanceHistory h;
+  final double? consumptionPer100km;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: p.surface,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: p.border),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+    return Material(
+      color: p.surface,
+      borderRadius: BorderRadius.circular(16),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: () => showAddHistorySheet(context, vehicleId, existing: h),
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            border: Border.all(color: p.border),
+          ),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(h.title,
-                        style: TextStyle(
-                            color: p.textPrimary,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 3),
-                    Text(
-                      [
-                        Fmt.date(h.doneAt),
-                        if (h.km != null) Fmt.km(h.km),
-                      ].whereType<String>().join(' · '),
-                      style: TextStyle(color: p.textSecondary, fontSize: 12),
-                    ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (h.isFuel) ...[
+                    Icon(Icons.local_gas_station, size: 18, color: p.warn),
+                    const SizedBox(width: 8),
                   ],
-                ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(h.title,
+                            style: TextStyle(
+                                color: p.textPrimary,
+                                fontSize: 15,
+                                fontWeight: FontWeight.w700)),
+                        const SizedBox(height: 3),
+                        Text(
+                          [
+                            Fmt.date(h.doneAt),
+                            if (h.km != null) Fmt.km(h.km),
+                          ].whereType<String>().join(' · '),
+                          style:
+                              TextStyle(color: p.textSecondary, fontSize: 12),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (h.cost != null)
+                    Text(Fmt.money(h.cost),
+                        style: AppText.odometer(p.primary, size: 16)),
+                ],
               ),
-              if (h.cost != null)
-                Text(Fmt.money(h.cost),
-                    style: AppText.odometer(p.primary, size: 16)),
+              const SizedBox(height: 12),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  if (h.garageName != null)
+                    _Chip(
+                        icon: Icons.store,
+                        label: h.garageName!,
+                        color: p.textSecondary),
+                  if (h.invoiceUrl != null)
+                    _Chip(
+                        icon: Icons.receipt_long,
+                        label: 'Facture',
+                        color: p.ok),
+                  if (h.liters != null)
+                    _Chip(
+                        icon: Icons.local_gas_station,
+                        label: '${h.liters!.toStringAsFixed(1)} L',
+                        color: p.warn),
+                  if (consumptionPer100km != null)
+                    _Chip(
+                        icon: Icons.speed,
+                        label:
+                            '${consumptionPer100km!.toStringAsFixed(1)} L/100km',
+                        color: p.textSecondary),
+                ],
+              ),
             ],
           ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              if (h.garageName != null)
-                _Chip(icon: Icons.store, label: h.garageName!, color: p.textSecondary),
-              if (h.invoiceUrl != null)
-                _Chip(icon: Icons.receipt_long, label: 'Facture', color: p.ok),
-            ],
-          ),
-        ],
+        ),
       ),
     );
   }

@@ -1,10 +1,16 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/constants.dart';
+import '../../core/file_pick.dart';
 import '../../core/theme.dart';
 import '../../models/vehicle.dart';
+import '../../providers/service_providers.dart';
 import '../../providers/vehicle_provider.dart';
+import '../../widgets/striped_placeholder.dart';
 
 /// Create (or edit, when [existing] is provided) a vehicle.
 class VehicleFormScreen extends ConsumerStatefulWidget {
@@ -25,9 +31,18 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   late final _plate = TextEditingController(text: widget.existing?.plateNumber);
   late final _km =
       TextEditingController(text: '${widget.existing?.currentKm ?? 0}');
+  String? _photoUrl;
+  File? _pendingPhoto;
+  bool _uploadingPhoto = false;
   bool _saving = false;
 
   bool get _isEdit => widget.existing != null;
+
+  @override
+  void initState() {
+    super.initState();
+    _photoUrl = widget.existing?.photoUrl;
+  }
 
   @override
   void dispose() {
@@ -37,17 +52,45 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
     super.dispose();
   }
 
+  Future<void> _pickPhoto() async {
+    final file = await pickImage(context);
+    if (file == null) return;
+    setState(() {
+      _pendingPhoto = file;
+      _uploadingPhoto = true;
+    });
+    try {
+      final url = await ref.read(supabaseServiceProvider).uploadFile(
+            bucket: Buckets.vehiclePhotos,
+            file: file,
+            filename: buildUploadName(
+                'vehicle-${widget.existing?.id ?? 'new'}', file),
+          );
+      if (mounted) setState(() => _photoUrl = url);
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Erreur photo : $e')));
+      }
+    } finally {
+      if (mounted) setState(() => _uploadingPhoto = false);
+    }
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _saving = true);
     try {
       if (_isEdit) {
-        await ref.read(vehiclesProvider.notifier).updateVehicle(widget.existing!.id, {
+        await ref
+            .read(vehiclesProvider.notifier)
+            .updateVehicle(widget.existing!.id, {
           'name': _name.text.trim(),
           'brand': _text(_brand),
           'model': _text(_model),
           'year': int.tryParse(_year.text.trim()),
           'plate_number': _text(_plate),
+          'photo_url': _photoUrl,
         });
       } else {
         final vehicle = Vehicle(
@@ -59,6 +102,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
           year: int.tryParse(_year.text.trim()),
           plateNumber: _text(_plate),
           currentKm: int.tryParse(_km.text.trim()) ?? 0,
+          photoUrl: _photoUrl,
         );
         await ref.read(vehiclesProvider.notifier).add(vehicle);
       }
@@ -87,6 +131,56 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
         child: ListView(
           padding: const EdgeInsets.all(20),
           children: [
+            GestureDetector(
+              onTap: _uploadingPhoto ? null : _pickPhoto,
+              child: Container(
+                height: 150,
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: p.border),
+                ),
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    if (_pendingPhoto != null)
+                      Image.file(_pendingPhoto!, fit: BoxFit.cover)
+                    else if (_photoUrl != null)
+                      Image.network(
+                        _photoUrl!,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, __, ___) => const StripedPlaceholder(
+                            icon: Icons.directions_car_outlined),
+                      )
+                    else
+                      const StripedPlaceholder(
+                          icon: Icons.add_a_photo_outlined),
+                    if (_uploadingPhoto)
+                      Container(
+                        color: Colors.black.withValues(alpha: .4),
+                        child: const Center(
+                            child:
+                                CircularProgressIndicator(color: Colors.white)),
+                      )
+                    else
+                      Positioned(
+                        right: 10,
+                        bottom: 10,
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: .55),
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(Icons.camera_alt,
+                              color: Colors.white, size: 18),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
             TextFormField(
               controller: _name,
               style: TextStyle(color: p.textPrimary),

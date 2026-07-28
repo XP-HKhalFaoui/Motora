@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../core/app_text.dart';
-import '../../core/formatters.dart';
 import '../../core/theme.dart';
 import '../../models/reminder.dart';
 import '../../providers/notification_provider.dart';
+import '../notifications/notifications_screen.dart';
 
-/// "N alertes prioritaires" card at the top of Accueil — screen 02.
+/// Slim priority-alert strip at the top of Accueil: one tappable line
+/// summarising the most urgent reminder across all vehicles. Tapping it
+/// switches the shell to the Alertes tab for the full list.
 class AlertsBanner extends ConsumerWidget {
   const AlertsBanner({super.key});
 
@@ -18,77 +19,67 @@ class AlertsBanner extends ConsumerWidget {
     if (reminders.isEmpty) return const SizedBox.shrink();
 
     final sorted = [...reminders]..sort((a, b) => a.when.compareTo(b.when));
-    final top = sorted.take(3).toList();
+    final top = sorted.first;
+    final anyOverdue = reminders.any((r) => r.isOverdue);
+    final color = anyOverdue ? p.danger : p.warn;
+    final n = reminders.length;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 22),
-      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-      decoration: BoxDecoration(
-        color: p.accent.withValues(alpha: .08),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: p.accent.withValues(alpha: .3)),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(Icons.warning_amber_rounded, color: p.accent, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                '${reminders.length} alerte${reminders.length > 1 ? 's' : ''} prioritaire${reminders.length > 1 ? 's' : ''}',
-                style: TextStyle(
-                    color: p.accent, fontSize: 14, fontWeight: FontWeight.w700),
-              ),
-            ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 20),
+      child: Material(
+        color: color.withValues(alpha: .1),
+        borderRadius: BorderRadius.circular(14),
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const NotificationsScreen()),
           ),
-          ...top.map((r) => Container(
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  border: Border(top: BorderSide(color: p.border)),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            decoration: BoxDecoration(
+              border: Border.all(color: color.withValues(alpha: .3)),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.warning_amber_rounded, color: color, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text.rich(
+                    TextSpan(
+                      style: TextStyle(color: p.textPrimary, fontSize: 13.5),
+                      children: [
+                        TextSpan(
+                          text: '$n alerte${n > 1 ? 's' : ''}',
+                          style: TextStyle(
+                              color: color, fontWeight: FontWeight.w700),
+                        ),
+                        const TextSpan(text: '  ·  '),
+                        TextSpan(
+                          text: _shortTitle(top.title),
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                      ],
+                    ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 9,
-                      height: 9,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: r.isOverdue ? p.danger : p.warn,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(r.title,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: p.textPrimary,
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600)),
-                          const SizedBox(height: 2),
-                          Text(r.body,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: TextStyle(
-                                  color: p.textSecondary, fontSize: 12)),
-                        ],
-                      ),
-                    ),
-                    Text(
-                      r.isOverdue ? 'en retard' : Fmt.relative(r.when),
-                      textAlign: TextAlign.right,
-                      style: AppText.technical(
-                          r.isOverdue ? p.danger : p.warn, size: 13),
-                    ),
-                  ],
-                ),
-              )),
-        ],
+                const SizedBox(width: 6),
+                Icon(Icons.chevron_right, color: p.textMuted, size: 20),
+              ],
+            ),
+          ),
+        ),
       ),
     );
+  }
+
+  /// Reminder titles read "Vidange moteur — kanggo"; on the garage screen
+  /// the vehicle is obvious from context, so drop the trailing " — name".
+  String _shortTitle(String title) {
+    final i = title.lastIndexOf(' — ');
+    return i == -1 ? title : title.substring(0, i);
   }
 }
