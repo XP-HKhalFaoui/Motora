@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../core/app_text.dart';
+import '../core/formatters.dart';
 import '../core/theme.dart';
 
 /// Circular km gauge shown on the vehicle hub's Aperçu section:
@@ -30,6 +31,19 @@ class KmGauge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
+    // A CustomPaint is invisible to a screen reader; the odometer and the
+    // monthly average are the point of this widget.
+    return Semantics(
+      label: [
+        'Kilométrage ${Fmt.km(currentKm)}',
+        if (subtitle != null) subtitle,
+      ].whereType<String>().join(', '),
+      excludeSemantics: true,
+      child: _gauge(context, p),
+    );
+  }
+
+  Widget _gauge(BuildContext context, AppPalette p) {
     return SizedBox(
       width: size,
       height: size,

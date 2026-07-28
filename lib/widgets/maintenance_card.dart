@@ -130,10 +130,14 @@ class _CardBody extends StatelessWidget {
                 ),
                 if (onMarkDone != null)
                   IconButton(
-                    tooltip: 'Marquer comme fait',
+                    tooltip: 'Marquer ${type.label} comme fait',
                     icon: Icon(Icons.check_circle_outline, color: p.ok),
                     onPressed: onMarkDone,
-                    visualDensity: VisualDensity.compact,
+                    // No compact density here: it pulled the button under
+                    // the 48dp minimum, and this is the card's only action.
+                    constraints:
+                        const BoxConstraints(minWidth: 48, minHeight: 48),
+                    padding: EdgeInsets.zero,
                   ),
               ],
             ),

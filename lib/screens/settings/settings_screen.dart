@@ -83,9 +83,12 @@ class SettingsScreen extends ConsumerWidget {
                     trailingAction: IconButton(
                       icon:
                           Icon(Icons.delete_outline, size: 20, color: p.danger),
+                      tooltip: 'Supprimer ${v.name}',
                       visualDensity: VisualDensity.compact,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
+                      // The 48dp minimum was explicitly stripped here,
+                      // leaving a destructive action on a ~20dp target.
+                      constraints:
+                          const BoxConstraints(minWidth: 48, minHeight: 48),
                       onPressed: () => _confirmDeleteVehicle(context, ref, v),
                     ),
                     onTap: () => Navigator.push(

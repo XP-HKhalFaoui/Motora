@@ -66,20 +66,28 @@ class _Body extends StatelessWidget {
           runSpacing: 8,
           children: years.map((y) {
             final active = y == year;
-            return GestureDetector(
-              onTap: () => onYearSelected(y),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: active ? p.primary : p.surface,
-                  border: Border.all(color: active ? p.primary : p.border),
-                  borderRadius: BorderRadius.circular(99),
+            return Semantics(
+              button: true,
+              selected: active,
+              label: 'Année $y',
+              excludeSemantics: true,
+              child: GestureDetector(
+                onTap: () => onYearSelected(y),
+                child: Container(
+                  constraints: const BoxConstraints(minHeight: 48),
+                  alignment: Alignment.center,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: active ? p.primary : p.surface,
+                    border: Border.all(color: active ? p.primary : p.border),
+                    borderRadius: BorderRadius.circular(99),
+                  ),
+                  child: Text('$y',
+                      style: AppText.technical(
+                          active ? p.onPrimary : p.textSecondary,
+                          size: 14)),
                 ),
-                child: Text('$y',
-                    style: AppText.technical(
-                        active ? p.onPrimary : p.textSecondary,
-                        size: 14)),
               ),
             );
           }).toList(),

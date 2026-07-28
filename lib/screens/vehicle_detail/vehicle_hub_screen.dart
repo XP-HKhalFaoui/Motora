@@ -209,6 +209,7 @@ class _Hero extends ConsumerWidget {
               children: [
                 _CircleButton(
                   icon: Icons.arrow_back,
+                  label: 'Retour',
                   onTap: () => Navigator.pop(context),
                 ),
                 const Spacer(),
@@ -216,6 +217,7 @@ class _Hero extends ConsumerWidget {
                 const SizedBox(width: 8),
                 _CircleButton(
                   icon: Icons.edit_outlined,
+                  label: 'Modifier le véhicule',
                   onTap: () => Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -328,6 +330,7 @@ class _ExportButtonState extends ConsumerState<_ExportButton> {
     }
     return _CircleButton(
       icon: Icons.ios_share,
+      label: "Exporter le carnet d'entretien",
       tooltip: "Exporter le carnet d'entretien",
       onTap: _export,
     );
@@ -338,11 +341,15 @@ class _CircleButton extends StatelessWidget {
   const _CircleButton({
     required this.icon,
     required this.onTap,
+    required this.label,
     this.tooltip,
   });
 
   final IconData icon;
   final VoidCallback onTap;
+
+  /// Spoken by a screen reader — an icon on its own says nothing.
+  final String label;
   final String? tooltip;
 
   @override
@@ -353,15 +360,26 @@ class _CircleButton extends StatelessWidget {
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
-        child: SizedBox(
-          width: 40,
-          height: 40,
-          child: Icon(icon, color: Colors.white, size: 20),
+        // The circle stays 40dp for the design; the tappable area is
+        // padded out to the 48dp minimum.
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: SizedBox(
+            width: 40,
+            height: 40,
+            child: Icon(icon, color: Colors.white, size: 20),
+          ),
         ),
       ),
     );
-    if (tooltip == null) return button;
-    return Tooltip(message: tooltip!, child: button);
+    final semantic = Semantics(
+      button: true,
+      label: label,
+      excludeSemantics: true,
+      child: button,
+    );
+    if (tooltip == null) return semantic;
+    return Tooltip(message: tooltip!, child: semantic);
   }
 }
 
@@ -416,31 +434,40 @@ class _SegmentedControl extends StatelessWidget {
                   children: List.generate(segments.length, (i) {
                     final active = i == current;
                     return Expanded(
-                      child: GestureDetector(
-                        behavior: HitTestBehavior.opaque,
-                        onTap: () => onChanged(i),
-                        child: SizedBox(
-                          height: 40,
-                          child: Center(
-                            // Scales down rather than ellipsising: with five
-                            // segments on a narrow phone "Entretien" and
-                            // "Carburant" no longer fit at 13px, and "Entr…"
-                            // is worse than slightly smaller type.
-                            child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 3),
-                                child: Text(
-                                  segments[i],
-                                  maxLines: 1,
-                                  style: TextStyle(
-                                    color:
-                                        active ? p.onPrimary : p.textSecondary,
-                                    fontSize: 13,
-                                    fontWeight: active
-                                        ? FontWeight.w700
-                                        : FontWeight.w600,
+                      // Announced as a selectable tab so a screen reader
+                      // says which section is active, not just its label.
+                      child: Semantics(
+                        button: true,
+                        selected: active,
+                        label: segments[i],
+                        excludeSemantics: true,
+                        child: GestureDetector(
+                          behavior: HitTestBehavior.opaque,
+                          onTap: () => onChanged(i),
+                          child: SizedBox(
+                            height: 40,
+                            child: Center(
+                              // Scales down rather than ellipsising: with five
+                              // segments on a narrow phone "Entretien" and
+                              // "Carburant" no longer fit at 13px, and "Entr…"
+                              // is worse than slightly smaller type.
+                              child: FittedBox(
+                                fit: BoxFit.scaleDown,
+                                child: Padding(
+                                  padding:
+                                      const EdgeInsets.symmetric(horizontal: 3),
+                                  child: Text(
+                                    segments[i],
+                                    maxLines: 1,
+                                    style: TextStyle(
+                                      color: active
+                                          ? p.onPrimary
+                                          : p.textSecondary,
+                                      fontSize: 13,
+                                      fontWeight: active
+                                          ? FontWeight.w700
+                                          : FontWeight.w600,
+                                    ),
                                   ),
                                 ),
                               ),

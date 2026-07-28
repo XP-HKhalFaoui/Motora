@@ -68,22 +68,37 @@ class HomeScreen extends ConsumerWidget {
                               builder: (_) => const NotificationsScreen())),
                     ),
                     const SizedBox(width: 10),
-                    GestureDetector(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (_) => const SettingsScreen())),
-                      child: Container(
-                        width: 42,
-                        height: 42,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: p.surfaceElevated,
-                          border: Border.all(color: p.border),
+                    // The initials are decoration; a screen reader needs to
+                    // hear what the control does, not the letter in it.
+                    Semantics(
+                      button: true,
+                      label: 'Réglages',
+                      excludeSemantics: true,
+                      child: InkWell(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (_) => const SettingsScreen())),
+                        customBorder: const CircleBorder(),
+                        child: Container(
+                          // 48dp minimum touch target; the visible circle
+                          // stays 42 via the inner decoration.
+                          width: 48,
+                          height: 48,
+                          alignment: Alignment.center,
+                          child: Container(
+                            width: 42,
+                            height: 42,
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: p.surfaceElevated,
+                              border: Border.all(color: p.border),
+                            ),
+                            child: Text(initials,
+                                style: AppText.odometer(p.primary, size: 14)),
+                          ),
                         ),
-                        child: Text(initials,
-                            style: AppText.odometer(p.primary, size: 14)),
                       ),
                     ),
                   ],
@@ -171,36 +186,51 @@ class _BellButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 42,
-        height: 42,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: p.surfaceElevated,
-          border: Border.all(color: p.border),
-        ),
-        child: Stack(
-          clipBehavior: Clip.none,
-          children: [
-            Icon(Icons.notifications_rounded, size: 20, color: p.textSecondary),
-            if (hasAlerts)
-              Positioned(
-                top: -3,
-                right: -3,
-                child: Container(
-                  width: 9,
-                  height: 9,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: p.danger,
-                    border: Border.all(color: p.surfaceElevated, width: 1.5),
+    return Semantics(
+      button: true,
+      // The red dot is the only thing distinguishing the two states
+      // visually — say it out loud rather than leaving it to colour.
+      label: hasAlerts ? 'Alertes, échéances en attente' : 'Alertes',
+      excludeSemantics: true,
+      child: InkWell(
+        onTap: onTap,
+        customBorder: const CircleBorder(),
+        child: Container(
+          width: 48,
+          height: 48,
+          alignment: Alignment.center,
+          child: Container(
+            width: 42,
+            height: 42,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: p.surfaceElevated,
+              border: Border.all(color: p.border),
+            ),
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Icon(Icons.notifications_rounded,
+                    size: 20, color: p.textSecondary),
+                if (hasAlerts)
+                  Positioned(
+                    top: -3,
+                    right: -3,
+                    child: Container(
+                      width: 9,
+                      height: 9,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: p.danger,
+                        border:
+                            Border.all(color: p.surfaceElevated, width: 1.5),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-          ],
+              ],
+            ),
+          ),
         ),
       ),
     );
@@ -472,6 +502,18 @@ class _HealthRing extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.palette;
     final percent = this.percent;
+    // A CustomPaint draws nothing a screen reader can see, and this ring
+    // is the primary health signal on the card.
+    return Semantics(
+      label: percent == null
+          ? 'Santé du véhicule non calculable'
+          : 'Santé du véhicule $percent %',
+      excludeSemantics: true,
+      child: _ring(context, p, percent),
+    );
+  }
+
+  Widget _ring(BuildContext context, AppPalette p, int? percent) {
     if (percent == null) {
       return Container(
         width: 52,
