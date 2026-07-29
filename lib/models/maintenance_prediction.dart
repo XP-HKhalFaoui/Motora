@@ -8,7 +8,18 @@ class MaintenancePrediction {
   final int? remainingKm;
 
   /// Estimated due date, from km forecast and/or the time interval.
+  ///
+  /// The km half of this is a *projection*: remaining km divided by the
+  /// monthly average. Useful to show, but it must not drive alerts — see
+  /// [timeDueDate].
   final DateTime? dueDate;
+
+  /// Due date from the type's own time interval (`intervalMonths` counted
+  /// from the last intervention), or null when it has no time interval.
+  ///
+  /// Unlike [dueDate] this is a fact, not an estimate, which is why the
+  /// day-based alert threshold uses it.
+  final DateTime? timeDueDate;
 
   /// Monthly km average used for the estimate.
   final double kmPerMonth;
@@ -33,6 +44,7 @@ class MaintenancePrediction {
     required this.dueDate,
     required this.kmPerMonth,
     required this.urgency,
+    this.timeDueDate,
     this.kmPerMonthIsEstimated = false,
     this.needsSetup = false,
   });

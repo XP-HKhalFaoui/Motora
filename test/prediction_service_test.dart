@@ -205,6 +205,54 @@ void main() {
           isTrue);
     });
 
+    test('a short km interval does not alert from the moment it is done', () {
+      // The regression, from real data: a 7 000 km vidange on a car doing
+      // 15 634 km/month is "due in 13 days" the instant it is performed.
+      // Alerting on the *projected* date meant this type sat inside a
+      // 30-day horizon permanently — the home banner shouted while the
+      // card correctly showed a full interval remaining.
+      final p = PredictionService.predict(
+        type: _type(
+          intervalKm: 7000,
+          lastDoneKm: 569265,
+          intervalMonths: 3,
+          lastDoneDate: DateTime(2026, 7, 27),
+        ),
+        vehicle: _vehicle(currentKm: 569265),
+        kmPerMonth: 15634,
+        now: _now,
+      );
+
+      expect(p.remainingKm, 7000, reason: 'a whole interval is left');
+      expect(p.urgency, lessThan(0.1), reason: 'it was done two days ago');
+      expect(PredictionService.needsAlert(p, now: _now), isFalse);
+    });
+
+    test('still alerts once the distance actually runs out', () {
+      final p = PredictionService.predict(
+        type: _type(intervalKm: 7000, lastDoneKm: 569265),
+        vehicle: _vehicle(currentKm: 575900),
+        kmPerMonth: 15634,
+        now: _now,
+      );
+
+      expect(p.remainingKm, 365);
+      expect(PredictionService.needsAlert(p, now: _now), isTrue);
+    });
+
+    test('a genuine time interval still alerts on the calendar', () {
+      // No km interval at all, so only the date can trigger it.
+      final p = PredictionService.predict(
+        type: _type(intervalMonths: 12, lastDoneDate: DateTime(2025, 8, 20)),
+        vehicle: _vehicle(),
+        kmPerMonth: 15634,
+        now: _now,
+      );
+
+      expect(p.timeDueDate, DateTime(2026, 8, 20));
+      expect(PredictionService.needsAlert(p, now: _now), isTrue);
+    });
+
     test('honours a caller-supplied day threshold', () {
       final p = PredictionService.predict(
         type: _type(intervalMonths: 12, lastDoneDate: DateTime(2025, 8, 20)),
