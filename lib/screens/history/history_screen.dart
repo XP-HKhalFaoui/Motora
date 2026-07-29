@@ -21,8 +21,17 @@ import '../quick_add/add_history_sheet.dart';
 /// through `children: history.map(...)`, which after a few years of
 /// fill-ups means hundreds of widgets constructed to show ten.
 class HistoryScreen extends ConsumerStatefulWidget {
-  const HistoryScreen({super.key, required this.vehicleId});
+  const HistoryScreen({
+    super.key,
+    required this.vehicleId,
+    this.embedded = false,
+  });
+
   final String vehicleId;
+
+  /// True when shown as a bottom-bar tab: the shell already supplies the
+  /// app bar and there is nothing to go back to.
+  final bool embedded;
 
   @override
   ConsumerState<HistoryScreen> createState() => _HistoryScreenState();
@@ -75,22 +84,25 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: Icon(Icons.arrow_back,
-                                  color: p.textSecondary),
-                              onPressed: () => Navigator.pop(context),
-                            ),
-                            Expanded(
-                              child: Text('Historique · ${vehicle?.name ?? ''}',
-                                  overflow: TextOverflow.ellipsis,
-                                  style: AppText.screenTitle(p.textPrimary,
-                                      size: 20)),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 14),
+                        if (!widget.embedded) ...[
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: Icon(Icons.arrow_back,
+                                    color: p.textSecondary),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                              Expanded(
+                                child: Text(
+                                    'Historique · ${vehicle?.name ?? ''}',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: AppText.screenTitle(p.textPrimary,
+                                        size: 20)),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                        ],
                         _SearchField(
                           controller: _search,
                           onChanged: (v) => setState(
