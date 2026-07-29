@@ -24,8 +24,10 @@ S = SIZE * SS
 # lib/core/theme.dart — AppPalette.dark
 BACKGROUND = (14, 21, 32, 255)      # #0E1520
 SURFACE = (23, 32, 46, 255)         # #17202E
-PRIMARY = (76, 141, 255, 255)       # #4C8DFF
-ACCENT = (255, 138, 61, 255)        # #FF8A3D
+PRIMARY = (46, 207, 217, 255)       # #2ECFD9 — teal, dark-theme primary
+ACCENT = (234, 240, 247, 255)       # #EAF0F7 — the pip is a highlight now;
+#                                     an orange one read as off-brand once
+#                                     the app went teal.
 TRACK = (45, 58, 76, 255)
 WHITE = (234, 240, 247, 255)        # textPrimary
 
@@ -41,7 +43,7 @@ def draw_mark(draw: ImageDraw.ImageDraw, cx: float, cy: float, scale: float):
     draw.arc(box, 0, 360, fill=TRACK, width=int(stroke))
     draw.arc(box, -90, -90 + 252, fill=PRIMARY, width=int(stroke))
 
-    # Accent pip marking the end of the sweep, echoing the alert colour.
+    # Pip marking the end of the sweep.
     pip_r = stroke * 0.62
     draw.ellipse(
         [cx - pip_r, cy - r - pip_r, cx + pip_r, cy - r + pip_r],
