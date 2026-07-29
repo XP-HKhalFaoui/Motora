@@ -121,11 +121,6 @@ class _Hero extends ConsumerWidget {
             right: 8,
             child: Row(
               children: [
-                _CircleButton(
-                  icon: Icons.arrow_back,
-                  label: 'Retour',
-                  onTap: () => Navigator.pop(context),
-                ),
                 const Spacer(),
                 _ExportButton(vehicleId: vehicle.id),
                 const SizedBox(width: 8),

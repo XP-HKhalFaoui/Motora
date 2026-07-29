@@ -35,6 +35,8 @@ class AppShell extends ConsumerStatefulWidget {
 }
 
 class _AppShellState extends ConsumerState<AppShell> {
+  bool _dialOpen = false;
+
   @override
   void initState() {
     super.initState();
@@ -89,9 +91,12 @@ class _AppShellState extends ConsumerState<AppShell> {
           const SizedBox(width: 8),
         ],
       ),
-      body: vehicleId == null
-          ? const _NoVehicle()
-          : IndexedStack(
+      body: Stack(
+        children: [
+          if (vehicleId == null)
+            const _NoVehicle()
+          else
+            IndexedStack(
               index: tab.index,
               children: [
                 VehicleTab(vehicleId: vehicleId),
@@ -100,7 +105,17 @@ class _AppShellState extends ConsumerState<AppShell> {
                 MoreTab(vehicleId: vehicleId),
               ],
             ),
-      floatingActionButton: QuickAddDial(vehicleId: vehicleId),
+          if (_dialOpen)
+            QuickAddOverlay(
+              vehicleId: vehicleId,
+              onClose: () => setState(() => _dialOpen = false),
+            ),
+        ],
+      ),
+      floatingActionButton: QuickAddFab(
+        open: _dialOpen,
+        onToggle: () => setState(() => _dialOpen = !_dialOpen),
+      ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       bottomNavigationBar: BottomNavBar(
         current: tab,

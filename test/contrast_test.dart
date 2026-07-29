@@ -27,6 +27,26 @@ const _aaText = 4.5;
 const _aaNonText = 3.0;
 
 void main() {
+  group('ColorScheme carries the palette, not Material defaults', () {
+    for (final name in ['dark', 'light']) {
+      // testWidgets, not test: AppTheme builds its text theme through
+      // google_fonts, whose async font loading needs a binding that
+      // tracks pending work — a plain test fails after it has passed.
+      testWidgets('$name theme', (tester) async {
+        final dark = name == 'dark';
+        final theme = dark ? AppTheme.dark : AppTheme.light;
+        final palette = dark ? AppPalette.dark : AppPalette.light;
+        expect(theme.colorScheme.primary, palette.primary);
+        expect(theme.colorScheme.onPrimary, palette.onPrimary);
+        // Unset, this stays Material's default purple and tints every
+        // surface that scrolls under the app bar — which is exactly how a
+        // teal app grew a lavender header.
+        expect(theme.colorScheme.surfaceTint, Colors.transparent);
+        expect(theme.appBarTheme.surfaceTintColor, Colors.transparent);
+      });
+    }
+  });
+
   for (final entry in {
     'dark': AppPalette.dark,
     'light': AppPalette.light,

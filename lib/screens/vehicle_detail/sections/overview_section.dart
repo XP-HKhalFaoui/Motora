@@ -63,8 +63,15 @@ class OverviewSection extends ConsumerWidget {
     // The km/month average lives on the mileage logs, not on the
     // predictions — reading it off `predictions.first` showed "+0 km/mois"
     // for any vehicle with no maintenance type configured.
-    final logs = ref.watch(mileageLogsProvider(vehicleId)).value ?? const [];
-    final kmPerMonth = PredictionService.measuredMonthlyKmAverage(logs);
+    // Loading is not the same as "nothing to measure". As a pushed screen
+    // this arrived with the caches already warm; as the first tab it does
+    // not, and announcing "moyenne à venir" while the logs are still in
+    // flight states a fact that isn't one.
+    final logsAsync = ref.watch(mileageLogsProvider(vehicleId));
+    final logsLoading = logsAsync.value == null;
+    final kmPerMonth = logsLoading
+        ? null
+        : PredictionService.measuredMonthlyKmAverage(logsAsync.value!);
 
     final topPreds = predictions.take(3).toList();
 
@@ -81,9 +88,11 @@ class OverviewSection extends ConsumerWidget {
         Center(
           child: KmGauge(
             currentKm: currentKm,
-            subtitle: kmPerMonth == null
-                ? 'moyenne mensuelle à venir'
-                : '+${kmPerMonth.round()} km / mois',
+            subtitle: logsLoading
+                ? null
+                : kmPerMonth == null
+                    ? 'moyenne mensuelle à venir'
+                    : '+${kmPerMonth.round()} km / mois',
             progress: topUrgency.clamp(0.0, 1.0),
           ),
         ),

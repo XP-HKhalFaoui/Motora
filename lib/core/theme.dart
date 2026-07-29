@@ -237,13 +237,23 @@ class AppTheme {
               : const ColorScheme.light())
           .copyWith(
         primary: p.primary,
+        onPrimary: p.onPrimary,
         secondary: p.accent,
+        onSecondary: p.onPrimary,
         surface: p.surface,
         error: p.danger,
         onSurface: p.textPrimary,
+        // Material 3 tints surfaces with this as they scroll under the
+        // app bar. Left unset it keeps the framework's default purple,
+        // which is how a teal app ended up with a lavender app bar.
+        // Motora's chrome is flat, so the tint is switched off rather
+        // than recoloured.
+        surfaceTint: Colors.transparent,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: p.background,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         elevation: 0,
         centerTitle: false,
         foregroundColor: p.textPrimary,
