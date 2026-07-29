@@ -17,7 +17,7 @@ MaintenanceHistory _fill(
       km: km,
       liters: liters,
       cost: cost,
-      isFuel: true,
+      kind: HistoryEntryKind.fuel,
       isFullTank: full,
       doneAt: DateTime(2026, 7, day),
     );

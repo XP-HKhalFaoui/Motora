@@ -92,7 +92,7 @@ void main() {
           km: 146000,
           liters: 42,
           cost: 1890,
-          isFuel: true,
+          kind: HistoryEntryKind.fuel,
           doneAt: DateTime(2026, 5, 2),
         ),
         MaintenanceHistory(
@@ -102,7 +102,7 @@ void main() {
           km: 146600,
           liters: 38,
           cost: 1710,
-          isFuel: true,
+          kind: HistoryEntryKind.fuel,
           doneAt: DateTime(2026, 6, 9),
         ),
       ],

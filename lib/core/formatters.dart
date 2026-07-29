@@ -5,6 +5,9 @@ class Fmt {
   static final _date = DateFormat('d MMM yyyy', 'fr_FR');
   static final _dateShort = DateFormat('dd/MM/yyyy', 'fr_FR');
   static final _monthYear = DateFormat('MMM yyyy', 'fr_FR');
+  static final _monthShort = DateFormat('MM/yy', 'fr_FR');
+  static final _dayMonth = DateFormat('d MMM', 'fr_FR');
+  static final _monthHeader = DateFormat('MMMM yyyy', 'fr_FR');
   static final _km = NumberFormat.decimalPattern('fr_FR');
 
   /// Algerian dinar. The app is used in Algeria — plates, vignette, carte
@@ -19,10 +22,27 @@ class Fmt {
   static String date(DateTime? d) => d == null ? '—' : _date.format(d);
   static String dateShort(DateTime? d) =>
       d == null ? '—' : _dateShort.format(d);
+
+  /// "22 mai" — a timeline row already sits under its month header, so
+  /// repeating the year on every line is noise.
+  static String dayMonth(DateTime? d) => d == null ? '—' : _dayMonth.format(d);
+
+  /// "MAI 2026" — the section header a long timeline is navigated by.
+  static String monthHeader(DateTime? d) =>
+      d == null ? '—' : _monthHeader.format(d).toUpperCase();
+
+  /// "07/26" — compact enough for a chart axis with a year of bars.
+  static String monthShort(DateTime? d) =>
+      d == null ? '—' : _monthShort.format(d);
+
   static String monthYear(DateTime? d) =>
       d == null ? '—' : _monthYear.format(d);
   static String km(num? v) => v == null ? '—' : '${_km.format(v)} km';
   static String money(num? v) => v == null ? '—' : _money.format(v);
+
+  /// Currency suffix for input fields, so a form label can never drift
+  /// from what [money] actually prints.
+  static String get currencySuffix => _money.currencySymbol;
 
   /// `yyyy-MM-dd` for Postgres `date` columns.
   ///

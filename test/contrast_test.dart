@@ -27,6 +27,26 @@ const _aaText = 4.5;
 const _aaNonText = 3.0;
 
 void main() {
+  group('ColorScheme carries the palette, not Material defaults', () {
+    for (final name in ['dark', 'light']) {
+      // testWidgets, not test: AppTheme builds its text theme through
+      // google_fonts, whose async font loading needs a binding that
+      // tracks pending work — a plain test fails after it has passed.
+      testWidgets('$name theme', (tester) async {
+        final dark = name == 'dark';
+        final theme = dark ? AppTheme.dark : AppTheme.light;
+        final palette = dark ? AppPalette.dark : AppPalette.light;
+        expect(theme.colorScheme.primary, palette.primary);
+        expect(theme.colorScheme.onPrimary, palette.onPrimary);
+        // Unset, this stays Material's default purple and tints every
+        // surface that scrolls under the app bar — which is exactly how a
+        // teal app grew a lavender header.
+        expect(theme.colorScheme.surfaceTint, Colors.transparent);
+        expect(theme.appBarTheme.surfaceTintColor, Colors.transparent);
+      });
+    }
+  });
+
   for (final entry in {
     'dark': AppPalette.dark,
     'light': AppPalette.light,
@@ -79,6 +99,60 @@ void main() {
               reason: '${status.key} on surface is '
                   '${ratio.toStringAsFixed(2)}:1');
         }
+      });
+
+      test('entry badges are visible and carry a readable glyph', () {
+        // The badges are what make a mixed timeline scannable, so they
+        // fall under the graphical-object threshold — both against the
+        // surface they sit on and against the glyph drawn inside them.
+        // Dark-theme badges are bright tones, which is why onEntryBadge
+        // is dark there rather than white.
+        for (final badge in {
+          'entryFuel': p.entryFuel,
+          'entryExpense': p.entryExpense,
+          'entryMaintenance': p.entryMaintenance,
+          'entryDocument': p.entryDocument,
+          'entryMileage': p.entryMileage,
+          'entryDue': p.entryDue,
+        }.entries) {
+          for (final surface in surfaces.entries) {
+            final vsSurface = contrast(badge.value, surface.value);
+            expect(vsSurface, greaterThanOrEqualTo(_aaNonText),
+                reason: '${badge.key} on ${surface.key} is '
+                    '${vsSurface.toStringAsFixed(2)}:1');
+          }
+          final vsGlyph = contrast(p.onEntryBadge, badge.value);
+          expect(vsGlyph, greaterThanOrEqualTo(_aaNonText),
+              reason: 'glyph on ${badge.key} is '
+                  '${vsGlyph.toStringAsFixed(2)}:1');
+        }
+      });
+
+      test('every entry badge is a distinct hue', () {
+        // Two types that look alike defeat the point of colouring them.
+        final badges = [
+          p.entryFuel,
+          p.entryExpense,
+          p.entryMaintenance,
+          p.entryDocument,
+          p.entryMileage,
+          p.entryDue,
+        ];
+        for (var i = 0; i < badges.length; i++) {
+          for (var j = i + 1; j < badges.length; j++) {
+            expect(badges[i], isNot(badges[j]));
+          }
+        }
+      });
+
+      test('bottom nav entries are legible on the bar', () {
+        // The bar is set apart by its top rule, not its fill — in the
+        // light theme it is white like the cards. What has to hold is
+        // that both states read against it.
+        expect(contrast(p.primary, p.navBar), greaterThanOrEqualTo(_aaNonText),
+            reason: 'selected entry on the nav bar');
+        expect(contrast(p.textMuted, p.navBar), greaterThanOrEqualTo(_aaText),
+            reason: 'unselected entry label on the nav bar');
       });
 
       test('the text scale keeps three distinguishable steps', () {

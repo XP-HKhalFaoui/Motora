@@ -44,6 +44,64 @@ class Thresholds {
   static const double fallbackKmPerMonth = 1000;
 }
 
+/// Categories for spending that isn't maintenance and isn't fuel.
+///
+/// Chosen for Algeria: vignette and contrôle technique are recurring
+/// paid formalities here, and amendes are frequent enough to be worth
+/// their own line rather than hiding in "autre".
+class ExpenseCategories {
+  static const assurance = 'assurance';
+  static const vignette = 'vignette';
+  static const taxe = 'taxe';
+  static const controleTechnique = 'controle_technique';
+  static const peage = 'peage';
+  static const parking = 'parking';
+  static const lavage = 'lavage';
+  static const amende = 'amende';
+  static const accessoires = 'accessoires';
+  static const autre = 'autre';
+
+  static const all = <String>[
+    assurance,
+    vignette,
+    taxe,
+    controleTechnique,
+    peage,
+    parking,
+    lavage,
+    amende,
+    accessoires,
+    autre,
+  ];
+
+  static String label(String category) {
+    switch (category) {
+      case assurance:
+        return 'Assurance';
+      case vignette:
+        return 'Vignette';
+      case taxe:
+        return 'Taxe';
+      case controleTechnique:
+        return 'Contrôle technique';
+      case peage:
+        return 'Péage';
+      case parking:
+        return 'Parking';
+      case lavage:
+        return 'Lavage';
+      case amende:
+        return 'Amende';
+      case accessoires:
+        return 'Accessoires';
+      case autre:
+        return 'Autre';
+      default:
+        return category;
+    }
+  }
+}
+
 /// Known administrative document types.
 class DocTypes {
   static const vignette = 'vignette';

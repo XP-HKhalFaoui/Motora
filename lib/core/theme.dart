@@ -12,8 +12,16 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.textSecondary,
     required this.textMuted,
     required this.border,
+    required this.navBar,
     required this.primary,
     required this.onPrimary,
+    required this.onEntryBadge,
+    required this.entryFuel,
+    required this.entryExpense,
+    required this.entryMaintenance,
+    required this.entryDocument,
+    required this.entryMileage,
+    required this.entryDue,
     required this.accent,
     required this.ok,
     required this.warn,
@@ -27,12 +35,33 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color textSecondary;
   final Color textMuted;
   final Color border;
+
+  /// Bottom navigation surface, distinct from [surface] so the bar reads
+  /// as chrome rather than as another card.
+  final Color navBar;
+
   final Color primary;
 
   /// Foreground for anything filled with [primary]. Dark in the dark
   /// theme, where primary is a light tone — white on it only reaches
   /// 3.2:1, well under the 4.5:1 AA needs for button labels.
   final Color onPrimary;
+
+  /// Glyph drawn inside a coloured entry badge. Same reasoning as
+  /// [onPrimary]: dark theme badges are bright tones, so a white glyph on
+  /// them would sit near 2:1.
+  final Color onEntryBadge;
+
+  /// One hue per ledger entry type — what makes a mixed timeline scannable
+  /// at a glance. Kept here rather than scattered through the screens so
+  /// the contrast test can check them all in one place.
+  final Color entryFuel;
+  final Color entryExpense;
+  final Color entryMaintenance;
+  final Color entryDocument;
+  final Color entryMileage;
+  final Color entryDue;
+
   final Color accent;
   final Color ok;
   final Color warn;
@@ -46,9 +75,17 @@ class AppPalette extends ThemeExtension<AppPalette> {
     textSecondary: Color(0xFFA6B3C4),
     textMuted: Color(0xFF8491A4),
     border: Color(0x12FFFFFF), // rgba(255,255,255,.07)
-    primary: Color(0xFF4C8DFF),
+    navBar: Color(0xFF0C121B),
+    primary: Color(0xFF2ECFD9),
     onPrimary: Color(0xFF0E1520),
-    accent: Color(0xFFFF8A3D),
+    onEntryBadge: Color(0xFF0E1520),
+    entryFuel: Color(0xFFF0A44A),
+    entryExpense: Color(0xFFF07A7A),
+    entryMaintenance: Color(0xFFC39A78),
+    entryDocument: Color(0xFF4FD6A0),
+    entryMileage: Color(0xFFF084B8),
+    entryDue: Color(0xFFB49CFB),
+    accent: Color(0xFF2ECFD9),
     ok: Color(0xFF35C88A),
     warn: Color(0xFFF5B23D),
     danger: Color(0xFFFF5D5D),
@@ -62,9 +99,17 @@ class AppPalette extends ThemeExtension<AppPalette> {
     textSecondary: Color(0xFF46525F),
     textMuted: Color(0xFF5C6B7E),
     border: Color(0x14121C2A), // rgba(18,28,42,.08)
-    primary: Color(0xFF2D70E8),
+    navBar: Color(0xFFFFFFFF),
+    primary: Color(0xFF008389),
     onPrimary: Color(0xFFFFFFFF),
-    accent: Color(0xFFF2732A),
+    onEntryBadge: Color(0xFFFFFFFF),
+    entryFuel: Color(0xFFB36405),
+    entryExpense: Color(0xFFC13333),
+    entryMaintenance: Color(0xFF7A5540),
+    entryDocument: Color(0xFF0F7A50),
+    entryMileage: Color(0xFFAD3269),
+    entryDue: Color(0xFF6B49D6),
+    accent: Color(0xFF008389),
     ok: Color(0xFF1FA971),
     warn: Color(0xFFC8871B),
     danger: Color(0xFFE23B3B),
@@ -79,8 +124,16 @@ class AppPalette extends ThemeExtension<AppPalette> {
     Color? textSecondary,
     Color? textMuted,
     Color? border,
+    Color? navBar,
     Color? primary,
     Color? onPrimary,
+    Color? onEntryBadge,
+    Color? entryFuel,
+    Color? entryExpense,
+    Color? entryMaintenance,
+    Color? entryDocument,
+    Color? entryMileage,
+    Color? entryDue,
     Color? accent,
     Color? ok,
     Color? warn,
@@ -94,8 +147,16 @@ class AppPalette extends ThemeExtension<AppPalette> {
       textSecondary: textSecondary ?? this.textSecondary,
       textMuted: textMuted ?? this.textMuted,
       border: border ?? this.border,
+      navBar: navBar ?? this.navBar,
       primary: primary ?? this.primary,
       onPrimary: onPrimary ?? this.onPrimary,
+      onEntryBadge: onEntryBadge ?? this.onEntryBadge,
+      entryFuel: entryFuel ?? this.entryFuel,
+      entryExpense: entryExpense ?? this.entryExpense,
+      entryMaintenance: entryMaintenance ?? this.entryMaintenance,
+      entryDocument: entryDocument ?? this.entryDocument,
+      entryMileage: entryMileage ?? this.entryMileage,
+      entryDue: entryDue ?? this.entryDue,
       accent: accent ?? this.accent,
       ok: ok ?? this.ok,
       warn: warn ?? this.warn,
@@ -114,8 +175,17 @@ class AppPalette extends ThemeExtension<AppPalette> {
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       textMuted: Color.lerp(textMuted, other.textMuted, t)!,
       border: Color.lerp(border, other.border, t)!,
+      navBar: Color.lerp(navBar, other.navBar, t)!,
       primary: Color.lerp(primary, other.primary, t)!,
       onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
+      onEntryBadge: Color.lerp(onEntryBadge, other.onEntryBadge, t)!,
+      entryFuel: Color.lerp(entryFuel, other.entryFuel, t)!,
+      entryExpense: Color.lerp(entryExpense, other.entryExpense, t)!,
+      entryMaintenance:
+          Color.lerp(entryMaintenance, other.entryMaintenance, t)!,
+      entryDocument: Color.lerp(entryDocument, other.entryDocument, t)!,
+      entryMileage: Color.lerp(entryMileage, other.entryMileage, t)!,
+      entryDue: Color.lerp(entryDue, other.entryDue, t)!,
       accent: Color.lerp(accent, other.accent, t)!,
       ok: Color.lerp(ok, other.ok, t)!,
       warn: Color.lerp(warn, other.warn, t)!,
@@ -167,13 +237,23 @@ class AppTheme {
               : const ColorScheme.light())
           .copyWith(
         primary: p.primary,
+        onPrimary: p.onPrimary,
         secondary: p.accent,
+        onSecondary: p.onPrimary,
         surface: p.surface,
         error: p.danger,
         onSurface: p.textPrimary,
+        // Material 3 tints surfaces with this as they scroll under the
+        // app bar. Left unset it keeps the framework's default purple,
+        // which is how a teal app ended up with a lavender app bar.
+        // Motora's chrome is flat, so the tint is switched off rather
+        // than recoloured.
+        surfaceTint: Colors.transparent,
       ),
       appBarTheme: AppBarTheme(
         backgroundColor: p.background,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
         elevation: 0,
         centerTitle: false,
         foregroundColor: p.textPrimary,

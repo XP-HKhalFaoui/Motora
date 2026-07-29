@@ -6,28 +6,43 @@ import '../../../core/formatters.dart';
 import '../../../core/theme.dart';
 import '../../../providers/document_provider.dart';
 import '../../../providers/maintenance_provider.dart';
+import '../../../providers/shell_provider.dart';
 import '../../../providers/vehicle_provider.dart';
 import '../../../services/prediction_service.dart';
 import '../../../widgets/document_card.dart';
 import '../../../widgets/km_gauge.dart';
 import '../../../widgets/maintenance_card.dart';
 import '../../history/history_screen.dart';
+import '../../reports/reports_screen.dart';
+import '../../shell/section_screen.dart';
+import 'documents_section.dart';
+import 'fuel_section.dart';
+import 'mileage_section.dart';
 import '../update_km_sheet.dart';
 
 /// "Aperçu" section of the vehicle hub: a digest that pulls the key signal
 /// from every other tab — km gauge, cost/intervention stats, the next few
 /// échéances and the soonest-expiring documents — with links that jump to
-/// the relevant full-list section. [onOpenSection] switches the hub's
-/// segmented control (1 = Entretien, 2 = Docs, 3 = Km).
+/// the relevant full list. Those links used to switch the hub's segmented
+/// control; the hub is gone, so they now either select a bottom-bar tab
+/// or push the section's own screen — see [_open].
 class OverviewSection extends ConsumerWidget {
-  const OverviewSection({
-    super.key,
-    required this.vehicleId,
-    required this.onOpenSection,
-  });
+  const OverviewSection({super.key, required this.vehicleId});
 
   final String vehicleId;
-  final ValueChanged<int> onOpenSection;
+
+  /// Échéances is a tab; the rest are screens reached from Plus, so the
+  /// digest pushes them directly rather than sending the user hunting.
+  void _openDue(WidgetRef ref) =>
+      ref.read(shellTabProvider.notifier).state = ShellTab.due;
+
+  void _push(BuildContext context, String title, Widget child) =>
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => SectionScreen(title: title, child: child),
+        ),
+      );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -48,8 +63,15 @@ class OverviewSection extends ConsumerWidget {
     // The km/month average lives on the mileage logs, not on the
     // predictions — reading it off `predictions.first` showed "+0 km/mois"
     // for any vehicle with no maintenance type configured.
-    final logs = ref.watch(mileageLogsProvider(vehicleId)).value ?? const [];
-    final kmPerMonth = PredictionService.measuredMonthlyKmAverage(logs);
+    // Loading is not the same as "nothing to measure". As a pushed screen
+    // this arrived with the caches already warm; as the first tab it does
+    // not, and announcing "moyenne à venir" while the logs are still in
+    // flight states a fact that isn't one.
+    final logsAsync = ref.watch(mileageLogsProvider(vehicleId));
+    final logsLoading = logsAsync.value == null;
+    final kmPerMonth = logsLoading
+        ? null
+        : PredictionService.measuredMonthlyKmAverage(logsAsync.value!);
 
     final topPreds = predictions.take(3).toList();
 
@@ -66,9 +88,11 @@ class OverviewSection extends ConsumerWidget {
         Center(
           child: KmGauge(
             currentKm: currentKm,
-            subtitle: kmPerMonth == null
-                ? 'moyenne mensuelle à venir'
-                : '+${kmPerMonth.round()} km / mois',
+            subtitle: logsLoading
+                ? null
+                : kmPerMonth == null
+                    ? 'moyenne mensuelle à venir'
+                    : '+${kmPerMonth.round()} km / mois',
             progress: topUrgency.clamp(0.0, 1.0),
           ),
         ),
@@ -83,12 +107,14 @@ class OverviewSection extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             TextButton.icon(
-              onPressed: () => onOpenSection(3),
+              onPressed: () => _push(
+                  context, 'Kilométrage', MileageSection(vehicleId: vehicleId)),
               icon: const Icon(Icons.show_chart, size: 18),
               label: const Text('Historique km'),
             ),
             TextButton.icon(
-              onPressed: () => onOpenSection(4),
+              onPressed: () => _push(
+                  context, 'Carburant', FuelSection(vehicleId: vehicleId)),
               icon: const Icon(Icons.local_gas_station, size: 18),
               label: const Text('Carburant'),
             ),
@@ -121,45 +147,62 @@ class OverviewSection extends ConsumerWidget {
             label: const Text("Voir l'historique"),
           ),
         ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => ReportsScreen(vehicleId: vehicleId)),
+            ),
+            icon: const Icon(Icons.query_stats, size: 18),
+            label: const Text('Rapports'),
+          ),
+        ),
         const SizedBox(height: 8),
         _SectionHeader(
           label: 'PROCHAINES ÉCHÉANCES',
-          onSeeAll: predictions.length > topPreds.length
-              ? () => onOpenSection(1)
-              : null,
+          onSeeAll:
+              predictions.length > topPreds.length ? () => _openDue(ref) : null,
         ),
         const SizedBox(height: 12),
         if (topPreds.isEmpty)
           _EmptyLine(
             text: 'Aucune échéance configurée.',
             actionLabel: 'Configurer',
-            onAction: () => onOpenSection(1),
+            onAction: () => _openDue(ref),
           )
         else
           ...topPreds.map((pr) => Padding(
                 padding: const EdgeInsets.only(bottom: 10),
                 child: MaintenanceCard(
                   prediction: pr,
-                  onTap: () => onOpenSection(1),
+                  onTap: () => _openDue(ref),
                 ),
               )),
         const SizedBox(height: 18),
         _SectionHeader(
           label: 'DOCUMENTS',
-          onSeeAll:
-              docs.length > topDocs.length ? () => onOpenSection(2) : null,
+          onSeeAll: docs.length > topDocs.length
+              ? () => _push(
+                  context, 'Documents', DocumentsSection(vehicleId: vehicleId))
+              : null,
         ),
         const SizedBox(height: 12),
         if (topDocs.isEmpty)
           _EmptyLine(
             text: 'Aucun document enregistré.',
             actionLabel: 'Ajouter',
-            onAction: () => onOpenSection(2),
+            onAction: () => _push(
+                context, 'Documents', DocumentsSection(vehicleId: vehicleId)),
           )
         else
           ...topDocs.map((d) => Padding(
                 padding: const EdgeInsets.only(bottom: 12),
-                child: DocumentCard(doc: d, onTap: () => onOpenSection(2)),
+                child: DocumentCard(
+                    doc: d,
+                    onTap: () => _push(context, 'Documents',
+                        DocumentsSection(vehicleId: vehicleId))),
               )),
       ],
     );

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants.dart';
 import '../../core/errors.dart';
 import '../../core/file_pick.dart';
+import '../../core/formatters.dart';
 import '../../core/theme.dart';
 import '../../models/garage.dart';
 import '../../models/maintenance_history.dart';
@@ -18,17 +19,19 @@ import '../../providers/vehicle_provider.dart';
 import '../files/file_viewer_screen.dart';
 import '../garages/garage_form_sheet.dart';
 
-/// Bottom sheet to log a repair/intervention (screen 07 "Réparation") or,
-/// with [isFuel], a fuel fill-up ("Plein") — same form, but fuel entries
-/// capture liters instead of a linked maintenance type.
+/// Bottom sheet to log one ledger row: an intervention, a fuel fill-up,
+/// or an expense. One form, three modes — they share date, cost, km and
+/// invoice, and differ only in what else they capture: a maintenance type
+/// and garage for an intervention, litres for a fill-up, a category for
+/// an expense.
 ///
 /// Pass [existing] to edit/delete it instead of creating a new one; its
-/// own [MaintenanceHistory.isFuel] then decides the form's mode.
+/// own [MaintenanceHistory.kind] then decides the mode.
 Future<void> showAddHistorySheet(
   BuildContext context,
   String vehicleId, {
   String defaultTitle = '',
-  bool isFuel = false,
+  HistoryEntryKind kind = HistoryEntryKind.maintenance,
   MaintenanceHistory? existing,
   String? defaultMaintenanceTypeId,
 }) {
@@ -43,7 +46,7 @@ Future<void> showAddHistorySheet(
     builder: (_) => _AddHistorySheet(
       vehicleId: vehicleId,
       defaultTitle: defaultTitle,
-      isFuel: isFuel,
+      kind: kind,
       existing: existing,
       defaultMaintenanceTypeId: defaultMaintenanceTypeId,
     ),
@@ -54,13 +57,13 @@ class _AddHistorySheet extends ConsumerStatefulWidget {
   const _AddHistorySheet({
     required this.vehicleId,
     required this.defaultTitle,
-    required this.isFuel,
+    required this.kind,
     this.existing,
     this.defaultMaintenanceTypeId,
   });
   final String vehicleId;
   final String defaultTitle;
-  final bool isFuel;
+  final HistoryEntryKind kind;
   final MaintenanceHistory? existing;
   final String? defaultMaintenanceTypeId;
 
@@ -82,6 +85,7 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
   late final _garage =
       TextEditingController(text: widget.existing?.garageName ?? '');
   late String? _garageId = widget.existing?.garageId;
+  late String _category = widget.existing?.category ?? ExpenseCategories.autre;
   late bool _isFullTank = widget.existing?.isFullTank ?? true;
   late DateTime _doneAt = widget.existing?.doneAt ?? DateTime.now();
   File? _newInvoice;
@@ -104,7 +108,22 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
   }
 
   bool get _isEdit => widget.existing != null;
-  bool get _isFuel => widget.existing?.isFuel ?? widget.isFuel;
+  HistoryEntryKind get _kind => widget.existing?.kind ?? widget.kind;
+  bool get _isFuel => _kind == HistoryEntryKind.fuel;
+  bool get _isExpense => _kind == HistoryEntryKind.expense;
+
+  /// "le plein" / "la dépense" / "l'intervention".
+  String _kindArticle() => switch (_kind) {
+        HistoryEntryKind.fuel => 'le ',
+        HistoryEntryKind.expense => 'la ',
+        HistoryEntryKind.maintenance => "l'",
+      };
+
+  String _kindNoun() => switch (_kind) {
+        HistoryEntryKind.fuel => 'plein',
+        HistoryEntryKind.expense => 'dépense',
+        HistoryEntryKind.maintenance => 'intervention',
+      };
 
   // (garage picker lives in [_GaragePicker] below)
 
@@ -165,7 +184,8 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
       final history = MaintenanceHistory(
         id: widget.existing?.id ?? '',
         vehicleId: widget.vehicleId,
-        maintenanceTypeId: _isFuel ? null : _maintenanceTypeId,
+        maintenanceTypeId:
+            _kind == HistoryEntryKind.maintenance ? _maintenanceTypeId : null,
         title: _title.text.trim(),
         km: int.tryParse(_km.text.trim()),
         cost: double.tryParse(_cost.text.trim().replaceAll(',', '.')),
@@ -173,7 +193,8 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
         garageId: garageId,
         doneAt: _doneAt,
         invoiceUrl: invoiceUrl,
-        isFuel: _isFuel,
+        kind: _kind,
+        category: _isExpense ? _category : null,
         isFullTank: _isFuel ? _isFullTank : true,
         liters: _isFuel
             ? double.tryParse(_liters.text.trim().replaceAll(',', '.'))
@@ -254,8 +275,8 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
           ),
           Text(
               _isEdit
-                  ? (_isFuel ? 'Modifier le plein' : "Modifier l'intervention")
-                  : (_isFuel ? 'Nouveau plein' : 'Nouvelle intervention'),
+                  ? 'Modifier ${_kindArticle()}${_kindNoun()}'
+                  : '${_isFuel ? 'Nouveau' : 'Nouvelle'} ${_kindNoun()}',
               style: TextStyle(
                   color: p.textPrimary,
                   fontSize: 18,
@@ -267,7 +288,7 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
             decoration: const InputDecoration(labelText: 'Titre'),
           ),
           const SizedBox(height: 12),
-          if (!_isFuel)
+          if (_kind == HistoryEntryKind.maintenance)
             Consumer(
               builder: (context, ref, _) {
                 final types = ref
@@ -298,6 +319,30 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
                 );
               },
             ),
+          if (_isExpense)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: DropdownButtonFormField<String>(
+                initialValue: _category,
+                decoration: const InputDecoration(labelText: 'Catégorie'),
+                dropdownColor: p.surface,
+                style: TextStyle(color: p.textPrimary),
+                items: ExpenseCategories.all
+                    .map((c) => DropdownMenuItem(
+                        value: c, child: Text(ExpenseCategories.label(c))))
+                    .toList(),
+                onChanged: (v) => setState(() {
+                  _category = v!;
+                  // The title is what shows in the timeline; default it to
+                  // the category rather than leaving the field empty.
+                  if (_title.text.trim().isEmpty ||
+                      ExpenseCategories.all.any(
+                          (c) => ExpenseCategories.label(c) == _title.text)) {
+                    _title.text = ExpenseCategories.label(v);
+                  }
+                }),
+              ),
+            ),
           Row(children: [
             Expanded(
               child: TextField(
@@ -316,8 +361,8 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
                 style: TextStyle(color: p.textPrimary),
-                decoration:
-                    const InputDecoration(labelText: 'Coût', suffixText: '€'),
+                decoration: InputDecoration(
+                    labelText: 'Coût', suffixText: Fmt.currencySuffix),
               ),
             ),
           ]),
@@ -348,7 +393,9 @@ class _AddHistorySheetState extends ConsumerState<_AddHistorySheet> {
             ),
           ],
           const SizedBox(height: 12),
-          if (_isFuel)
+          if (_isExpense)
+            const SizedBox.shrink()
+          else if (_isFuel)
             TextField(
               controller: _garage,
               style: TextStyle(color: p.textPrimary),

@@ -1,6 +1,6 @@
 import '../models/maintenance_history.dart';
 
-enum HistoryKind { all, maintenance, fuel }
+enum HistoryKind { all, maintenance, fuel, expense }
 
 enum HistoryPeriod { all, last12Months, thisYear }
 
@@ -53,9 +53,11 @@ class HistoryFilter {
     return items.where((h) {
       switch (kind) {
         case HistoryKind.maintenance:
-          if (h.isFuel) return false;
+          if (!h.isMaintenance) return false;
         case HistoryKind.fuel:
           if (!h.isFuel) return false;
+        case HistoryKind.expense:
+          if (!h.isExpense) return false;
         case HistoryKind.all:
           break;
       }
