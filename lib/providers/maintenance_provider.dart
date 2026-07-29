@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/constants.dart';
 import '../models/maintenance_history.dart';
 import '../models/maintenance_prediction.dart';
 import '../models/maintenance_type.dart';
 import '../services/prediction_service.dart';
+import 'garage_provider.dart';
 import 'service_providers.dart';
 import 'vehicle_provider.dart';
 
@@ -32,15 +34,23 @@ final predictionsProvider =
   final logs = await ref.watch(mileageLogsProvider(vehicleId).future);
   if (vehicle == null) return const [];
 
-  final kmPerMonth = PredictionService.monthlyKmAverage(logs);
+  final measured = PredictionService.measuredMonthlyKmAverage(logs);
+  final kmPerMonth = measured ?? Thresholds.fallbackKmPerMonth;
+  // Types that can't be forecast yet sort last: they carry urgency 0 but
+  // "unknown" is not the same as "fresh", so they shouldn't outrank a
+  // healthy échéance either.
   final preds = types
       .map((t) => PredictionService.predict(
             type: t,
             vehicle: vehicle,
             kmPerMonth: kmPerMonth,
+            kmPerMonthIsEstimated: measured == null,
           ))
       .toList()
-    ..sort((a, b) => b.urgency.compareTo(a.urgency));
+    ..sort((a, b) {
+      if (a.needsSetup != b.needsSetup) return a.needsSetup ? 1 : -1;
+      return b.urgency.compareTo(a.urgency);
+    });
   return preds;
 });
 
@@ -68,19 +78,55 @@ class MaintenanceController {
     _invalidate(vehicleId);
   }
 
+  /// Records the intervention and, if a km reading was entered, feeds it
+  /// into mileage_logs too — so the vehicle's current km (and the km/month
+  /// average used for predictions) stays centralized no matter which entry
+  /// point (entretien, carburant, or the dedicated km-update sheet) it came
+  /// from. The DB trigger only ever raises current_km (GREATEST), so a
+  /// back-filled reading from an older, lower-km intervention is safe.
   Future<void> addHistory(MaintenanceHistory h) async {
     await ref.read(supabaseServiceProvider).addHistory(h);
-    _invalidate(h.vehicleId);
-    ref.invalidate(maintenanceHistoryProvider(h.vehicleId));
+    if (h.km != null) {
+      await ref.read(vehiclesProvider.notifier).addMileage(
+            h.vehicleId,
+            h.km!,
+            note: h.title,
+          );
+    }
+    _invalidateHistory(h.vehicleId);
   }
 
-  Future<void> deleteHistory(String vehicleId, String id) async {
-    await ref.read(supabaseServiceProvider).deleteHistory(id);
-    ref.invalidate(maintenanceHistoryProvider(vehicleId));
+  /// Edits an existing intervention. Unlike [addHistory], this doesn't
+  /// touch mileage_logs — an edit is a correction to an already-recorded
+  /// event, not a new odometer reading, so it shouldn't add another log
+  /// entry (that already happened when the intervention was first saved).
+  Future<void> updateHistory(MaintenanceHistory h) async {
+    await ref.read(supabaseServiceProvider).updateHistory(h);
+    _invalidateHistory(h.vehicleId);
+  }
+
+  Future<void> deleteHistory(String vehicleId, String id,
+      {String? invoiceUrl}) async {
+    final service = ref.read(supabaseServiceProvider);
+    await service.deleteHistory(id);
+    // Nothing else points at the invoice, so leaving it behind would
+    // strand it in the bucket for good.
+    await service.deleteFile(Buckets.invoices, invoiceUrl);
+    _invalidateHistory(vehicleId);
   }
 
   void _invalidate(String vehicleId) {
     ref.invalidate(maintenanceTypesProvider(vehicleId));
     ref.invalidate(predictionsProvider(vehicleId));
+  }
+
+  /// Anything that touches an intervention also moves the linked type's
+  /// anchor (recomputed by the DB trigger) and the per-garage intervention
+  /// counts, so those caches have to go too. deleteHistory used to refresh
+  /// only the history list, leaving stale predictions behind.
+  void _invalidateHistory(String vehicleId) {
+    _invalidate(vehicleId);
+    ref.invalidate(maintenanceHistoryProvider(vehicleId));
+    ref.invalidate(garageCountsProvider);
   }
 }

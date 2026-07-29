@@ -13,6 +13,7 @@ import '../../widgets/async_value_view.dart';
 final _readIdsProvider = StateProvider<Set<String>>((ref) => {});
 
 /// Notifications (screen 08): "Aujourd'hui" / "Cette semaine" groups.
+/// Pushed from the Accueil header bell (and the priority-alert strip).
 class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
 
@@ -22,20 +23,21 @@ class NotificationsScreen extends ConsumerWidget {
     final remindersAsync = ref.watch(remindersProvider);
     final readIds = ref.watch(_readIdsProvider);
 
-    return Container(
-      color: p.background,
-      child: SafeArea(
+    return Scaffold(
+      backgroundColor: p.background,
+      body: SafeArea(
         bottom: false,
         child: AsyncValueView(
           value: remindersAsync,
+          onRetry: () => ref.invalidate(remindersProvider),
           data: (reminders) {
             if (reminders.isEmpty) {
               return ListView(
-                padding: const EdgeInsets.fromLTRB(20, 12, 20, 130),
-                children: [
-                  Text('Rappels', style: AppText.screenTitle(p.textPrimary)),
-                  const SizedBox(height: 60),
-                  const EmptyState(
+                padding: const EdgeInsets.fromLTRB(8, 4, 20, 130),
+                children: const [
+                  _Header(),
+                  SizedBox(height: 60),
+                  EmptyState(
                     icon: Icons.notifications_none,
                     message: 'Aucun rappel pour le moment.',
                   ),
@@ -59,42 +61,58 @@ class NotificationsScreen extends ConsumerWidget {
             }
 
             return ListView(
-              padding: const EdgeInsets.fromLTRB(20, 12, 20, 130),
+              padding: const EdgeInsets.fromLTRB(8, 4, 20, 130),
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Rappels', style: AppText.screenTitle(p.textPrimary)),
-                    TextButton(
-                      onPressed: () => ref.read(_readIdsProvider.notifier).state =
-                          reminders.map((r) => r.id).toSet(),
-                      child: const Text('Tout lire'),
-                    ),
-                  ],
+                _Header(
+                  onReadAll: () => ref.read(_readIdsProvider.notifier).state =
+                      reminders.map((r) => r.id).toSet(),
                 ),
                 const SizedBox(height: 12),
                 if (today.isNotEmpty) ...[
-                  _GroupLabel("AUJOURD'HUI"),
-                  ...today.map((r) => _ReminderTile(
-                      reminder: r, read: readIds.contains(r.id))),
+                  const _GroupLabel("AUJOURD'HUI"),
+                  ...today.map((r) =>
+                      _ReminderTile(reminder: r, read: readIds.contains(r.id))),
                   const SizedBox(height: 22),
                 ],
                 if (week.isNotEmpty) ...[
-                  _GroupLabel('CETTE SEMAINE'),
-                  ...week.map((r) => _ReminderTile(
-                      reminder: r, read: readIds.contains(r.id))),
+                  const _GroupLabel('CETTE SEMAINE'),
+                  ...week.map((r) =>
+                      _ReminderTile(reminder: r, read: readIds.contains(r.id))),
                   const SizedBox(height: 22),
                 ],
                 if (later.isNotEmpty) ...[
-                  _GroupLabel('PLUS TARD'),
-                  ...later.map((r) => _ReminderTile(
-                      reminder: r, read: readIds.contains(r.id))),
+                  const _GroupLabel('PLUS TARD'),
+                  ...later.map((r) =>
+                      _ReminderTile(reminder: r, read: readIds.contains(r.id))),
                 ],
               ],
             );
           },
         ),
       ),
+    );
+  }
+}
+
+class _Header extends StatelessWidget {
+  const _Header({this.onReadAll});
+  final VoidCallback? onReadAll;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    return Row(
+      children: [
+        IconButton(
+          icon: Icon(Icons.arrow_back, color: p.textSecondary),
+          onPressed: () => Navigator.pop(context),
+        ),
+        Expanded(
+          child: Text('Rappels', style: AppText.screenTitle(p.textPrimary)),
+        ),
+        if (onReadAll != null)
+          TextButton(onPressed: onReadAll, child: const Text('Tout lire')),
+      ],
     );
   }
 }
@@ -107,7 +125,8 @@ class _GroupLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 12),
-      child: Text(text, style: AppText.sectionLabel(context.palette.textSecondary)),
+      child: Text(text,
+          style: AppText.sectionLabel(context.palette.textSecondary)),
     );
   }
 }
@@ -131,7 +150,8 @@ class _ReminderTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: read ? p.surface : color.withValues(alpha: .08),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: read ? p.border : color.withValues(alpha: .3)),
+        border:
+            Border.all(color: read ? p.border : color.withValues(alpha: .3)),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,

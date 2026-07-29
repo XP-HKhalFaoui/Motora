@@ -1,5 +1,9 @@
 name: carnet_auto
-description: "Carnet Auto — suivi d'entretien automobile (Flutter + Supabase)."
+# The Dart package name stays `carnet_auto`: renaming it would rewrite
+# every `package:carnet_auto/...` import for no user-visible gain. The
+# names users actually see — launcher label, bundle display name, in-app
+# wordmark — are all Motora.
+description: "Motora — suivi d'entretien automobile (Flutter + Supabase)."
 publish_to: "none"
 version: 1.0.0+1
 
@@ -8,6 +12,10 @@ environment:
 
 dependencies:
   flutter:
+    sdk: flutter
+  # Supplies the French strings for Material's own widgets (date picker
+  # buttons, text-selection menu). The app's own copy is hardcoded French.
+  flutter_localizations:
     sdk: flutter
   cupertino_icons: ^1.0.6
 
@@ -28,9 +36,18 @@ dependencies:
   # Charts
   fl_chart: ^0.68.0
 
+  # Carnet d'entretien PDF export (printing also handles the share sheet)
+  pdf: ^3.11.1
+  printing: ^5.13.2
+
   # Utils
-  intl: ^0.19.0
+  # Pinned by flutter_localizations, which requires ^0.20.2.
+  intl: ^0.20.2
   shared_preferences: ^2.3.2
+  url_launcher: ^6.3.1
+  # Version shown in Réglages > À propos, read from the build rather than
+  # duplicated as a constant that would drift from pubspec.
+  package_info_plus: ^8.0.2
 
   # Design system
   google_fonts: ^6.2.1
@@ -40,5 +57,38 @@ dev_dependencies:
     sdk: flutter
   flutter_lints: ^4.0.0
 
+  # Icon / splash generation (build-time only, not shipped)
+  flutter_launcher_icons: ^0.14.1
+  flutter_native_splash: ^2.4.1
+
 flutter:
   uses-material-design: true
+
+# Source artwork lives in assets/icon/, produced by tool/generate_icon.py.
+# It is deliberately not declared under `flutter: assets:` — both
+# generators read it from disk at build time, so bundling it would only
+# add dead weight to the app.
+# Regenerate the platform icons with:
+#   dart run flutter_launcher_icons
+flutter_launcher_icons:
+  image_path: "assets/icon/icon.png"
+  android: true
+  ios: true
+  remove_alpha_ios: true
+  # Android adaptive: the launcher masks the foreground to its own shape,
+  # so the mark is drawn smaller and the palette background fills behind.
+  adaptive_icon_background: "#0E1520"
+  adaptive_icon_foreground: "assets/icon/icon_foreground.png"
+
+# Regenerate with:
+#   dart run flutter_native_splash:create
+flutter_native_splash:
+  color: "#0E1520"
+  color_dark: "#0E1520"
+  image: "assets/icon/splash.png"
+  image_dark: "assets/icon/splash.png"
+  android_12:
+    color: "#0E1520"
+    color_dark: "#0E1520"
+    image: "assets/icon/splash.png"
+    image_dark: "assets/icon/splash.png"

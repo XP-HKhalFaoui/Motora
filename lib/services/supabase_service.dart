@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/supabase_client.dart';
 import '../models/admin_document.dart';
+import '../core/storage_paths.dart';
+import '../models/garage.dart';
 import '../models/maintenance_history.dart';
 import '../models/maintenance_type.dart';
 import '../models/mileage_log.dart';
@@ -17,10 +19,8 @@ class SupabaseService {
   // ---------------- Vehicles ----------------------------------------
 
   Future<List<Vehicle>> fetchVehicles() async {
-    final rows = await _c
-        .from('vehicles')
-        .select()
-        .order('created_at', ascending: true);
+    final rows =
+        await _c.from('vehicles').select().order('created_at', ascending: true);
     return (rows as List).map((e) => Vehicle.fromJson(e)).toList();
   }
 
@@ -52,11 +52,17 @@ class SupabaseService {
   }
 
   /// Insert a reading. A DB trigger keeps vehicles.current_km in sync.
+  /// A [photoUrl] marks the reading as "certifié" rather than "déclaratif".
   Future<MileageLog> addMileageLog(String vehicleId, int km,
-      {String? note}) async {
+      {String? note, String? photoUrl}) async {
     final row = await _c
         .from('mileage_logs')
-        .insert({'vehicle_id': vehicleId, 'km': km, if (note != null) 'note': note})
+        .insert({
+          'vehicle_id': vehicleId,
+          'km': km,
+          if (note != null) 'note': note,
+          if (photoUrl != null) 'photo_url': photoUrl,
+        })
         .select()
         .single();
     return MileageLog.fromJson(row);
@@ -108,25 +114,69 @@ class SupabaseService {
     return (rows as List).map((e) => MaintenanceHistory.fromJson(e)).toList();
   }
 
+  /// Records an intervention.
+  ///
+  /// The linked maintenance type's `last_done_km` / `last_done_date` are
+  /// recomputed from the history by a DB trigger (migration 0005), not
+  /// written here: a second client write was neither atomic nor correct
+  /// when a more recent intervention already existed.
   Future<MaintenanceHistory> addHistory(MaintenanceHistory h) async {
     final row = await _c
         .from('maintenance_history')
         .insert(h.toInsert())
         .select()
         .single();
+    return MaintenanceHistory.fromJson(row);
+  }
 
-    // Advance the linked maintenance type's "last done" markers.
-    if (h.maintenanceTypeId != null) {
-      await _c.from('maintenance_types').update({
-        'last_done_km': h.km,
-        'last_done_date': h.doneAt.toIso8601String(),
-      }).eq('id', h.maintenanceTypeId!);
-    }
+  Future<MaintenanceHistory> updateHistory(MaintenanceHistory h) async {
+    final row = await _c
+        .from('maintenance_history')
+        .update(h.toInsert())
+        .eq('id', h.id)
+        .select()
+        .single();
     return MaintenanceHistory.fromJson(row);
   }
 
   Future<void> deleteHistory(String id) async {
     await _c.from('maintenance_history').delete().eq('id', id);
+  }
+
+  // ---------------- Garages ------------------------------------------
+
+  Future<List<Garage>> fetchGarages() async {
+    final rows =
+        await _c.from('garages').select().order('name', ascending: true);
+    return (rows as List).map((e) => Garage.fromJson(e)).toList();
+  }
+
+  Future<Garage> createGarage(Garage g) async {
+    final data = g.toInsert()..['user_id'] = Db.uid;
+    final row = await _c.from('garages').insert(data).select().single();
+    return Garage.fromJson(row);
+  }
+
+  Future<Garage> updateGarage(String id, Map<String, dynamic> patch) async {
+    final row =
+        await _c.from('garages').update(patch).eq('id', id).select().single();
+    return Garage.fromJson(row);
+  }
+
+  Future<void> deleteGarage(String id) async {
+    await _c.from('garages').delete().eq('id', id);
+  }
+
+  /// Number of interventions linked to each garage across all the user's
+  /// vehicles (RLS scopes the rows to the current user). Keyed by garage_id.
+  Future<Map<String, int>> fetchGarageInterventionCounts() async {
+    final rows = await _c.from('maintenance_history').select('garage_id');
+    final counts = <String, int>{};
+    for (final r in (rows as List)) {
+      final id = r['garage_id'] as String?;
+      if (id != null) counts[id] = (counts[id] ?? 0) + 1;
+    }
+    return counts;
   }
 
   // ---------------- Admin documents ----------------------------------
@@ -141,9 +191,16 @@ class SupabaseService {
   }
 
   Future<AdminDocument> addDocument(AdminDocument d) async {
+    final row =
+        await _c.from('admin_documents').insert(d.toInsert()).select().single();
+    return AdminDocument.fromJson(row);
+  }
+
+  Future<AdminDocument> updateDocument(AdminDocument d) async {
     final row = await _c
         .from('admin_documents')
-        .insert(d.toInsert())
+        .update(d.toInsert())
+        .eq('id', d.id)
         .select()
         .single();
     return AdminDocument.fromJson(row);
@@ -155,7 +212,14 @@ class SupabaseService {
 
   // ---------------- Storage ------------------------------------------
 
-  /// Uploads [file] to <bucket>/<uid>/<filename> and returns a signed URL.
+  /// Uploads [file] to `<bucket>/<uid>/<filename>` and returns the object
+  /// **path**, which is what gets persisted.
+  ///
+  /// It used to return a signed URL valid for a year and store that. The
+  /// buckets are private, so those URLs stop working after 365 days and
+  /// nothing anywhere refreshed them: every photo, invoice and scan in the
+  /// app would silently break, permanently. The path never expires, and
+  /// [resolveUrl] mints a short-lived URL at display time instead.
   Future<String> uploadFile({
     required String bucket,
     required File file,
@@ -167,7 +231,26 @@ class SupabaseService {
           file,
           fileOptions: const FileOptions(upsert: true),
         );
-    // Signed URL valid for a year — buckets are private.
-    return _c.storage.from(bucket).createSignedUrl(path, 60 * 60 * 24 * 365);
+    return path;
+  }
+
+  /// Turns a stored reference into a URL usable right now.
+  ///
+  /// Rows written before the change above hold a full signed URL rather
+  /// than a path; those are passed through unchanged. They may already
+  /// have expired, but re-signing them is impossible — the path can be
+  /// recovered from the URL, which is what [_pathFromLegacyUrl] does.
+  Future<String?> resolveUrl(String bucket, String? reference) async {
+    final path = storagePathFor(bucket, reference);
+    // Unparseable legacy URL: hand it back as-is rather than showing
+    // nothing — it may still be within its original year.
+    if (path == null) return reference;
+    return _c.storage.from(bucket).createSignedUrl(path, 60 * 60);
+  }
+
+  Future<void> deleteFile(String bucket, String? reference) async {
+    final path = storagePathFor(bucket, reference);
+    if (path == null) return;
+    await _c.storage.from(bucket).remove([path]);
   }
 }

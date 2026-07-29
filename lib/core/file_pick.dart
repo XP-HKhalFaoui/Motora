@@ -10,14 +10,15 @@ import 'theme.dart';
 ///
 /// Presents a small bottom sheet and returns the chosen [File], or `null`
 /// if the user dismissed it. Used for invoices and administrative scans.
-Future<File?> pickAttachment(BuildContext context) async {
+Future<File?> pickAttachment(BuildContext context,
+    {bool allowPdf = true}) async {
   final source = await showModalBottomSheet<_Source>(
     context: context,
     backgroundColor: context.palette.surface,
     shape: const RoundedRectangleBorder(
       borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
     ),
-    builder: (_) => const _SourcePicker(),
+    builder: (_) => _SourcePicker(allowPdf: allowPdf),
   );
   if (source == null) return null;
 
@@ -26,9 +27,8 @@ Future<File?> pickAttachment(BuildContext context) async {
     case _Source.gallery:
       final picker = ImagePicker();
       final shot = await picker.pickImage(
-        source: source == _Source.camera
-            ? ImageSource.camera
-            : ImageSource.gallery,
+        source:
+            source == _Source.camera ? ImageSource.camera : ImageSource.gallery,
         imageQuality: 80,
         maxWidth: 2000,
       );
@@ -43,10 +43,16 @@ Future<File?> pickAttachment(BuildContext context) async {
   }
 }
 
+/// Convenience wrapper for photo-only pickers (e.g. a vehicle photo),
+/// where a PDF option wouldn't make sense.
+Future<File?> pickImage(BuildContext context) =>
+    pickAttachment(context, allowPdf: false);
+
 enum _Source { camera, gallery, pdf }
 
 class _SourcePicker extends StatelessWidget {
-  const _SourcePicker();
+  const _SourcePicker({required this.allowPdf});
+  final bool allowPdf;
 
   @override
   Widget build(BuildContext context) {
@@ -66,11 +72,12 @@ class _SourcePicker extends StatelessWidget {
             title: const Text('Choisir dans la galerie'),
             onTap: () => Navigator.pop(context, _Source.gallery),
           ),
-          ListTile(
-            leading: Icon(Icons.picture_as_pdf_outlined, color: accent),
-            title: const Text('Sélectionner un PDF'),
-            onTap: () => Navigator.pop(context, _Source.pdf),
-          ),
+          if (allowPdf)
+            ListTile(
+              leading: Icon(Icons.picture_as_pdf_outlined, color: accent),
+              title: const Text('Sélectionner un PDF'),
+              onTap: () => Navigator.pop(context, _Source.pdf),
+            ),
           const SizedBox(height: 8),
         ],
       ),

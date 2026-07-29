@@ -1,4 +1,4 @@
-package com.example.carnet_auto
+package com.motora.app
 
 import io.flutter.embedding.android.FlutterActivity
 

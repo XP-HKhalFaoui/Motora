@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/constants.dart';
 import '../models/admin_document.dart';
 import 'service_providers.dart';
 
@@ -21,8 +22,17 @@ class DocumentController {
     ref.invalidate(documentsProvider(d.vehicleId));
   }
 
-  Future<void> remove(String vehicleId, String id) async {
-    await ref.read(supabaseServiceProvider).deleteDocument(id);
+  Future<void> update(AdminDocument d) async {
+    await ref.read(supabaseServiceProvider).updateDocument(d);
+    ref.invalidate(documentsProvider(d.vehicleId));
+  }
+
+  /// Removes the row *and* its scan. Deleting only the row would strand
+  /// the object in the bucket forever — nothing else references it.
+  Future<void> remove(String vehicleId, String id, {String? fileUrl}) async {
+    final service = ref.read(supabaseServiceProvider);
+    await service.deleteDocument(id);
+    await service.deleteFile(Buckets.adminDocuments, fileUrl);
     ref.invalidate(documentsProvider(vehicleId));
   }
 }

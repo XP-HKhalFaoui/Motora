@@ -1,13 +1,20 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/constants.dart';
+import '../../core/errors.dart';
+import '../../core/file_pick.dart';
 import '../../core/formatters.dart';
 import '../../core/theme.dart';
+import '../../providers/service_providers.dart';
 import '../../providers/vehicle_provider.dart';
 
 /// Bottom sheet to record a new odometer reading (also reachable from the
-/// Ajout rapide grid — screen 07 "Relevé km").
+/// Ajout rapide grid — screen 07 "Relevé km"). Attaching a photo of the
+/// odometer marks the reading "certifié" instead of "déclaratif".
 Future<void> showUpdateKmSheet(BuildContext context, String vehicleId) {
   final p = context.palette;
   return showModalBottomSheet(
@@ -21,17 +28,10 @@ Future<void> showUpdateKmSheet(BuildContext context, String vehicleId) {
   );
 }
 
-class _UpdateKmSheet extends ConsumerStatefulWidget {
-  const _UpdateKmSheet({required this.vehicleId});
-  final String vehicleId;
-
-  @override
-  ConsumerState<_UpdateKmSheet> createState() => _UpdateKmSheetState();
-}
-
 class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
   final _km = TextEditingController();
   final _note = TextEditingController();
+  File? _photo;
   bool _saving = false;
   String? _error;
 
@@ -40,6 +40,11 @@ class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
     _km.dispose();
     _note.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickPhoto() async {
+    final file = await pickImage(context);
+    if (file != null) setState(() => _photo = file);
   }
 
   Future<void> _save(int currentKm) async {
@@ -58,16 +63,25 @@ class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
       _error = null;
     });
     try {
+      String? photoUrl;
+      if (_photo != null) {
+        photoUrl = await ref.read(supabaseServiceProvider).uploadFile(
+              bucket: Buckets.mileagePhotos,
+              file: _photo!,
+              filename: buildUploadName('mileage-${widget.vehicleId}', _photo!),
+            );
+      }
       await ref.read(vehiclesProvider.notifier).addMileage(
             widget.vehicleId,
             value,
             note: _note.text.trim().isEmpty ? null : _note.text.trim(),
+            photoUrl: photoUrl,
           );
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
         setState(() {
-          _error = 'Erreur : $e';
+          _error = friendlyError(e);
           _saving = false;
         });
       }
@@ -80,7 +94,7 @@ class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
     final vehicle = ref.watch(vehicleByIdProvider(widget.vehicleId));
     final currentKm = vehicle?.currentKm ?? 0;
 
-    return Padding(
+    return SingleChildScrollView(
       padding: EdgeInsets.only(
         left: 20,
         right: 20,
@@ -132,6 +146,16 @@ class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
               prefixIcon: Icon(Icons.notes, color: p.textMuted),
             ),
           ),
+          const SizedBox(height: 12),
+          OutlinedButton.icon(
+            onPressed: _pickPhoto,
+            icon: Icon(
+                _photo == null ? Icons.camera_alt_outlined : Icons.check_circle,
+                color: _photo == null ? p.textMuted : p.ok),
+            label: Text(_photo == null
+                ? 'Photo du compteur (certifie le relevé)'
+                : 'Photo ajoutée — relevé certifié'),
+          ),
           if (_error != null) ...[
             const SizedBox(height: 12),
             Text(_error!, style: TextStyle(color: p.danger)),
@@ -140,11 +164,11 @@ class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
           ElevatedButton.icon(
             onPressed: _saving ? null : () => _save(currentKm),
             icon: _saving
-                ? const SizedBox(
+                ? SizedBox(
                     height: 18,
                     width: 18,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white))
+                        strokeWidth: 2, color: p.onPrimary))
                 : const Icon(Icons.check),
             label: const Text('Enregistrer'),
           ),
@@ -152,4 +176,12 @@ class _UpdateKmSheetState extends ConsumerState<_UpdateKmSheet> {
       ),
     );
   }
+}
+
+class _UpdateKmSheet extends ConsumerStatefulWidget {
+  const _UpdateKmSheet({required this.vehicleId});
+  final String vehicleId;
+
+  @override
+  ConsumerState<_UpdateKmSheet> createState() => _UpdateKmSheetState();
 }

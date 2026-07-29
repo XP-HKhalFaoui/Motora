@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_text.dart';
+import '../../core/errors.dart';
 import '../../core/theme.dart';
 import '../../models/vehicle.dart';
 import '../../providers/auth_provider.dart';
+import '../../providers/session_provider.dart';
 import '../../providers/settings_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../../widgets/async_value_view.dart';
+import '../garages/garages_screen.dart';
 import '../home/vehicle_form_screen.dart';
 
 /// Paramètres (screen 09): profile, vehicles, alert thresholds,
@@ -27,6 +30,7 @@ class SettingsScreen extends ConsumerWidget {
       appBar: AppBar(title: const Text('Paramètres')),
       body: AsyncValueView(
         value: settingsAsync,
+        onRetry: () => ref.invalidate(settingsProvider),
         data: (settings) => ListView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 32),
           children: [
@@ -70,17 +74,21 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: 22),
-            _SectionLabel('VÉHICULES'),
+            const _SectionLabel('VÉHICULES'),
             _Group(children: [
               ...vehicles.map((v) => _Row(
                     icon: Icons.directions_car,
                     label: v.name,
                     trailing: v.plateNumber ?? '',
                     trailingAction: IconButton(
-                      icon: Icon(Icons.delete_outline, size: 20, color: p.danger),
+                      icon:
+                          Icon(Icons.delete_outline, size: 20, color: p.danger),
+                      tooltip: 'Supprimer ${v.name}',
                       visualDensity: VisualDensity.compact,
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
+                      // The 48dp minimum was explicitly stripped here,
+                      // leaving a destructive action on a ~20dp target.
+                      constraints:
+                          const BoxConstraints(minWidth: 48, minHeight: 48),
                       onPressed: () => _confirmDeleteVehicle(context, ref, v),
                     ),
                     onTap: () => Navigator.push(
@@ -101,15 +109,27 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ]),
             const SizedBox(height: 22),
-            _SectionLabel('ALERTES & SEUILS'),
+            const _SectionLabel('GARAGES'),
+            _Group(children: [
+              _Row(
+                icon: Icons.store_mall_directory,
+                label: 'Mes garages',
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const GaragesScreen()),
+                ),
+              ),
+            ]),
+            const SizedBox(height: 22),
+            const _SectionLabel('ALERTES & SEUILS'),
             _Group(children: [
               _ValueRow(
                 label: 'Seuil kilométrique',
                 sublabel: 'Alerter sous ce reste',
                 value: '${settings.kmAlertThreshold} km',
                 onTap: () async {
-                  final v = await _promptNumber(
-                      context, 'Seuil kilométrique (km)', settings.kmAlertThreshold);
+                  final v = await _promptNumber(context,
+                      'Seuil kilométrique (km)', settings.kmAlertThreshold);
                   if (v != null) {
                     await ref.read(settingsProvider.notifier).setKmThreshold(v);
                   }
@@ -120,10 +140,12 @@ class SettingsScreen extends ConsumerWidget {
                 sublabel: 'Papiers & visites',
                 value: '${settings.daysAlertThreshold} jours',
                 onTap: () async {
-                  final v = await _promptNumber(context, 'Seuil échéance (jours)',
-                      settings.daysAlertThreshold);
+                  final v = await _promptNumber(context,
+                      'Seuil échéance (jours)', settings.daysAlertThreshold);
                   if (v != null) {
-                    await ref.read(settingsProvider.notifier).setDaysThreshold(v);
+                    await ref
+                        .read(settingsProvider.notifier)
+                        .setDaysThreshold(v);
                   }
                 },
               ),
@@ -135,32 +157,73 @@ class SettingsScreen extends ConsumerWidget {
               ),
             ]),
             const SizedBox(height: 22),
-            _SectionLabel('PRÉFÉRENCES'),
+            const _SectionLabel('PRÉFÉRENCES'),
             _Group(children: [
-              _UnitRow(
-                unit: settings.distanceUnit,
-                onChanged: (u) =>
-                    ref.read(settingsProvider.notifier).setDistanceUnit(u),
+              _SegmentRow<ThemeMode>(
+                label: 'Thème',
+                value: settings.themeMode,
+                options: const {
+                  ThemeMode.system: 'Système',
+                  ThemeMode.light: 'Clair',
+                  ThemeMode.dark: 'Sombre',
+                },
+                onChanged: (m) =>
+                    ref.read(settingsProvider.notifier).setThemeMode(m),
               ),
-              _SwitchRow(
-                label: 'Thème sombre',
-                value: settings.themeMode == ThemeMode.dark,
-                onChanged: (v) =>
-                    ref.read(settingsProvider.notifier).toggleDarkMode(v),
+            ]),
+            const SizedBox(height: 22),
+            const _SectionLabel('À PROPOS'),
+            _Group(children: [
+              _ValueRow(
+                label: 'Version',
+                sublabel: 'Motora',
+                value: ref.watch(appVersionProvider).value ?? '…',
+                onTap: null,
               ),
             ]),
             const SizedBox(height: 26),
             OutlinedButton.icon(
-              onPressed: () => ref.read(authControllerProvider).signOut(),
+              onPressed: () => ref.read(sessionControllerProvider).signOut(),
               icon: Icon(Icons.logout, color: p.danger),
               label: Text('Se déconnecter', style: TextStyle(color: p.danger)),
               style: OutlinedButton.styleFrom(
                   side: BorderSide(color: p.danger.withValues(alpha: .3))),
             ),
+            const SizedBox(height: 10),
+            TextButton(
+              onPressed: () => _confirmDeleteAccount(context, ref),
+              child: Text('Supprimer mon compte',
+                  style: TextStyle(
+                      color: p.textMuted,
+                      decoration: TextDecoration.underline,
+                      decorationColor: p.textMuted)),
+            ),
           ],
         ),
       ),
     );
+  }
+
+  /// Account deletion is irreversible and server-side, so it asks for the
+  /// word to be typed rather than relying on a single tap.
+  Future<void> _confirmDeleteAccount(
+      BuildContext context, WidgetRef ref) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => const _DeleteAccountDialog(),
+    );
+    if (confirmed != true || !context.mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    try {
+      await ref.read(sessionControllerProvider).deleteAccount();
+      // _AuthGate swaps to the login screen on its own once the session
+      // is gone; this just leaves the settings page behind it.
+      navigator.popUntil((r) => r.isFirst);
+    } catch (e) {
+      messenger.showSnackBar(SnackBar(content: Text(friendlyError(e))));
+    }
   }
 
   Future<void> _confirmDeleteVehicle(
@@ -208,7 +271,8 @@ class SettingsScreen extends ConsumerWidget {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('Annuler')),
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Annuler')),
           TextButton(
             onPressed: () =>
                 Navigator.pop(ctx, int.tryParse(controller.text.trim())),
@@ -228,7 +292,8 @@ class _SectionLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Text(text, style: AppText.sectionLabel(context.palette.textSecondary)),
+      child: Text(text,
+          style: AppText.sectionLabel(context.palette.textSecondary)),
     );
   }
 }
@@ -316,6 +381,74 @@ class _Row extends StatelessWidget {
   }
 }
 
+/// Confirms account deletion by requiring the word to be typed out.
+class _DeleteAccountDialog extends StatefulWidget {
+  const _DeleteAccountDialog();
+
+  @override
+  State<_DeleteAccountDialog> createState() => _DeleteAccountDialogState();
+}
+
+class _DeleteAccountDialogState extends State<_DeleteAccountDialog> {
+  static const _word = 'SUPPRIMER';
+  final _controller = TextEditingController();
+  var _busy = false;
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.palette;
+    final matches = _controller.text.trim().toUpperCase() == _word;
+
+    return AlertDialog(
+      title: const Text('Supprimer votre compte ?'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            'Vos véhicules, entretiens, relevés, documents, garages et '
+            'fichiers seront définitivement effacés. Cette action est '
+            'irréversible et ne peut pas être annulée.',
+          ),
+          const SizedBox(height: 16),
+          Text('Tapez « $_word » pour confirmer.',
+              style: TextStyle(color: p.textSecondary, fontSize: 13)),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.characters,
+            onChanged: (_) => setState(() {}),
+            decoration: const InputDecoration(hintText: _word),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(
+          onPressed: _busy ? null : () => Navigator.pop(context, false),
+          child: const Text('Annuler'),
+        ),
+        TextButton(
+          onPressed: matches && !_busy
+              ? () {
+                  setState(() => _busy = true);
+                  Navigator.pop(context, true);
+                }
+              : null,
+          child: Text('Supprimer définitivement',
+              style: TextStyle(color: matches ? p.danger : p.textMuted)),
+        ),
+      ],
+    );
+  }
+}
+
 class _ValueRow extends StatelessWidget {
   const _ValueRow({
     required this.label,
@@ -359,8 +492,7 @@ class _ValueRow extends StatelessWidget {
                 color: p.background,
                 borderRadius: BorderRadius.circular(9),
               ),
-              child: Text(value,
-                  style: AppText.technical(p.primary, size: 14)),
+              child: Text(value, style: AppText.technical(p.primary, size: 14)),
             ),
           ],
         ),
@@ -370,7 +502,8 @@ class _ValueRow extends StatelessWidget {
 }
 
 class _SwitchRow extends StatelessWidget {
-  const _SwitchRow({required this.label, required this.value, required this.onChanged});
+  const _SwitchRow(
+      {required this.label, required this.value, required this.onChanged});
   final String label;
   final bool value;
   final ValueChanged<bool> onChanged;
@@ -392,7 +525,7 @@ class _SwitchRow extends StatelessWidget {
           Switch(
             value: value,
             onChanged: onChanged,
-            activeColor: p.primary,
+            activeThumbColor: p.primary,
           ),
         ],
       ),
@@ -400,20 +533,29 @@ class _SwitchRow extends StatelessWidget {
   }
 }
 
-class _UnitRow extends StatelessWidget {
-  const _UnitRow({required this.unit, required this.onChanged});
-  final DistanceUnit unit;
-  final ValueChanged<DistanceUnit> onChanged;
+/// A labelled row of mutually-exclusive pill options (unit, theme…).
+class _SegmentRow<T> extends StatelessWidget {
+  const _SegmentRow({
+    required this.label,
+    required this.value,
+    required this.options,
+    required this.onChanged,
+  });
+
+  final String label;
+  final T value;
+  final Map<T, String> options;
+  final ValueChanged<T> onChanged;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 13),
+      padding: const EdgeInsets.symmetric(vertical: 10),
       child: Row(
         children: [
           Expanded(
-            child: Text('Unité de distance',
+            child: Text(label,
                 style: TextStyle(
                     color: p.textPrimary,
                     fontSize: 15,
@@ -426,9 +568,10 @@ class _UnitRow extends StatelessWidget {
               borderRadius: BorderRadius.circular(9),
             ),
             child: Row(
+              mainAxisSize: MainAxisSize.min,
               children: [
-                _unitTab(context, 'km', DistanceUnit.km),
-                _unitTab(context, 'miles', DistanceUnit.miles),
+                for (final entry in options.entries)
+                  _tab(context, entry.value, entry.key),
               ],
             ),
           ),
@@ -437,22 +580,32 @@ class _UnitRow extends StatelessWidget {
     );
   }
 
-  Widget _unitTab(BuildContext context, String label, DistanceUnit value) {
+  Widget _tab(BuildContext context, String label, T optionValue) {
     final p = context.palette;
-    final active = unit == value;
-    return GestureDetector(
-      onTap: () => onChanged(value),
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-        decoration: BoxDecoration(
-          color: active ? p.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(7),
+    final active = value == optionValue;
+    return Semantics(
+      selected: active,
+      button: true,
+      label: label,
+      child: InkWell(
+        onTap: () => onChanged(optionValue),
+        borderRadius: BorderRadius.circular(7),
+        child: Container(
+          // 44dp min height keeps the pill a usable tap target; the old
+          // 5px vertical padding made it about 27dp.
+          constraints: const BoxConstraints(minHeight: 44),
+          alignment: Alignment.center,
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: active ? p.primary : Colors.transparent,
+            borderRadius: BorderRadius.circular(7),
+          ),
+          child: Text(label,
+              style: TextStyle(
+                  color: active ? p.onPrimary : p.textSecondary,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700)),
         ),
-        child: Text(label,
-            style: TextStyle(
-                color: active ? Colors.white : p.textSecondary,
-                fontSize: 12,
-                fontWeight: FontWeight.w700)),
       ),
     );
   }

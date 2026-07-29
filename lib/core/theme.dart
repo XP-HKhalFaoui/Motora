@@ -8,12 +8,12 @@ class AppPalette extends ThemeExtension<AppPalette> {
     required this.background,
     required this.surface,
     required this.surfaceElevated,
-    required this.navBar,
     required this.textPrimary,
     required this.textSecondary,
     required this.textMuted,
     required this.border,
     required this.primary,
+    required this.onPrimary,
     required this.accent,
     required this.ok,
     required this.warn,
@@ -23,12 +23,16 @@ class AppPalette extends ThemeExtension<AppPalette> {
   final Color background;
   final Color surface;
   final Color surfaceElevated;
-  final Color navBar;
   final Color textPrimary;
   final Color textSecondary;
   final Color textMuted;
   final Color border;
   final Color primary;
+
+  /// Foreground for anything filled with [primary]. Dark in the dark
+  /// theme, where primary is a light tone — white on it only reaches
+  /// 3.2:1, well under the 4.5:1 AA needs for button labels.
+  final Color onPrimary;
   final Color accent;
   final Color ok;
   final Color warn;
@@ -38,12 +42,12 @@ class AppPalette extends ThemeExtension<AppPalette> {
     background: Color(0xFF0E1520),
     surface: Color(0xFF17202E),
     surfaceElevated: Color(0xFF1E2A3A),
-    navBar: Color(0xFF0C121B),
     textPrimary: Color(0xFFEAF0F7),
-    textSecondary: Color(0xFF8695A8),
-    textMuted: Color(0xFF5D6B7E),
+    textSecondary: Color(0xFFA6B3C4),
+    textMuted: Color(0xFF8491A4),
     border: Color(0x12FFFFFF), // rgba(255,255,255,.07)
     primary: Color(0xFF4C8DFF),
+    onPrimary: Color(0xFF0E1520),
     accent: Color(0xFFFF8A3D),
     ok: Color(0xFF35C88A),
     warn: Color(0xFFF5B23D),
@@ -54,12 +58,12 @@ class AppPalette extends ThemeExtension<AppPalette> {
     background: Color(0xFFEEF1F6),
     surface: Color(0xFFFFFFFF),
     surfaceElevated: Color(0xFFE6EAF1),
-    navBar: Color(0xFFFFFFFF),
     textPrimary: Color(0xFF16202E),
-    textSecondary: Color(0xFF5E6B7D),
-    textMuted: Color(0xFF93A0B0),
+    textSecondary: Color(0xFF46525F),
+    textMuted: Color(0xFF5C6B7E),
     border: Color(0x14121C2A), // rgba(18,28,42,.08)
-    primary: Color(0xFF2F72E8),
+    primary: Color(0xFF2D70E8),
+    onPrimary: Color(0xFFFFFFFF),
     accent: Color(0xFFF2732A),
     ok: Color(0xFF1FA971),
     warn: Color(0xFFC8871B),
@@ -71,12 +75,12 @@ class AppPalette extends ThemeExtension<AppPalette> {
     Color? background,
     Color? surface,
     Color? surfaceElevated,
-    Color? navBar,
     Color? textPrimary,
     Color? textSecondary,
     Color? textMuted,
     Color? border,
     Color? primary,
+    Color? onPrimary,
     Color? accent,
     Color? ok,
     Color? warn,
@@ -86,12 +90,12 @@ class AppPalette extends ThemeExtension<AppPalette> {
       background: background ?? this.background,
       surface: surface ?? this.surface,
       surfaceElevated: surfaceElevated ?? this.surfaceElevated,
-      navBar: navBar ?? this.navBar,
       textPrimary: textPrimary ?? this.textPrimary,
       textSecondary: textSecondary ?? this.textSecondary,
       textMuted: textMuted ?? this.textMuted,
       border: border ?? this.border,
       primary: primary ?? this.primary,
+      onPrimary: onPrimary ?? this.onPrimary,
       accent: accent ?? this.accent,
       ok: ok ?? this.ok,
       warn: warn ?? this.warn,
@@ -106,12 +110,12 @@ class AppPalette extends ThemeExtension<AppPalette> {
       background: Color.lerp(background, other.background, t)!,
       surface: Color.lerp(surface, other.surface, t)!,
       surfaceElevated: Color.lerp(surfaceElevated, other.surfaceElevated, t)!,
-      navBar: Color.lerp(navBar, other.navBar, t)!,
       textPrimary: Color.lerp(textPrimary, other.textPrimary, t)!,
       textSecondary: Color.lerp(textSecondary, other.textSecondary, t)!,
       textMuted: Color.lerp(textMuted, other.textMuted, t)!,
       border: Color.lerp(border, other.border, t)!,
       primary: Color.lerp(primary, other.primary, t)!,
+      onPrimary: Color.lerp(onPrimary, other.onPrimary, t)!,
       accent: Color.lerp(accent, other.accent, t)!,
       ok: Color.lerp(ok, other.ok, t)!,
       warn: Color.lerp(warn, other.warn, t)!,
@@ -222,13 +226,13 @@ class AppTheme {
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: p.primary,
-          foregroundColor: Colors.white,
+          foregroundColor: p.onPrimary,
           disabledBackgroundColor: p.primary.withValues(alpha: .4),
           padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 20),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-          textStyle: GoogleFonts.manrope(
-              fontWeight: FontWeight.w700, fontSize: 16),
+          textStyle:
+              GoogleFonts.manrope(fontWeight: FontWeight.w700, fontSize: 16),
         ),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(

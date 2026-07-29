@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_text.dart';
+import '../../core/errors.dart';
 import '../../core/theme.dart';
 import '../../providers/auth_provider.dart';
 import '../../widgets/striped_placeholder.dart';
@@ -51,7 +52,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         await auth.signIn(_email.text.trim(), _password.text);
       }
     } catch (e) {
-      if (mounted) setState(() => _error = _friendly(e));
+      if (mounted) setState(() => _error = friendlyError(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -71,22 +72,40 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await ref
           .read(authControllerProvider)
           .signInWithMagicLink(_email.text.trim());
-      if (mounted) setState(() => _info = 'Lien magique envoyé — vérifiez vos emails.');
+      if (mounted) {
+        setState(() => _info = 'Lien magique envoyé — vérifiez vos emails.');
+      }
     } catch (e) {
-      if (mounted) setState(() => _error = _friendly(e));
+      if (mounted) setState(() => _error = friendlyError(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
   }
 
-  String _friendly(Object e) {
-    final s = e.toString();
-    if (s.contains('Invalid login')) return 'Email ou mot de passe incorrect.';
-    if (s.contains('already registered')) return 'Ce compte existe déjà.';
-    if (s.contains('Email not confirmed')) {
-      return 'Email non confirmé — vérifiez votre boîte mail avant de vous connecter.';
+  Future<void> _sendPasswordReset() async {
+    if (_email.text.trim().isEmpty || !_email.text.contains('@')) {
+      setState(() => _error =
+          'Entrez votre email pour recevoir le lien de réinitialisation.');
+      return;
     }
-    return 'Une erreur est survenue. Réessayez.';
+    setState(() {
+      _loading = true;
+      _error = null;
+      _info = null;
+    });
+    try {
+      await ref
+          .read(authControllerProvider)
+          .sendPasswordReset(_email.text.trim());
+      if (mounted) {
+        setState(() => _info =
+            'Email envoyé — ouvrez le lien pour choisir un nouveau mot de passe.');
+      }
+    } catch (e) {
+      if (mounted) setState(() => _error = friendlyError(e));
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
   }
 
   @override
@@ -137,7 +156,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     ),
                   ),
                   const SizedBox(height: 30),
-                  SizedBox(
+                  const SizedBox(
                     height: 150,
                     child: StripedPlaceholder(
                       borderRadius: 22,
@@ -199,11 +218,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ElevatedButton(
                     onPressed: _loading ? null : _submit,
                     child: _loading
-                        ? const SizedBox(
+                        ? SizedBox(
                             height: 20,
                             width: 20,
                             child: CircularProgressIndicator(
-                                strokeWidth: 2, color: Colors.white),
+                                strokeWidth: 2, color: p.onPrimary),
                           )
                         : Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -222,7 +241,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                     icon: Icon(Icons.link, size: 20, color: p.textMuted),
                     label: const Text('Recevoir un lien magique'),
                   ),
-                  const SizedBox(height: 22),
+                  if (!_isSignUp) ...[
+                    const SizedBox(height: 4),
+                    Center(
+                      child: TextButton(
+                        onPressed: _loading ? null : _sendPasswordReset,
+                        child: Text('Mot de passe oublié ?',
+                            style: TextStyle(
+                                color: p.textSecondary, fontSize: 13.5)),
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 18),
                   Center(
                     child: GestureDetector(
                       onTap: _loading
@@ -235,15 +265,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                               fontSize: 14,
                               fontWeight: FontWeight.w500),
                           children: [
-                            TextSpan(text: _isSignUp
-                                ? 'Déjà un compte ? '
-                                : 'Pas encore de compte ? '),
+                            TextSpan(
+                                text: _isSignUp
+                                    ? 'Déjà un compte ? '
+                                    : 'Pas encore de compte ? '),
                             TextSpan(
                               text: _isSignUp
                                   ? 'Se connecter'
                                   : 'Créer un compte',
                               style: TextStyle(
-                                  color: p.primary, fontWeight: FontWeight.w700),
+                                  color: p.primary,
+                                  fontWeight: FontWeight.w700),
                             ),
                           ],
                         ),

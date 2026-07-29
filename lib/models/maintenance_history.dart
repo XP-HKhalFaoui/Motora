@@ -1,3 +1,5 @@
+import '../core/formatters.dart';
+
 class MaintenanceHistory {
   final String id;
   final String vehicleId;
@@ -7,8 +9,17 @@ class MaintenanceHistory {
   final int? km;
   final double? cost;
   final String? garageName;
+  final String? garageId;
   final DateTime doneAt;
   final String? invoiceUrl;
+  final bool isFuel;
+  final double? liters;
+
+  /// Whether the tank was brimmed. Only the stretch between two full tanks
+  /// yields a meaningful L/100km, so partial fills are accumulated rather
+  /// than measured (see [FuelService]).
+  final bool isFullTank;
+
   final DateTime? createdAt;
 
   const MaintenanceHistory({
@@ -20,8 +31,12 @@ class MaintenanceHistory {
     this.km,
     this.cost,
     this.garageName,
+    this.garageId,
     required this.doneAt,
     this.invoiceUrl,
+    this.isFuel = false,
+    this.liters,
+    this.isFullTank = true,
     this.createdAt,
   });
 
@@ -35,8 +50,12 @@ class MaintenanceHistory {
         km: (j['km'] as num?)?.toInt(),
         cost: (j['cost'] as num?)?.toDouble(),
         garageName: j['garage_name'] as String?,
+        garageId: j['garage_id'] as String?,
         doneAt: DateTime.parse(j['done_at'] as String),
         invoiceUrl: j['invoice_url'] as String?,
+        isFuel: j['is_fuel'] as bool? ?? false,
+        liters: (j['liters'] as num?)?.toDouble(),
+        isFullTank: j['is_full_tank'] as bool? ?? true,
         createdAt: j['created_at'] == null
             ? null
             : DateTime.parse(j['created_at'] as String).toLocal(),
@@ -50,7 +69,11 @@ class MaintenanceHistory {
         'km': km,
         'cost': cost,
         'garage_name': garageName,
-        'done_at': doneAt.toIso8601String(),
+        'garage_id': garageId,
+        'done_at': Fmt.isoDate(doneAt),
         'invoice_url': invoiceUrl,
+        'is_fuel': isFuel,
+        'liters': liters,
+        'is_full_tank': isFullTank,
       };
 }

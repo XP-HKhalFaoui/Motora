@@ -7,6 +7,14 @@ import '../core/theme.dart';
 import '../models/maintenance_prediction.dart';
 import '../models/maintenance_type.dart';
 
+/// Accent color for a prediction: the usual green/orange/red urgency
+/// scale, but neutral for a type that can't be forecast yet — a green
+/// bar there would read as "nothing to do" when the truth is "unknown".
+Color _accentFor(BuildContext context, MaintenancePrediction pr) {
+  final p = context.palette;
+  return pr.needsSetup ? p.textSecondary : statusColorFor(p, pr.urgency);
+}
+
 /// A maintenance type row: 3px colored left border, progress bar and the
 /// km/date forecast — screens 03/04 ("bordure gauche colorée de 3px").
 class MaintenanceCard extends StatelessWidget {
@@ -24,7 +32,7 @@ class MaintenanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final color = statusColorFor(p, prediction.urgency);
+    final color = _accentFor(context, prediction);
 
     // BoxDecoration can't combine borderRadius with a Border whose sides
     // have different colors (the left accent vs. the neutral p.border on
@@ -76,7 +84,7 @@ class _CardBody extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.palette;
     final pr = prediction;
-    final color = statusColorFor(p, pr.urgency);
+    final color = _accentFor(context, pr);
     final type = pr.type;
 
     return InkWell(
@@ -107,61 +115,94 @@ class _CardBody extends StatelessWidget {
                     ],
                   ),
                 ),
+                // Badge and action are shown together: previously supplying
+                // onMarkDone replaced the badge, which hid the km-remaining
+                // figure on the very screen dedicated to maintenance.
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: color.withValues(alpha: .14),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(_badgeLabel(pr),
+                      style: AppText.technical(color, size: 12)),
+                ),
                 if (onMarkDone != null)
                   IconButton(
-                    tooltip: 'Marquer comme fait',
+                    tooltip: 'Marquer ${type.label} comme fait',
                     icon: Icon(Icons.check_circle_outline, color: p.ok),
                     onPressed: onMarkDone,
-                    visualDensity: VisualDensity.compact,
-                  )
-                else
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: color.withValues(alpha: .14),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(_badgeLabel(pr),
-                        style: AppText.technical(color, size: 12)),
+                    // No compact density here: it pulled the button under
+                    // the 48dp minimum, and this is the card's only action.
+                    constraints:
+                        const BoxConstraints(minWidth: 48, minHeight: 48),
+                    padding: EdgeInsets.zero,
                   ),
               ],
             ),
             const SizedBox(height: 12),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(99),
-              child: LinearProgressIndicator(
-                value: pr.urgency.clamp(0.02, 1.0),
-                minHeight: 7,
-                backgroundColor: p.background,
-                valueColor: AlwaysStoppedAnimation(color),
-              ),
-            ),
-            const SizedBox(height: 7),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Text(_progressLabel(pr),
-                      overflow: TextOverflow.ellipsis,
+            if (pr.needsSetup)
+              Row(
+                children: [
+                  Icon(Icons.info_outline, size: 15, color: p.textSecondary),
+                  const SizedBox(width: 7),
+                  Expanded(
+                    child: Text(
+                      _setupPrompt(type),
+                      style: TextStyle(
+                          color: p.textSecondary,
+                          fontSize: 11.5,
+                          fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  Text(_intervalLabel(type),
                       style: TextStyle(
                           color: p.textMuted,
                           fontSize: 11,
                           fontWeight: FontWeight.w600)),
+                ],
+              )
+            else ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(99),
+                child: LinearProgressIndicator(
+                  value: pr.progress.clamp(0.02, 1.0),
+                  minHeight: 7,
+                  backgroundColor: p.background,
+                  valueColor: AlwaysStoppedAnimation(color),
                 ),
-                const SizedBox(width: 8),
-                Text(_intervalLabel(type),
+              ),
+              const SizedBox(height: 7),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(
+                    child: Text(_progressLabel(pr),
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: p.textMuted,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600)),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(_intervalLabel(type),
+                      style: TextStyle(
+                          color: p.textMuted,
+                          fontSize: 11,
+                          fontWeight: FontWeight.w600)),
+                ],
+              ),
+              if (pr.dueDate != null) ...[
+                const SizedBox(height: 3),
+                Text(
+                    'échéance estimée : ${Fmt.date(pr.dueDate)}'
+                    '${pr.kmPerMonthIsEstimated ? ' (moyenne km estimée)' : ''}',
                     style: TextStyle(
-                        color: p.textMuted,
+                        color: color,
                         fontSize: 11,
                         fontWeight: FontWeight.w600)),
               ],
-            ),
-            if (pr.dueDate != null) ...[
-              const SizedBox(height: 3),
-              Text('échéance estimée : ${Fmt.date(pr.dueDate)}',
-                  style: TextStyle(
-                      color: color, fontSize: 11, fontWeight: FontWeight.w600)),
             ],
           ],
         ),
@@ -180,11 +221,24 @@ class _CardBody extends StatelessWidget {
     return 'Aucune intervention enregistrée';
   }
 
+  /// What the user has to fill in before this type can be forecast: a km
+  /// interval needs a last-done km, a time interval a last-done date.
+  String _setupPrompt(MaintenanceType type) {
+    final needsKm = (type.intervalKm ?? 0) > 0 && type.lastDoneKm == null;
+    final needsDate =
+        (type.intervalMonths ?? 0) > 0 && type.lastDoneDate == null;
+    if (needsKm && needsDate) return 'Renseignez le dernier entretien';
+    if (needsKm) return 'Renseignez le km du dernier entretien';
+    if (needsDate) return 'Renseignez la date du dernier entretien';
+    return 'Aucun intervalle configuré';
+  }
+
   String _badgeLabel(MaintenancePrediction p) {
+    if (p.needsSetup) return 'à configurer';
     if (p.remainingKm != null) {
       return p.remainingKm! < 0
-          ? '${-p.remainingKm!} km dépassé'
-          : '${p.remainingKm} km';
+          ? '${Fmt.km(-p.remainingKm!)} dépassé'
+          : Fmt.km(p.remainingKm!);
     }
     if (p.dueDate != null) return Fmt.relative(p.dueDate);
     return '—';
@@ -193,8 +247,8 @@ class _CardBody extends StatelessWidget {
   String _progressLabel(MaintenancePrediction p) {
     if (p.remainingKm == null) return Fmt.relative(p.dueDate);
     return p.remainingKm! < 0
-        ? 'dépassé de ${-p.remainingKm!} km'
-        : '≈ ${p.remainingKm} km restants';
+        ? 'dépassé de ${Fmt.km(-p.remainingKm!)}'
+        : '≈ ${Fmt.km(p.remainingKm!)} restants';
   }
 
   String _intervalLabel(MaintenanceType type) {

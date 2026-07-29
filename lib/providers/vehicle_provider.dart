@@ -2,16 +2,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/mileage_log.dart';
 import '../models/vehicle.dart';
+import 'auth_provider.dart';
 import 'service_providers.dart';
 
 /// List of the current user's vehicles.
-final vehiclesProvider =
-    AsyncNotifierProvider<VehiclesNotifier, List<Vehicle>>(
-        VehiclesNotifier.new);
+final vehiclesProvider = AsyncNotifierProvider<VehiclesNotifier, List<Vehicle>>(
+    VehiclesNotifier.new);
 
 class VehiclesNotifier extends AsyncNotifier<List<Vehicle>> {
   @override
   Future<List<Vehicle>> build() async {
+    // Tied to the session: rebuilt when the signed-in user changes, and
+    // never fetched at all without one. Previously this was built once,
+    // whenever it first happened to be read — possibly before the session
+    // was restored — and kept serving the old account's rows afterwards.
+    final user = ref.watch(currentUserProvider);
+    if (user == null) return const [];
     return ref.read(supabaseServiceProvider).fetchVehicles();
   }
 
@@ -38,10 +44,12 @@ class VehiclesNotifier extends AsyncNotifier<List<Vehicle>> {
   }
 
   /// Add a mileage reading; the DB trigger updates current_km, so we refresh.
-  Future<void> addMileage(String vehicleId, int km, {String? note}) async {
+  /// A [photoUrl] marks the reading as "certifié" rather than "déclaratif".
+  Future<void> addMileage(String vehicleId, int km,
+      {String? note, String? photoUrl}) async {
     await ref
         .read(supabaseServiceProvider)
-        .addMileageLog(vehicleId, km, note: note);
+        .addMileageLog(vehicleId, km, note: note, photoUrl: photoUrl);
     await refresh();
     ref.invalidate(mileageLogsProvider(vehicleId));
   }

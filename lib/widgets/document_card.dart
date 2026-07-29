@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/constants.dart';
 import '../core/formatters.dart';
 import '../core/theme.dart';
 import '../models/admin_document.dart';
-import 'striped_placeholder.dart';
+import '../providers/settings_provider.dart';
+import 'storage_image.dart';
 
 /// Document administratif card: scan thumbnail (or placeholder) on the
 /// left, type/status/expiry on the right — screen 06.
-class DocumentCard extends StatelessWidget {
+class DocumentCard extends ConsumerWidget {
   const DocumentCard({
     super.key,
     required this.doc,
@@ -19,12 +21,15 @@ class DocumentCard extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final p = context.palette;
     final days = doc.daysToExpiry;
-    final urgency = doc.isExpired
-        ? 1.0
-        : (1 - (days / (Thresholds.daysAlert * 2))).clamp(0.0, 1.0);
+    // The user's own "alerte échéance" setting, not the compile-time
+    // default — the Réglages screen let you change it but nothing read it.
+    final alertDays = ref.watch(settingsProvider).value?.daysAlertThreshold ??
+        Thresholds.daysAlert;
+    final urgency =
+        doc.isExpired ? 1.0 : (1 - (days / (alertDays * 2))).clamp(0.0, 1.0);
     final color = statusColorFor(p, urgency);
     final hasFile = doc.fileUrl != null;
 
@@ -41,15 +46,26 @@ class DocumentCard extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                // The real scan, not a placeholder. This used to render a
+                // StripedPlaceholder labelled "scan" precisely *when* a file
+                // existed, so the uploaded document was never once visible.
                 SizedBox(
                   width: 76,
-                  child: hasFile
-                      ? const StripedPlaceholder(label: 'scan')
-                      : Container(
-                          color: p.background,
-                          child: Icon(Icons.add_a_photo_outlined,
-                              color: p.textMuted, size: 22),
-                        ),
+                  child: StorageImage(
+                    bucket: Buckets.adminDocuments,
+                    reference: doc.fileUrl,
+                    fallback: Container(
+                      color: p.background,
+                      alignment: Alignment.center,
+                      child: Icon(
+                        hasFile
+                            ? Icons.description_outlined
+                            : Icons.add_a_photo_outlined,
+                        color: p.textMuted,
+                        size: 22,
+                      ),
+                    ),
+                  ),
                 ),
                 Expanded(
                   child: Padding(
@@ -76,7 +92,8 @@ class DocumentCard extends StatelessWidget {
                                 color: color.withValues(alpha: .14),
                                 borderRadius: BorderRadius.circular(7),
                               ),
-                              child: Text(_statusLabel(days, hasFile),
+                              child: Text(
+                                  _statusLabel(days, hasFile, alertDays),
                                   style: TextStyle(
                                       color: color,
                                       fontSize: 11,
@@ -110,10 +127,10 @@ class DocumentCard extends StatelessWidget {
     );
   }
 
-  String _statusLabel(int days, bool hasFile) {
+  String _statusLabel(int days, bool hasFile, int alertDays) {
     if (doc.isExpired) return 'EXPIRÉ';
     if (!hasFile) return 'À FAIRE';
-    if (days < Thresholds.daysAlert) return 'EXPIRE $days J';
+    if (days < alertDays) return 'EXPIRE $days J';
     return 'VALIDE';
   }
 
@@ -125,6 +142,8 @@ class DocumentCard extends StatelessWidget {
         return Icons.verified_user_outlined;
       case DocTypes.controleTechnique:
         return Icons.fact_check_outlined;
+      case DocTypes.carteGrise:
+        return Icons.badge_outlined;
       default:
         return Icons.description_outlined;
     }

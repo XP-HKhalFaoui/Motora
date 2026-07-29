@@ -3,31 +3,47 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
 import '../core/app_text.dart';
+import '../core/formatters.dart';
 import '../core/theme.dart';
 
-/// Circular km gauge (screen 03 "Détail véhicule"): conic-gradient ring,
-/// value + monthly average centered inside, per PROMPT-claude-code.md §5
-/// ("anneau circulaire (conic gradient, ~206px)").
+/// Circular km gauge shown on the vehicle hub's Aperçu section:
+/// conic-gradient ring, value + monthly average centered inside, per
+/// PROMPT-claude-code.md §5 ("anneau circulaire (conic gradient, ~206px)").
 class KmGauge extends StatelessWidget {
   const KmGauge({
     super.key,
     required this.currentKm,
     this.subtitle,
     this.size = 206,
-    this.progress = 0.62,
+    this.progress = 0,
   });
 
   final int currentKm;
   final String? subtitle;
   final double size;
 
-  /// Fraction (0..1) of the ring drawn in the primary color; decorative,
-  /// mirrors the fixed ~62% sweep in the design mock.
+  /// Fraction (0..1) of the ring drawn in the primary color — how far the
+  /// most urgent échéance has consumed its interval. The design mock shows
+  /// a fixed ~62% sweep; that is a mock value, not a default, so an empty
+  /// ring here means "nothing due" rather than a fabricated 62%.
   final double progress;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
+    // A CustomPaint is invisible to a screen reader; the odometer and the
+    // monthly average are the point of this widget.
+    return Semantics(
+      label: [
+        'Kilométrage ${Fmt.km(currentKm)}',
+        if (subtitle != null) subtitle,
+      ].whereType<String>().join(', '),
+      excludeSemantics: true,
+      child: _gauge(context, p),
+    );
+  }
+
+  Widget _gauge(BuildContext context, AppPalette p) {
     return SizedBox(
       width: size,
       height: size,
@@ -111,11 +127,17 @@ class _GaugePainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = size.width * .085;
 
-    canvas.drawArc(Rect.fromCircle(center: center, radius: radius - trackPaint.strokeWidth / 2),
-        0, math.pi * 2, false, trackPaint);
+    canvas.drawArc(
+        Rect.fromCircle(
+            center: center, radius: radius - trackPaint.strokeWidth / 2),
+        0,
+        math.pi * 2,
+        false,
+        trackPaint);
     if (progress > 0) {
       canvas.drawArc(
-          Rect.fromCircle(center: center, radius: radius - progressPaint.strokeWidth / 2),
+          Rect.fromCircle(
+              center: center, radius: radius - progressPaint.strokeWidth / 2),
           start,
           sweep,
           false,

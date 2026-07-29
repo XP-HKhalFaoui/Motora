@@ -3,16 +3,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/theme.dart';
 import '../../providers/notification_provider.dart';
-import '../../widgets/bottom_nav_bar.dart';
-import '../admin_documents/documents_screen.dart';
+import '../../services/notification_service.dart';
 import '../home/home_screen.dart';
-import '../maintenance/maintenance_screen.dart';
-import '../notifications/notifications_screen.dart';
 import '../quick_add/quick_add_sheet.dart';
+import '../vehicle_detail/vehicle_hub_screen.dart';
 
-/// Top-level shell: Accueil / Entretien / Docs / Alertes behind a bottom
-/// nav with a center FAB (Ajout rapide), per §5 "Chrome Android". Vehicle
-/// detail, history and settings are pushed on top of this, not part of it.
+/// Top-level shell. The app is car-first with a single global screen — the
+/// Accueil "garage" — so there is no bottom nav: Alertes and Réglages are
+/// reached from the header, a vehicle's maintenance / documents / km live
+/// inside its hub (pushed on top), and the only persistent chrome is the
+/// Ajout-rapide FAB.
+///
+/// The shell also owns the two side effects that need a live navigator:
+/// keeping the OS notification schedule in sync with [remindersProvider],
+/// and opening the vehicle behind a tapped reminder.
 class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key});
 
@@ -21,49 +25,45 @@ class AppShell extends ConsumerStatefulWidget {
 }
 
 class _AppShellState extends ConsumerState<AppShell> {
-  int _index = 0;
+  @override
+  void initState() {
+    super.initState();
+    NotificationService.instance.onOpenVehicle = _openVehicle;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final launched = NotificationService.instance.takeLaunchVehicleId();
+      if (launched != null) _openVehicle(launched);
+    });
+  }
 
-  static const _pages = [
-    HomeScreen(),
-    MaintenanceScreen(),
-    DocumentsScreen(),
-    NotificationsScreen(),
-  ];
+  void _openVehicle(String vehicleId) {
+    if (!mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        // Land on Entretien: every reminder is about an échéance or a
+        // document, not the overview.
+        builder: (_) =>
+            VehicleHubScreen(vehicleId: vehicleId, initialSection: 1),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final hasAlerts = (ref.watch(remindersProvider).value ?? const []).isNotEmpty;
+
+    ref.listen(remindersProvider, (_, next) {
+      final reminders = next.value;
+      if (reminders != null) {
+        ref.read(reminderSchedulerProvider).sync(reminders);
+      }
+    });
 
     return Scaffold(
       backgroundColor: p.background,
-      body: Stack(
-        children: [
-          IndexedStack(index: _index, children: _pages),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: SafeArea(
-              top: false,
-              child: BottomNavBar(
-                currentIndex: _index,
-                showAlertBadge: hasAlerts,
-                onTap: (i) => setState(() => _index = i),
-              ),
-            ),
-          ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 44,
-            child: Center(
-              child: _QuickAddFab(
-                onTap: () => showQuickAddSheet(context),
-              ),
-            ),
-          ),
-        ],
+      body: const HomeScreen(),
+      floatingActionButton: _QuickAddFab(
+        onTap: () => showQuickAddSheet(context),
       ),
     );
   }
