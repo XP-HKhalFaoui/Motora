@@ -9,6 +9,7 @@ import '../../../models/maintenance_history.dart';
 import '../../../providers/maintenance_provider.dart';
 import '../../../services/fuel_service.dart';
 import '../../../widgets/async_value_view.dart';
+import '../../../widgets/ledger_row.dart';
 import '../../quick_add/add_history_sheet.dart';
 
 /// "Carburant" section of the vehicle hub.
@@ -149,14 +150,15 @@ class _Body extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        ...history.where((h) => h.isFuel).map((h) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: _FillUpTile(
+        ...() {
+          final fills = history.where((h) => h.isFuel).toList();
+          return fills.asMap().entries.map((e) => _FillUpTile(
                 vehicleId: vehicleId,
-                entry: h,
-                consumption: stats.consumptionByEntryId[h.id],
-              ),
-            )),
+                entry: e.value,
+                consumption: stats.consumptionByEntryId[e.value.id],
+                isLast: e.key == fills.length - 1,
+              ));
+        }(),
       ],
     );
   }
@@ -273,73 +275,34 @@ class _FillUpTile extends StatelessWidget {
   const _FillUpTile({
     required this.vehicleId,
     required this.entry,
+    required this.isLast,
     this.consumption,
   });
 
   final String vehicleId;
   final MaintenanceHistory entry;
+  final bool isLast;
   final double? consumption;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    return Material(
-      color: p.surface,
-      borderRadius: BorderRadius.circular(14),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => showAddHistorySheet(context, vehicleId, existing: entry),
-        child: Container(
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(border: Border.all(color: p.border)),
-          child: Row(
-            children: [
-              Icon(Icons.local_gas_station, size: 20, color: p.warn),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      [
-                        if (entry.liters != null)
-                          '${entry.liters!.toStringAsFixed(1)} L',
-                        if (entry.km != null) Fmt.km(entry.km),
-                      ].join(' · '),
-                      style: AppText.odometer(p.textPrimary, size: 15),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      [
-                        Fmt.date(entry.doneAt),
-                        if (!entry.isFullTank) 'plein partiel',
-                        if (entry.garageName != null) entry.garageName!,
-                      ].join(' · '),
-                      style: TextStyle(color: p.textSecondary, fontSize: 12),
-                    ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  if (entry.cost != null)
-                    Text(Fmt.money(entry.cost),
-                        style: AppText.odometer(p.primary, size: 14)),
-                  if (consumption != null) ...[
-                    const SizedBox(height: 2),
-                    Text('${consumption!.toStringAsFixed(1)} L/100',
-                        style: TextStyle(
-                            color: p.textMuted,
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600)),
-                  ],
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+    return LedgerRow(
+      icon: Icons.local_gas_station,
+      color: p.entryFuel,
+      title: [
+        if (entry.liters != null) '${entry.liters!.toStringAsFixed(1)} L',
+        if (!entry.isFullTank) '(appoint)',
+      ].join(' '),
+      subtitle: entry.garageName,
+      meta: entry.km == null ? null : Fmt.km(entry.km),
+      date: Fmt.dayMonth(entry.doneAt),
+      trailing: entry.cost == null ? null : Fmt.money(entry.cost),
+      trailingBelow: consumption == null
+          ? null
+          : '${consumption!.toStringAsFixed(1)} L/100km',
+      isLast: isLast,
+      onTap: () => showAddHistorySheet(context, vehicleId, existing: entry),
     );
   }
 }

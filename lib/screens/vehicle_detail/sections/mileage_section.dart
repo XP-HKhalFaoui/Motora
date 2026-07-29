@@ -10,6 +10,8 @@ import '../../../models/mileage_log.dart';
 import '../../../providers/vehicle_provider.dart';
 import '../../../services/prediction_service.dart';
 import '../../../widgets/async_value_view.dart';
+import '../../../widgets/ledger_row.dart';
+import '../../files/file_viewer_screen.dart';
 import '../../../widgets/storage_image.dart';
 import '../update_km_sheet.dart';
 
@@ -105,9 +107,9 @@ class _Body extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 8),
-        ...logs.map((l) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: _LogTile(log: l),
+        ...logs.asMap().entries.map((e) => _LogTile(
+              log: e.value,
+              isLast: e.key == logs.length - 1,
             )),
       ],
     );
@@ -229,79 +231,78 @@ class _MileageChart extends StatelessWidget {
 }
 
 class _LogTile extends StatelessWidget {
-  const _LogTile({required this.log});
+  const _LogTile({required this.log, required this.isLast});
   final MileageLog log;
+  final bool isLast;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    final color = log.isCertified ? p.ok : p.textSecondary;
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: p.surface,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: p.border),
-      ),
-      child: Row(
-        children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: StorageImage(
+    final certified = log.isCertified;
+    return LedgerRow(
+      // A photo-backed reading is the certified one, so it gets the
+      // status colour; a typed one stays the neutral mileage hue.
+      icon: certified ? Icons.verified : Icons.speed,
+      color: certified ? p.ok : p.entryMileage,
+      // The odometer photo *is* the proof, so it takes the badge slot
+      // rather than being dropped for a generic glyph.
+      leading: log.photoUrl == null
+          ? null
+          : StorageImage(
               bucket: Buckets.mileagePhotos,
               reference: log.photoUrl,
-              width: 44,
-              height: 44,
-              fallback: Container(
-                width: 44,
-                height: 44,
-                alignment: Alignment.center,
-                decoration: BoxDecoration(
-                  color: p.background,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Icon(Icons.edit_note, color: p.textMuted, size: 22),
+              fallback: Container(color: p.ok),
+            ),
+      onTap: log.photoUrl == null
+          ? null
+          : () => FileViewerScreen.open(
+                context,
+                bucket: Buckets.mileagePhotos,
+                reference: log.photoUrl!,
+                title: Fmt.km(log.km),
               ),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(Fmt.km(log.km),
-                    style: AppText.odometer(p.textPrimary, size: 16)),
-                const SizedBox(height: 2),
-                Text(
-                  [
-                    Fmt.date(log.recordedAt),
-                    if (log.note != null) log.note,
-                  ].whereType<String>().join(' · '),
-                  style: TextStyle(color: p.textSecondary, fontSize: 12),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
-            decoration: BoxDecoration(
-              color: color.withValues(alpha: .14),
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(log.isCertified ? Icons.verified : Icons.edit_outlined,
-                    size: 13, color: color),
-                const SizedBox(width: 4),
-                Text(log.isCertified ? 'Certifié' : 'Déclaratif',
-                    style: TextStyle(
-                        color: color,
-                        fontSize: 11,
-                        fontWeight: FontWeight.w600)),
-              ],
-            ),
-          ),
+      title: Fmt.km(log.km),
+      subtitle: log.note,
+      date: Fmt.dayMonth(log.recordedAt),
+      isLast: isLast,
+      badges: [
+        _StatusBadge(
+          label: certified ? 'Certifié' : 'Déclaratif',
+          color: certified ? p.ok : p.textSecondary,
+          icon: certified ? Icons.verified : Icons.edit_outlined,
+        ),
+      ],
+    );
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({
+    required this.label,
+    required this.color,
+    required this.icon,
+  });
+
+  final String label;
+  final Color color;
+  final IconData icon;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 5),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: .14),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 13, color: color),
+          const SizedBox(width: 4),
+          Text(label,
+              style: TextStyle(
+                  color: color, fontSize: 11, fontWeight: FontWeight.w600)),
         ],
       ),
     );

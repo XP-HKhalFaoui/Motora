@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/app_text.dart';
 import '../../core/constants.dart';
+import '../../core/entry_style.dart';
 import '../../core/formatters.dart';
 import '../../core/theme.dart';
 import '../../models/maintenance_history.dart';
@@ -11,6 +12,7 @@ import '../../providers/vehicle_provider.dart';
 import '../../services/fuel_service.dart';
 import '../../services/history_filter.dart';
 import '../../widgets/async_value_view.dart';
+import '../../widgets/ledger_row.dart';
 import '../files/file_viewer_screen.dart';
 import '../quick_add/add_history_sheet.dart';
 
@@ -75,6 +77,7 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
               ..sort();
             final consumption = FuelService.consumptionByEntryId(history);
             final total = filtered.fold<double>(0, (s, h) => s + (h.cost ?? 0));
+            final rows = _flatten(filtered);
 
             return CustomScrollView(
               slivers: [
@@ -156,16 +159,21 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
                   )
                 else
                   SliverPadding(
-                    padding: const EdgeInsets.fromLTRB(46, 0, 20, 32),
+                    padding: const EdgeInsets.fromLTRB(12, 0, 20, 32),
                     sliver: SliverList.builder(
-                      itemCount: filtered.length,
-                      itemBuilder: (context, i) => _TimelineRow(
-                        vehicleId: widget.vehicleId,
-                        entry: filtered[i],
-                        consumptionPer100km: consumption[filtered[i].id],
-                        isFirst: i == 0,
-                        isLast: i == filtered.length - 1,
-                      ),
+                      itemCount: rows.length,
+                      itemBuilder: (context, i) {
+                        final row = rows[i];
+                        if (row.header != null) {
+                          return LedgerMonthHeader(label: row.header!);
+                        }
+                        return _EntryRow(
+                          vehicleId: widget.vehicleId,
+                          entry: row.entry!,
+                          consumptionPer100km: consumption[row.entry!.id],
+                          isLast: i == rows.length - 1,
+                        );
+                      },
                     ),
                   ),
               ],
@@ -175,6 +183,31 @@ class _HistoryScreenState extends ConsumerState<HistoryScreen> {
       ),
     );
   }
+}
+
+/// A timeline item: either a month header or an entry. Flattening the two
+/// into one list keeps the SliverList lazy — grouping into nested lists
+/// would have meant building every month up front.
+class _Row {
+  const _Row.header(String this.header) : entry = null;
+  const _Row.entry(MaintenanceHistory this.entry) : header = null;
+
+  final String? header;
+  final MaintenanceHistory? entry;
+}
+
+List<_Row> _flatten(List<MaintenanceHistory> entries) {
+  final rows = <_Row>[];
+  DateTime? currentMonth;
+  for (final e in entries) {
+    final month = DateTime(e.doneAt.year, e.doneAt.month);
+    if (currentMonth == null || month != currentMonth) {
+      rows.add(_Row.header(Fmt.monthHeader(month)));
+      currentMonth = month;
+    }
+    rows.add(_Row.entry(e));
+  }
+  return rows;
 }
 
 class _SearchField extends StatelessWidget {
@@ -327,172 +360,65 @@ class _Pill extends StatelessWidget {
   }
 }
 
-/// One timeline entry: the connector line and dot are drawn per row rather
-/// than as one Positioned line behind the whole list, so the list can be
-/// built lazily and still look continuous.
-class _TimelineRow extends StatelessWidget {
-  const _TimelineRow({
+/// One entry, as a dense ledger row.
+class _EntryRow extends StatelessWidget {
+  const _EntryRow({
     required this.vehicleId,
     required this.entry,
-    required this.isFirst,
     required this.isLast,
     this.consumptionPer100km,
   });
 
   final String vehicleId;
   final MaintenanceHistory entry;
-  final bool isFirst;
   final bool isLast;
   final double? consumptionPer100km;
 
   @override
   Widget build(BuildContext context) {
     final p = context.palette;
-    return IntrinsicHeight(
-      child: Stack(
-        clipBehavior: Clip.none,
-        children: [
-          Positioned(
-            left: -20,
-            top: isFirst ? 13 : 0,
-            bottom: isLast ? null : 0,
-            height: isLast ? 0 : null,
-            child: Container(width: 2, color: p.border),
-          ),
-          Positioned(
-            left: -26,
-            top: 6,
-            child: Container(
-              width: 14,
-              height: 14,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: isFirst ? p.primary : p.surfaceElevated,
-                border: Border.all(color: p.background, width: 3),
-              ),
+    final style = entryStyleFor(p, entry);
+
+    final subtitle = [
+      if (entry.isExpense && entry.category != null)
+        ExpenseCategories.label(entry.category!),
+      if (entry.garageName != null) entry.garageName!,
+    ].join(' · ');
+
+    return LedgerRow(
+      icon: style.icon,
+      color: style.color,
+      title: entry.title,
+      subtitle: subtitle.isEmpty ? null : subtitle,
+      meta: entry.km == null ? null : Fmt.km(entry.km),
+      date: Fmt.dayMonth(entry.doneAt),
+      trailing: entry.cost == null ? null : Fmt.money(entry.cost),
+      trailingColor: p.textPrimary,
+      trailingBelow: consumptionPer100km == null
+          ? null
+          : '${consumptionPer100km!.toStringAsFixed(1)} L/100km',
+      isLast: isLast,
+      onTap: () => showAddHistorySheet(context, vehicleId, existing: entry),
+      badges: [
+        if (entry.liters != null)
+          _Chip(
+              icon: Icons.local_gas_station,
+              label: '${entry.liters!.toStringAsFixed(1)} L'
+                  '${entry.isFullTank ? '' : ' (appoint)'}',
+              color: p.entryFuel),
+        if (entry.invoiceUrl != null)
+          _Chip(
+            icon: Icons.receipt_long,
+            label: 'Facture',
+            color: p.ok,
+            onTap: () => FileViewerScreen.open(
+              context,
+              bucket: Buckets.invoices,
+              reference: entry.invoiceUrl!,
+              title: entry.title,
             ),
           ),
-          Padding(
-            padding: EdgeInsets.only(bottom: isLast ? 0 : 16),
-            child: _HistoryCard(
-              vehicleId: vehicleId,
-              h: entry,
-              consumptionPer100km: consumptionPer100km,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _HistoryCard extends StatelessWidget {
-  const _HistoryCard(
-      {required this.vehicleId, required this.h, this.consumptionPer100km});
-  final String vehicleId;
-  final MaintenanceHistory h;
-  final double? consumptionPer100km;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.palette;
-    return Material(
-      color: p.surface,
-      borderRadius: BorderRadius.circular(16),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: () => showAddHistorySheet(context, vehicleId, existing: h),
-        child: Container(
-          padding: const EdgeInsets.all(14),
-          decoration: BoxDecoration(
-            border: Border.all(color: p.border),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  if (h.isFuel) ...[
-                    Icon(Icons.local_gas_station, size: 18, color: p.warn),
-                    const SizedBox(width: 8),
-                  ] else if (h.isExpense) ...[
-                    Icon(Icons.receipt_long, size: 18, color: p.danger),
-                    const SizedBox(width: 8),
-                  ],
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(h.title,
-                            style: TextStyle(
-                                color: p.textPrimary,
-                                fontSize: 15,
-                                fontWeight: FontWeight.w700)),
-                        const SizedBox(height: 3),
-                        Text(
-                          [
-                            Fmt.date(h.doneAt),
-                            if (h.km != null) Fmt.km(h.km),
-                          ].whereType<String>().join(' · '),
-                          style:
-                              TextStyle(color: p.textSecondary, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (h.cost != null)
-                    Text(Fmt.money(h.cost),
-                        style: AppText.odometer(p.primary, size: 16)),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  if (h.isExpense && h.category != null)
-                    _Chip(
-                        icon: Icons.sell_outlined,
-                        label: ExpenseCategories.label(h.category!),
-                        color: p.danger),
-                  if (h.garageName != null)
-                    _Chip(
-                        icon: Icons.store,
-                        label: h.garageName!,
-                        color: p.textSecondary),
-                  if (h.invoiceUrl != null)
-                    _Chip(
-                      icon: Icons.receipt_long,
-                      label: 'Facture',
-                      color: p.ok,
-                      // The invoice was uploaded and then unreachable —
-                      // this chip was pure decoration.
-                      onTap: () => FileViewerScreen.open(
-                        context,
-                        bucket: Buckets.invoices,
-                        reference: h.invoiceUrl!,
-                        title: h.title,
-                      ),
-                    ),
-                  if (h.liters != null)
-                    _Chip(
-                        icon: Icons.local_gas_station,
-                        label: '${h.liters!.toStringAsFixed(1)} L'
-                            '${h.isFullTank ? '' : ' (appoint)'}',
-                        color: p.warn),
-                  if (consumptionPer100km != null)
-                    _Chip(
-                        icon: Icons.speed,
-                        label:
-                            '${consumptionPer100km!.toStringAsFixed(1)} L/100km',
-                        color: p.textSecondary),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+      ],
     );
   }
 }
