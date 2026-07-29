@@ -112,6 +112,7 @@ class PredictionService {
       type: type,
       remainingKm: remainingKm,
       dueDate: _earliest(kmDueDate, timeDueDate),
+      timeDueDate: timeDueDate,
       kmPerMonth: kmPerMonth,
       kmPerMonthIsEstimated: kmPerMonthIsEstimated,
       // Left unclamped on purpose: clamping to 1.0 would make "due today"
@@ -141,8 +142,16 @@ class PredictionService {
         p.remainingKm! < (kmThreshold ?? Thresholds.kmAlert)) {
       return true;
     }
-    if (p.dueDate != null) {
-      final days = p.dueDate!.difference(ref).inDays;
+    // Deliberately timeDueDate, not dueDate. dueDate can come from the km
+    // projection, and an interval consumed faster than the alert horizon
+    // then sits inside that horizon permanently: a 7 000 km vidange on a
+    // car doing 15 000 km/month is "due in 13 days" the moment it is
+    // done, so a 30-day threshold alerts forever. Distance is already
+    // covered by the km branch above; this branch is for maintenance that
+    // genuinely expires with the calendar.
+    final timeDue = p.timeDueDate;
+    if (timeDue != null) {
+      final days = timeDue.difference(ref).inDays;
       if (days < (daysThreshold ?? Thresholds.daysAlert)) return true;
     }
     return false;
