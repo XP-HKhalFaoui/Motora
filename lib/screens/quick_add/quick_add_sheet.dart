@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/formatters.dart';
 import '../../core/theme.dart';
+import '../../models/maintenance_history.dart';
 import '../../providers/ui_state_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../admin_documents/add_document_sheet.dart';
@@ -169,11 +170,23 @@ class _QuickAddSheetState extends ConsumerState<_QuickAddSheet> {
                   icon: Icons.local_gas_station,
                   color: p.warn,
                   title: 'Plein',
-                  subtitle: 'Carburant / dépense',
+                  subtitle: 'Carburant',
                   onTap: () {
                     Navigator.pop(context);
                     showAddHistorySheet(context, vehicleId,
-                        defaultTitle: 'Plein / carburant', isFuel: true);
+                        defaultTitle: 'Plein / carburant',
+                        kind: HistoryEntryKind.fuel);
+                  },
+                ),
+                _QuickAddTile(
+                  icon: Icons.receipt_long,
+                  color: p.danger,
+                  title: 'Dépense',
+                  subtitle: 'Assurance, péage…',
+                  onTap: () {
+                    Navigator.pop(context);
+                    showAddHistorySheet(context, vehicleId,
+                        kind: HistoryEntryKind.expense);
                   },
                 ),
               ],

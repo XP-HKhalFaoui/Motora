@@ -1,5 +1,36 @@
 import '../core/formatters.dart';
 
+/// What a ledger row actually is.
+///
+/// `maintenance_history` was always more than its name suggests: it held
+/// interventions plus fuel fill-ups, told apart by an `is_fuel` boolean.
+/// Expenses make that a three-way distinction, which a boolean can no
+/// longer carry.
+enum HistoryEntryKind {
+  maintenance,
+  fuel,
+
+  /// Money spent on the car that isn't an intervention and isn't fuel —
+  /// insurance, vignette, tolls, fines. Carries a [ExpenseCategories]
+  /// category and never touches a maintenance type's anchor.
+  expense;
+
+  static HistoryEntryKind fromJson(Map<String, dynamic> j) {
+    switch (j['kind'] as String?) {
+      case 'fuel':
+        return HistoryEntryKind.fuel;
+      case 'expense':
+        return HistoryEntryKind.expense;
+      case 'maintenance':
+        return HistoryEntryKind.maintenance;
+    }
+    // Rows written before migration 0007 only have the boolean.
+    return (j['is_fuel'] as bool? ?? false)
+        ? HistoryEntryKind.fuel
+        : HistoryEntryKind.maintenance;
+  }
+}
+
 class MaintenanceHistory {
   final String id;
   final String vehicleId;
@@ -12,7 +43,12 @@ class MaintenanceHistory {
   final String? garageId;
   final DateTime doneAt;
   final String? invoiceUrl;
-  final bool isFuel;
+  final HistoryEntryKind kind;
+
+  /// One of [ExpenseCategories.all] — set only when [kind] is
+  /// [HistoryEntryKind.expense].
+  final String? category;
+
   final double? liters;
 
   /// Whether the tank was brimmed. Only the stretch between two full tanks
@@ -34,11 +70,16 @@ class MaintenanceHistory {
     this.garageId,
     required this.doneAt,
     this.invoiceUrl,
-    this.isFuel = false,
+    this.kind = HistoryEntryKind.maintenance,
+    this.category,
     this.liters,
     this.isFullTank = true,
     this.createdAt,
   });
+
+  bool get isFuel => kind == HistoryEntryKind.fuel;
+  bool get isExpense => kind == HistoryEntryKind.expense;
+  bool get isMaintenance => kind == HistoryEntryKind.maintenance;
 
   factory MaintenanceHistory.fromJson(Map<String, dynamic> j) =>
       MaintenanceHistory(
@@ -53,7 +94,8 @@ class MaintenanceHistory {
         garageId: j['garage_id'] as String?,
         doneAt: DateTime.parse(j['done_at'] as String),
         invoiceUrl: j['invoice_url'] as String?,
-        isFuel: j['is_fuel'] as bool? ?? false,
+        kind: HistoryEntryKind.fromJson(j),
+        category: j['category'] as String?,
         liters: (j['liters'] as num?)?.toDouble(),
         isFullTank: j['is_full_tank'] as bool? ?? true,
         createdAt: j['created_at'] == null
@@ -72,6 +114,10 @@ class MaintenanceHistory {
         'garage_id': garageId,
         'done_at': Fmt.isoDate(doneAt),
         'invoice_url': invoiceUrl,
+        'kind': kind.name,
+        'category': category,
+        // Kept in sync so an APK built before migration 0007 still reads
+        // fuel entries correctly. Can go once no such install remains.
         'is_fuel': isFuel,
         'liters': liters,
         'is_full_tank': isFullTank,

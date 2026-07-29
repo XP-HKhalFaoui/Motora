@@ -50,7 +50,7 @@ class _Body extends StatelessWidget {
           ),
           ElevatedButton.icon(
             onPressed: () => showAddHistorySheet(context, vehicleId,
-                defaultTitle: 'Plein / carburant', isFuel: true),
+                defaultTitle: 'Plein / carburant', kind: HistoryEntryKind.fuel),
             icon: const Icon(Icons.local_gas_station, size: 20),
             label: const Text('Ajouter un plein'),
           ),
@@ -139,7 +139,8 @@ class _Body extends StatelessWidget {
             Text('PLEINS', style: AppText.sectionLabel(p.textSecondary)),
             TextButton.icon(
               onPressed: () => showAddHistorySheet(context, vehicleId,
-                  defaultTitle: 'Plein / carburant', isFuel: true),
+                  defaultTitle: 'Plein / carburant',
+                  kind: HistoryEntryKind.fuel),
               icon: const Icon(Icons.add, size: 18),
               label: const Text('Plein'),
               style: TextButton.styleFrom(

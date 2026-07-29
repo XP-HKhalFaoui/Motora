@@ -88,7 +88,11 @@ class CarnetPdfService {
       author: 'Motora',
     );
 
-    final repairs = data.history.where((h) => !h.isFuel).toList();
+    // Expenses are money spent on the car but not work done to it: they
+    // belong in the total and in their own section, never in the list of
+    // interventions a buyer reads as the service record.
+    final repairs = data.history.where((h) => h.isMaintenance).toList();
+    final expenses = data.history.where((h) => h.isExpense).toList();
     final fuel = FuelService.analyze(data.history);
     final totalCost = data.history.fold<double>(0, (s, h) => s + (h.cost ?? 0));
 
@@ -115,6 +119,11 @@ class CarnetPdfService {
             pw.SizedBox(height: 22),
             _section('Carburant'),
             _fuel(fuel),
+          ],
+          if (expenses.isNotEmpty) ...[
+            pw.SizedBox(height: 22),
+            _section('Dépenses'),
+            _expenses(expenses),
           ],
           pw.SizedBox(height: 22),
           _section('Documents administratifs'),
@@ -307,6 +316,21 @@ class CarnetPdfService {
         }
         return [t.label, interval, lastDone.isEmpty ? '—' : lastDone, state];
       }).toList(),
+    );
+  }
+
+  static pw.Widget _expenses(List<MaintenanceHistory> expenses) {
+    return _table(
+      headers: const ['Date', 'Catégorie', 'Libellé', 'Montant'],
+      rows: expenses
+          .map((e) => [
+                Fmt.dateShort(e.doneAt),
+                e.category == null ? '-' : ExpenseCategories.label(e.category!),
+                e.title,
+                e.cost == null ? '-' : Fmt.money(e.cost),
+              ])
+          .toList(),
+      alignRightLast: true,
     );
   }
 

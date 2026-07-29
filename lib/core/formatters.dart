@@ -24,6 +24,10 @@ class Fmt {
   static String km(num? v) => v == null ? '—' : '${_km.format(v)} km';
   static String money(num? v) => v == null ? '—' : _money.format(v);
 
+  /// Currency suffix for input fields, so a form label can never drift
+  /// from what [money] actually prints.
+  static String get currencySuffix => _money.currencySymbol;
+
   /// `yyyy-MM-dd` for Postgres `date` columns.
   ///
   /// The calendar day is taken from the *local* date. Sending a full

@@ -233,6 +233,15 @@ class _Filters extends StatelessWidget {
             )),
           ),
           _Pill(
+            label: 'Dépenses',
+            selected: filter.kind == HistoryKind.expense,
+            onTap: () => onChanged(filter.copyWith(
+              kind: filter.kind == HistoryKind.expense
+                  ? HistoryKind.all
+                  : HistoryKind.expense,
+            )),
+          ),
+          _Pill(
             label: '12 mois',
             selected: filter.period == HistoryPeriod.last12Months,
             onTap: () => onChanged(filter.copyWith(
@@ -395,6 +404,9 @@ class _HistoryCard extends StatelessWidget {
                   if (h.isFuel) ...[
                     Icon(Icons.local_gas_station, size: 18, color: p.warn),
                     const SizedBox(width: 8),
+                  ] else if (h.isExpense) ...[
+                    Icon(Icons.receipt_long, size: 18, color: p.danger),
+                    const SizedBox(width: 8),
                   ],
                   Expanded(
                     child: Column(
@@ -427,6 +439,11 @@ class _HistoryCard extends StatelessWidget {
                 spacing: 8,
                 runSpacing: 8,
                 children: [
+                  if (h.isExpense && h.category != null)
+                    _Chip(
+                        icon: Icons.sell_outlined,
+                        label: ExpenseCategories.label(h.category!),
+                        color: p.danger),
                   if (h.garageName != null)
                     _Chip(
                         icon: Icons.store,

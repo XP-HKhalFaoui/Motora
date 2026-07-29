@@ -17,7 +17,7 @@ MaintenanceHistory _entry(
       vehicleId: 'v1',
       title: title,
       garageName: garage,
-      isFuel: fuel,
+      kind: fuel ? HistoryEntryKind.fuel : HistoryEntryKind.maintenance,
       km: km,
       doneAt: at ?? _now,
     );
