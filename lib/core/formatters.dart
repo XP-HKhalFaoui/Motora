@@ -5,6 +5,7 @@ class Fmt {
   static final _date = DateFormat('d MMM yyyy', 'fr_FR');
   static final _dateShort = DateFormat('dd/MM/yyyy', 'fr_FR');
   static final _monthYear = DateFormat('MMM yyyy', 'fr_FR');
+  static final _monthShort = DateFormat('MM/yy', 'fr_FR');
   static final _km = NumberFormat.decimalPattern('fr_FR');
 
   /// Algerian dinar. The app is used in Algeria — plates, vignette, carte
@@ -19,6 +20,11 @@ class Fmt {
   static String date(DateTime? d) => d == null ? '—' : _date.format(d);
   static String dateShort(DateTime? d) =>
       d == null ? '—' : _dateShort.format(d);
+
+  /// "07/26" — compact enough for a chart axis with a year of bars.
+  static String monthShort(DateTime? d) =>
+      d == null ? '—' : _monthShort.format(d);
+
   static String monthYear(DateTime? d) =>
       d == null ? '—' : _monthYear.format(d);
   static String km(num? v) => v == null ? '—' : '${_km.format(v)} km';

@@ -12,6 +12,7 @@ import '../../../widgets/document_card.dart';
 import '../../../widgets/km_gauge.dart';
 import '../../../widgets/maintenance_card.dart';
 import '../../history/history_screen.dart';
+import '../../reports/reports_screen.dart';
 import '../update_km_sheet.dart';
 
 /// "Aperçu" section of the vehicle hub: a digest that pulls the key signal
@@ -119,6 +120,18 @@ class OverviewSection extends ConsumerWidget {
             ),
             icon: const Icon(Icons.history, size: 18),
             label: const Text("Voir l'historique"),
+          ),
+        ),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (_) => ReportsScreen(vehicleId: vehicleId)),
+            ),
+            icon: const Icon(Icons.query_stats, size: 18),
+            label: const Text('Rapports'),
           ),
         ),
         const SizedBox(height: 8),
