@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+import 'aurora_theme.dart';
+
 /// Design tokens for one theme (dark or light), per the Motora design
 /// system (motora-app-ui-ux-design/project/PROMPT-claude-code.md §5).
 class AppPalette extends ThemeExtension<AppPalette> {
@@ -231,7 +233,14 @@ class AppTheme {
     return base.copyWith(
       brightness: brightness,
       scaffoldBackgroundColor: p.background,
-      extensions: [p],
+      // AuroraPalette rides alongside the legacy AppPalette: screens
+      // migrated to the Nocturne Aurora redesign read `context.aurora`,
+      // everything else keeps reading `context.palette` unchanged until
+      // its own turn to migrate.
+      extensions: [
+        p,
+        brightness == Brightness.dark ? AuroraPalette.dark : AuroraPalette.light,
+      ],
       colorScheme: (brightness == Brightness.dark
               ? const ColorScheme.dark()
               : const ColorScheme.light())

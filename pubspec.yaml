@@ -51,6 +51,8 @@ dependencies:
 
   # Design system
   google_fonts: ^6.2.1
+  # Icons for the "Nocturne Aurora" redesign (design_handoff_motora_aurora/).
+  phosphor_flutter: ^2.1.0
 
 dev_dependencies:
   flutter_test:

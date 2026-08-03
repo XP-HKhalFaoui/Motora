@@ -8,10 +8,15 @@ import '../../models/vehicle.dart';
 import '../../providers/auth_provider.dart';
 import '../../providers/session_provider.dart';
 import '../../providers/settings_provider.dart';
+import '../../providers/ui_state_provider.dart';
 import '../../providers/vehicle_provider.dart';
 import '../../widgets/async_value_view.dart';
 import '../garages/garages_screen.dart';
 import '../home/vehicle_form_screen.dart';
+import '../shell/section_screen.dart';
+import '../vehicle_detail/sections/documents_section.dart';
+import '../vehicle_detail/sections/fuel_section.dart';
+import '../vehicle_detail/sections/mileage_section.dart';
 
 /// Paramètres (screen 09): profile, vehicles, alert thresholds,
 /// preferences (unit + theme), sign out.
@@ -120,6 +125,45 @@ class SettingsScreen extends ConsumerWidget {
                 ),
               ),
             ]),
+            if (ref.watch(effectiveSelectedVehicleIdProvider) case final id?) ...[
+              const SizedBox(height: 22),
+              const _SectionLabel('CE VÉHICULE'),
+              _Group(children: [
+                _Row(
+                  icon: Icons.local_gas_station,
+                  label: 'Carburant',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          SectionScreen(title: 'Carburant', child: FuelSection(vehicleId: id)),
+                    ),
+                  ),
+                ),
+                _Row(
+                  icon: Icons.speed,
+                  label: 'Kilométrage',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          SectionScreen(title: 'Kilométrage', child: MileageSection(vehicleId: id)),
+                    ),
+                  ),
+                ),
+                _Row(
+                  icon: Icons.description,
+                  label: 'Documents',
+                  onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) =>
+                          SectionScreen(title: 'Documents', child: DocumentsSection(vehicleId: id)),
+                    ),
+                  ),
+                ),
+              ]),
+            ],
             const SizedBox(height: 22),
             const _SectionLabel('ALERTES & SEUILS'),
             _Group(children: [

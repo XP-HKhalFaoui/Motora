@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/regular/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/duotone/style.css">
+<link rel="stylesheet" href="https://unpkg.com/@phosphor-icons/web@2.1.1/src/fill/style.css">
+<script src="./image-slot.js"></script>
+<link rel="stylesheet" href="ds/nocturne.css">
+<link rel="stylesheet" href="ds/broadsheet.css">
+<style>
+  body { margin: 0; background: #c9c7c4; }
+  x-dc { display: flex; flex-direction: column; gap: 130px; padding: 60px; }
+  a { color: #3a3835; }
+  a:hover { color: #17150f; }
+  .lbl { font-family: ui-monospace, "SF Mono", Menlo, monospace; }
+</style>
+</helmet>
+
+<section>
+  <div id="2a" style="display:flex;flex-direction:column;gap:22px">
+    <div style="display:flex;align-items:baseline;gap:14px">
+      <span class="lbl" style="font-size:13px;padding:4px 9px;background:#17150f;color:#f2f0ec;border-radius:3px">2a</span>
+      <span style="font-family:Inter,system-ui,sans-serif;font-size:26px;font-weight:500;color:#17150f">Nocturne Aurora</span>
+      <span class="lbl" style="font-size:12px;color:#5c5a56">le blurple Nocturne sur fond clair · cartes douces · nav flottante</span>
+    </div>
+
+    <div class="ds-nocturne" style="display:grid;grid-template-columns:repeat(3,380px);gap:40px;background:transparent;color:var(--color-bg)">
+
+      <!-- A1 Accueil -->
+      <div>
+        <div style="width:380px;height:820px;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;position:relative;background:linear-gradient(168deg,color-mix(in srgb,var(--color-accent) 6%,#fff),color-mix(in srgb,var(--color-accent) 16%,#fff) 58%,color-mix(in srgb,var(--color-accent) 5%,#fff));box-shadow:0 26px 60px rgba(30,26,60,.2)">
+          <div style="height:30px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:12px;font-weight:500;color:var(--color-bg)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-fill ph-wifi-high"></i><i class="ph-fill ph-battery-high"></i></span></div>
+
+          <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:14px;padding:8px 18px 96px">
+            <div style="display:flex;align-items:center;gap:10px">
+              <div style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:#fff;box-shadow:0 4px 14px rgba(40,36,80,.09);color:var(--color-accent)"><i class="ph-fill ph-car-profile" style="font-size:19px"></i></div>
+              <div style="flex:1"><div style="font-size:12px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Bonjour Camille</div><div style="font-size:17px;font-weight:600;display:flex;align-items:center;gap:5px">308 SW <i class="ph ph-caret-down" style="font-size:12px;color:color-mix(in srgb,var(--color-bg) 60%,#fff)"></i></div></div>
+              <div style="position:relative;width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:#fff;box-shadow:0 4px 14px rgba(40,36,80,.09)"><i class="ph ph-bell" style="font-size:18px"></i><span style="position:absolute;top:9px;right:10px;width:7px;height:7px;border-radius:50%;background:var(--color-accent);box-shadow:0 0 0 2px #fff"></span></div>
+            </div>
+
+            <div style="position:relative;height:132px;border-radius:26px;overflow:hidden;background:linear-gradient(120deg,color-mix(in srgb,var(--color-accent) 24%,#fff),color-mix(in srgb,var(--color-accent) 9%,#fff))">
+              <image-slot id="aurora-car" shape="rect" placeholder="Photo du véhicule" style="position:absolute;inset:0"></image-slot>
+              <span style="position:absolute;left:14px;bottom:12px;padding:5px 10px;border-radius:99px;font-size:11px;font-weight:600;letter-spacing:.04em;background:rgba(255,255,255,.88);backdrop-filter:blur(6px);font-variant-numeric:tabular-nums;pointer-events:none">AB-123-CD</span>
+              <span style="position:absolute;right:14px;bottom:12px;padding:5px 10px;border-radius:99px;font-size:11px;font-weight:600;background:rgba(255,255,255,.88);backdrop-filter:blur(6px);font-variant-numeric:tabular-nums;pointer-events:none">128 450 km</span>
+            </div>
+
+            <div style="background:#fff;border-radius:24px;padding:16px;box-shadow:0 6px 22px rgba(40,36,80,.07);display:flex;align-items:center;gap:16px">
+              <div style="flex:1">
+                <div style="font-size:12px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Prochaine échéance</div>
+                <div style="font-size:19px;font-weight:600;margin-top:3px;line-height:1.15">Contrôle technique</div>
+                <div style="font-size:12px;color:var(--color-accent);font-weight:600;margin-top:4px">dans 11 jours · 9 août</div>
+              </div>
+              <svg viewBox="0 0 72 72" style="width:72px;height:72px;flex:none">
+                <circle cx="36" cy="36" r="30" fill="none" stroke="color-mix(in srgb,var(--color-accent) 16%,#fff)" stroke-width="7"></circle>
+                <circle cx="36" cy="36" r="30" fill="none" stroke="var(--color-accent)" stroke-width="7" stroke-linecap="round" stroke-dasharray="188.5" stroke-dashoffset="17" transform="rotate(-90 36 36)"></circle>
+                <text x="36" y="34" text-anchor="middle" font-size="17" font-weight="600" fill="var(--color-bg)" font-family="Inter">11</text>
+                <text x="36" y="47" text-anchor="middle" font-size="9" fill="color-mix(in srgb,var(--color-bg) 50%,#fff)" font-family="Inter">jours</text>
+              </svg>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div style="background:#fff;border-radius:18px;padding:12px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 14%,#fff);color:var(--color-accent)"><i class="ph-fill ph-currency-eur" style="font-size:15px"></i></span><div><div style="font-size:10px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Coût / km</div><div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">0,21 €</div></div></div>
+              <div style="background:#fff;border-radius:18px;padding:12px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 14%,#fff);color:var(--color-accent)"><i class="ph-fill ph-gas-pump" style="font-size:15px"></i></span><div><div style="font-size:10px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Conso.</div><div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">6,4 L</div></div></div>
+              <div style="background:#fff;border-radius:18px;padding:12px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 14%,#fff);color:var(--color-accent)"><i class="ph-fill ph-drop" style="font-size:15px"></i></span><div><div style="font-size:10px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Vidange</div><div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">620 km</div></div></div>
+              <div style="background:#fff;border-radius:18px;padding:12px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:10px"><span style="width:30px;height:30px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 14%,#fff);color:var(--color-accent)"><i class="ph-fill ph-file-text" style="font-size:15px"></i></span><div><div style="font-size:10px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Papiers OK</div><div style="font-size:15px;font-weight:600;font-variant-numeric:tabular-nums">3 / 4</div></div></div>
+            </div>
+
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:2px"><span style="font-size:14px;font-weight:600">Activité récente</span><span style="font-size:12px;color:var(--color-accent);font-weight:600">Tout voir</span></div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <div style="background:#fff;border-radius:18px;padding:11px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:11px"><span style="width:30px;height:30px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 14%,#fff);color:var(--color-accent)"><i class="ph-fill ph-gas-pump" style="font-size:15px"></i></span><div style="flex:1"><div style="font-size:14px;font-weight:500">Plein — 42,1 L</div><div style="font-size:11px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">24 juil. · 6,2 L/100</div></div><span style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">71,20 €</span></div>
+              <div style="background:#fff;border-radius:18px;padding:11px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:11px"><span style="width:30px;height:30px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 14%,#fff);color:var(--color-accent)"><i class="ph-fill ph-wrench" style="font-size:15px"></i></span><div style="flex:1"><div style="font-size:14px;font-weight:500">Plaquettes avant</div><div style="font-size:11px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">27 juin · Garage Ferry</div></div><span style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">389,00 €</span></div>
+            </div>
+          </div>
+
+          <div style="position:absolute;left:18px;right:18px;bottom:18px;height:64px;border-radius:32px;background:var(--color-bg);display:grid;grid-template-columns:repeat(4,1fr);align-items:center;box-shadow:0 14px 34px rgba(22,24,38,.36)">
+            <div style="display:grid;place-items:center"><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-accent);color:var(--color-bg)"><i class="ph-fill ph-house" style="font-size:20px"></i></span></div>
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-bell-ringing" style="font-size:21px"></i></div>
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-receipt" style="font-size:21px"></i></div>
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-chart-line" style="font-size:21px"></i></div>
+          </div>
+        </div>
+        <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">01 — Accueil : photo, anneau d'échéance, tuiles de coût</div>
+      </div>
+
+      <!-- A2 Échéances -->
+      <div>
+        <div style="width:380px;height:820px;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;position:relative;background:linear-gradient(168deg,color-mix(in srgb,var(--color-accent) 6%,#fff),color-mix(in srgb,var(--color-accent) 16%,#fff) 58%,color-mix(in srgb,var(--color-accent) 5%,#fff));box-shadow:0 26px 60px rgba(30,26,60,.2)">
+          <div style="height:30px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:12px;font-weight:500"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-fill ph-wifi-high"></i><i class="ph-fill ph-battery-high"></i></span></div>
+          <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:14px;padding:10px 18px 96px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:22px;font-weight:600">Échéances</span><span style="flex:1"></span><span style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:#fff;box-shadow:0 4px 14px rgba(40,36,80,.09)"><i class="ph ph-sliders-horizontal" style="font-size:18px"></i></span></div>
+
+            <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">
+              <div style="background:var(--color-accent);color:#fff;border-radius:18px;padding:12px 8px;text-align:center;box-shadow:0 8px 20px color-mix(in srgb,var(--color-accent) 38%,transparent)"><div style="font-size:20px;font-weight:600">2</div><div style="font-size:9px;letter-spacing:.03em">Urgent</div></div>
+              <div style="background:#fff;border-radius:18px;padding:12px 8px;text-align:center;box-shadow:0 4px 16px rgba(40,36,80,.06)"><div style="font-size:20px;font-weight:600">3</div><div style="font-size:9px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">À surveiller</div></div>
+              <div style="background:#fff;border-radius:18px;padding:12px 8px;text-align:center;box-shadow:0 4px 16px rgba(40,36,80,.06)"><div style="font-size:20px;font-weight:600">6</div><div style="font-size:9px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">OK</div></div>
+              <div style="background:#fff;border-radius:18px;padding:12px 8px;text-align:center;box-shadow:0 4px 16px rgba(40,36,80,.06)"><div style="font-size:20px;font-weight:600">1</div><div style="font-size:9px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">À régler</div></div>
+            </div>
+
+            <div style="display:flex;gap:8px;background:#fff;border-radius:99px;padding:4px;box-shadow:0 4px 16px rgba(40,36,80,.06)">
+              <span style="flex:1;text-align:center;padding:8px;border-radius:99px;font-size:13px;font-weight:600;background:var(--color-bg);color:var(--color-text)">Tout</span>
+              <span style="flex:1;text-align:center;padding:8px;border-radius:99px;font-size:13px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Entretien</span>
+              <span style="flex:1;text-align:center;padding:8px;border-radius:99px;font-size:13px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Papiers</span>
+            </div>
+
+            <div style="background:var(--color-bg);border-radius:26px;padding:18px;color:var(--color-text);box-shadow:0 14px 34px rgba(22,24,38,.3)">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <span style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 26%,transparent);color:var(--color-accent)"><i class="ph-fill ph-shield-warning" style="font-size:19px"></i></span>
+                <div style="flex:1"><div style="font-size:11px;color:var(--color-accent)">Urgent</div><div style="font-size:18px;font-weight:600;margin-top:2px">Contrôle technique</div><div style="font-size:12px;color:color-mix(in srgb,var(--color-text) 62%,transparent);margin-top:3px">Expire le 9 août 2026 · dans 11 jours</div></div>
+              </div>
+              <div style="height:5px;border-radius:3px;background:color-mix(in srgb,var(--color-text) 14%,transparent);margin-top:14px;overflow:hidden"><div style="width:91%;height:100%;border-radius:3px;background:var(--color-accent)"></div></div>
+              <div style="display:flex;gap:9px;margin-top:14px">
+                <span style="flex:1;text-align:center;padding:11px;border-radius:99px;font-size:13px;font-weight:600;background:var(--color-accent);color:var(--color-bg)">Marquer comme fait</span>
+                <span style="padding:11px 15px;border-radius:99px;font-size:13px;border:1px solid color-mix(in srgb,var(--color-text) 26%,transparent)">Reporter</span>
+              </div>
+            </div>
+
+            <div style="background:#fff;border-radius:22px;padding:14px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:12px">
+              <span style="width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 14%,#fff);color:var(--color-accent)"><i class="ph-fill ph-drop" style="font-size:16px"></i></span>
+              <div style="flex:1"><div style="font-size:15px;font-weight:500">Vidange + filtre à huile</div><div style="font-size:11px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">dans 620 km · tous les 15 000 km</div></div>
+              <span style="font-size:11px;font-weight:600;padding:4px 9px;border-radius:99px;background:color-mix(in srgb,var(--color-accent) 15%,#fff);color:var(--color-accent)">Urgent</span>
+            </div>
+
+            <div style="font-size:13px;font-weight:600;color:color-mix(in srgb,var(--color-bg) 64%,#fff);margin-top:2px">À surveiller</div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <div style="background:#fff;border-radius:18px;padding:12px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:11px"><span style="width:30px;height:30px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 12%,#fff);color:var(--color-accent)"><i class="ph-fill ph-shield-check" style="font-size:15px"></i></span><div style="flex:1"><div style="font-size:14px;font-weight:500">Assurance</div><div style="font-size:11px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">1 nov. 2026 · dans 95 j</div></div><i class="ph ph-caret-right" style="color:color-mix(in srgb,var(--color-bg) 40%,#fff)"></i></div>
+              <div style="background:#fff;border-radius:18px;padding:12px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:11px"><span style="width:30px;height:30px;border-radius:11px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-bg) 8%,#fff);color:color-mix(in srgb,var(--color-bg) 64%,#fff)"><i class="ph-fill ph-gear" style="font-size:15px"></i></span><div style="flex:1"><div style="font-size:14px;font-weight:500">Plaquettes de frein</div><div style="font-size:11px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Intervalle à définir</div></div><span style="font-size:11px;font-weight:600;padding:4px 9px;border-radius:99px;border:1px solid var(--color-accent);color:var(--color-accent)">Régler</span></div>
+            </div>
+          </div>
+          <div style="position:absolute;left:18px;right:18px;bottom:18px;height:64px;border-radius:32px;background:var(--color-bg);display:grid;grid-template-columns:repeat(4,1fr);align-items:center;box-shadow:0 14px 34px rgba(22,24,38,.36)">
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-house" style="font-size:21px"></i></div>
+            <div style="display:grid;place-items:center"><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-accent);color:var(--color-bg)"><i class="ph-fill ph-bell-ringing" style="font-size:20px"></i></span></div>
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-receipt" style="font-size:21px"></i></div>
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-chart-line" style="font-size:21px"></i></div>
+          </div>
+        </div>
+        <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">02 — Échéances : l'urgence prend la carte sombre</div>
+      </div>
+
+      <!-- A3 Ajout rapide -->
+      <div>
+        <div style="width:380px;height:820px;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;position:relative;background:linear-gradient(168deg,color-mix(in srgb,var(--color-accent) 6%,#fff),color-mix(in srgb,var(--color-accent) 16%,#fff) 58%,color-mix(in srgb,var(--color-accent) 5%,#fff));box-shadow:0 26px 60px rgba(30,26,60,.2)">
+          <div style="height:30px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:12px;font-weight:500"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-fill ph-wifi-high"></i><i class="ph-fill ph-battery-high"></i></span></div>
+          <div style="flex:1;position:relative;overflow:hidden">
+            <div style="position:absolute;inset:0;padding:18px;opacity:.25;display:flex;flex-direction:column;gap:14px">
+              <div style="height:132px;border-radius:26px;background:#fff"></div>
+              <div style="height:104px;border-radius:24px;background:#fff"></div>
+              <div style="height:130px;border-radius:24px;background:#fff"></div>
+            </div>
+            <div style="position:absolute;inset:0;background:color-mix(in srgb,var(--color-accent) 10%,rgba(255,255,255,.72))"></div>
+            <div style="position:absolute;left:18px;right:18px;bottom:16px;background:#fff;border-radius:30px;padding:20px 18px;box-shadow:0 -8px 40px rgba(40,36,80,.16)">
+              <div style="width:38px;height:4px;border-radius:2px;background:color-mix(in srgb,var(--color-bg) 14%,#fff);margin:0 auto 16px"></div>
+              <div style="font-size:19px;font-weight:600">Ajouter</div>
+              <div style="font-size:12px;color:color-mix(in srgb,var(--color-bg) 64%,#fff);margin-top:3px">Cinq gestes, depuis n'importe quel écran</div>
+              <div style="display:flex;flex-direction:column;gap:9px;margin-top:16px">
+                <div style="display:flex;align-items:center;gap:13px;padding:12px;border-radius:20px;background:var(--color-accent);color:var(--color-bg);box-shadow:0 8px 22px color-mix(in srgb,var(--color-accent) 36%,transparent)"><span style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-bg) 18%,transparent)"><i class="ph-fill ph-gauge" style="font-size:19px"></i></span><div style="flex:1"><div style="font-size:15px;font-weight:600">Relevé kilométrique</div><div style="font-size:11px;opacity:.8">Saisie ou photo du compteur</div></div><i class="ph ph-arrow-right"></i></div>
+                <div style="display:flex;align-items:center;gap:13px;padding:12px;border-radius:20px;background:color-mix(in srgb,var(--color-accent) 8%,#fff)"><span style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--color-accent)"><i class="ph-fill ph-wrench" style="font-size:19px"></i></span><div style="flex:1;font-size:15px;font-weight:500">Réparation</div><i class="ph ph-caret-right" style="color:color-mix(in srgb,var(--color-bg) 40%,#fff)"></i></div>
+                <div style="display:flex;align-items:center;gap:13px;padding:12px;border-radius:20px;background:color-mix(in srgb,var(--color-accent) 8%,#fff)"><span style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--color-accent)"><i class="ph-fill ph-gas-pump" style="font-size:19px"></i></span><div style="flex:1;font-size:15px;font-weight:500">Plein de carburant</div><i class="ph ph-caret-right" style="color:color-mix(in srgb,var(--color-bg) 40%,#fff)"></i></div>
+                <div style="display:flex;align-items:center;gap:13px;padding:12px;border-radius:20px;background:color-mix(in srgb,var(--color-accent) 8%,#fff)"><span style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--color-accent)"><i class="ph-fill ph-currency-eur" style="font-size:19px"></i></span><div style="flex:1;font-size:15px;font-weight:500">Dépense</div><i class="ph ph-caret-right" style="color:color-mix(in srgb,var(--color-bg) 40%,#fff)"></i></div>
+                <div style="display:flex;align-items:center;gap:13px;padding:12px;border-radius:20px;background:color-mix(in srgb,var(--color-accent) 8%,#fff)"><span style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:#fff;color:var(--color-accent)"><i class="ph-fill ph-file-text" style="font-size:19px"></i></span><div style="flex:1;font-size:15px;font-weight:500">Document scanné</div><i class="ph ph-caret-right" style="color:color-mix(in srgb,var(--color-bg) 40%,#fff)"></i></div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">03 — Ajout rapide : feuille basse, le relevé km en tête</div>
+      </div>
+
+      <!-- A4 Nouvelle entrée -->
+      <div>
+        <div style="width:380px;height:820px;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;position:relative;background:linear-gradient(168deg,color-mix(in srgb,var(--color-accent) 6%,#fff),color-mix(in srgb,var(--color-accent) 16%,#fff) 58%,color-mix(in srgb,var(--color-accent) 5%,#fff));box-shadow:0 26px 60px rgba(30,26,60,.2)">
+          <div style="height:30px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:12px;font-weight:500"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-fill ph-wifi-high"></i><i class="ph-fill ph-battery-high"></i></span></div>
+          <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:14px;padding:10px 18px 0">
+            <div style="display:flex;align-items:center;gap:12px"><span style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:#fff;box-shadow:0 4px 14px rgba(40,36,80,.09)"><i class="ph ph-x" style="font-size:17px"></i></span><span style="font-size:20px;font-weight:600">Nouvelle entrée</span></div>
+
+            <div style="display:flex;gap:6px;background:#fff;border-radius:99px;padding:4px;box-shadow:0 4px 16px rgba(40,36,80,.06)">
+              <span style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px;border-radius:99px;font-size:12px;font-weight:600;background:var(--color-accent);color:var(--color-bg)"><i class="ph-fill ph-wrench"></i>Entretien</span>
+              <span style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px;border-radius:99px;font-size:12px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)"><i class="ph ph-gas-pump"></i>Carburant</span>
+              <span style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;padding:9px;border-radius:99px;font-size:12px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)"><i class="ph ph-currency-eur"></i>Dépense</span>
+            </div>
+
+            <div style="display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:20px;background:color-mix(in srgb,var(--color-accent) 12%,#fff)"><i class="ph-fill ph-link-simple" style="color:var(--color-accent);font-size:17px"></i><div style="font-size:12px;line-height:1.4">Lié à <strong>Contrôle technique</strong> — l'échéance sera remise à zéro</div></div>
+
+            <div style="background:#fff;border-radius:24px;padding:16px;box-shadow:0 6px 22px rgba(40,36,80,.07);display:flex;flex-direction:column;gap:14px">
+              <div><div style="font-size:11px;font-weight:600;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Intitulé</div><div style="font-size:15px;margin-top:5px;padding-bottom:8px;box-shadow:0 1px 0 color-mix(in srgb,var(--color-bg) 12%,#fff)">Contrôle technique périodique</div></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                <div><div style="font-size:11px;font-weight:600;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Date</div><div style="font-size:15px;margin-top:5px;padding-bottom:8px;box-shadow:0 1px 0 color-mix(in srgb,var(--color-bg) 12%,#fff);font-variant-numeric:tabular-nums">29/07/2026</div></div>
+                <div><div style="font-size:11px;font-weight:600;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Kilométrage</div><div style="font-size:15px;margin-top:5px;padding-bottom:8px;box-shadow:0 1px 0 color-mix(in srgb,var(--color-bg) 12%,#fff);font-variant-numeric:tabular-nums">128 450</div></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+                <div><div style="font-size:11px;font-weight:600;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Coût</div><div style="font-size:15px;margin-top:5px;padding-bottom:8px;box-shadow:0 1px 0 var(--color-accent);font-variant-numeric:tabular-nums">82,00 €</div></div>
+                <div><div style="font-size:11px;font-weight:600;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Garage</div><div style="font-size:15px;margin-top:5px;padding-bottom:8px;box-shadow:0 1px 0 color-mix(in srgb,var(--color-bg) 12%,#fff)">Autosur Massy</div></div>
+              </div>
+              <span style="align-self:flex-start;font-size:12px;font-weight:600;color:var(--color-accent);display:flex;align-items:center;gap:5px"><i class="ph ph-plus"></i>Nouveau garage</span>
+            </div>
+
+            <div style="background:#fff;border-radius:24px;padding:16px;box-shadow:0 6px 22px rgba(40,36,80,.07)">
+              <div style="font-size:11px;font-weight:600;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Justificatif</div>
+              <div style="display:flex;gap:11px;margin-top:10px">
+                <div style="width:84px;height:100px;border-radius:16px;overflow:hidden"><image-slot id="aurora-scan" shape="rect" placeholder="Scan"></image-slot></div>
+                <div style="width:84px;height:100px;border-radius:16px;border:1.5px dashed color-mix(in srgb,var(--color-accent) 45%,#fff);display:grid;place-items:center;color:var(--color-accent);background:color-mix(in srgb,var(--color-accent) 6%,#fff)"><i class="ph ph-camera" style="font-size:22px"></i></div>
+              </div>
+            </div>
+          </div>
+          <div style="flex:none;padding:14px 18px 20px"><div style="height:52px;border-radius:26px;display:grid;place-items:center;font-size:15px;font-weight:600;background:var(--color-accent);color:var(--color-bg);box-shadow:0 10px 26px color-mix(in srgb,var(--color-accent) 40%,transparent)">Enregistrer l'entrée</div></div>
+        </div>
+        <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">04 — Formulaire unique, champs soulignés dans une carte</div>
+      </div>
+
+      <!-- A5 Journal -->
+      <div>
+        <div style="width:380px;height:820px;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;position:relative;background:linear-gradient(168deg,color-mix(in srgb,var(--color-accent) 6%,#fff),color-mix(in srgb,var(--color-accent) 16%,#fff) 58%,color-mix(in srgb,var(--color-accent) 5%,#fff));box-shadow:0 26px 60px rgba(30,26,60,.2)">
+          <div style="height:30px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:12px;font-weight:500"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-fill ph-wifi-high"></i><i class="ph-fill ph-battery-high"></i></span></div>
+          <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:13px;padding:10px 18px 96px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:22px;font-weight:600">Journal</span><span style="flex:1"></span><span style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:#fff;box-shadow:0 4px 14px rgba(40,36,80,.09)"><i class="ph ph-funnel" style="font-size:18px"></i></span><span style="width:38px;height:38px;border-radius:14px;display:grid;place-items:center;background:#fff;box-shadow:0 4px 14px rgba(40,36,80,.09)"><i class="ph ph-export" style="font-size:18px"></i></span></div>
+
+            <div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:99px;padding:11px 15px;box-shadow:0 4px 16px rgba(40,36,80,.06)"><i class="ph ph-magnifying-glass" style="color:color-mix(in srgb,var(--color-bg) 60%,#fff)"></i><span style="font-size:13px;color:color-mix(in srgb,var(--color-bg) 60%,#fff)">Rechercher une entrée…</span></div>
+
+            <div style="display:flex;gap:7px;flex-wrap:wrap"><span style="font-size:11px;font-weight:600;padding:6px 11px;border-radius:99px;background:var(--color-bg);color:var(--color-text)">Tous les types</span><span style="font-size:11px;padding:6px 11px;border-radius:99px;background:#fff;box-shadow:0 2px 10px rgba(40,36,80,.06)">12 derniers mois</span><span style="font-size:11px;padding:6px 11px;border-radius:99px;background:#fff;box-shadow:0 2px 10px rgba(40,36,80,.06)">Tous garages</span></div>
+
+            <div style="background:var(--color-bg);border-radius:24px;padding:16px 18px;color:var(--color-text);display:flex;align-items:flex-end;justify-content:space-between;box-shadow:0 14px 34px rgba(22,24,38,.3)">
+              <div><div style="font-size:11px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">Total sur la période</div><div style="font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.15">3 148,60 €</div></div>
+              <div style="text-align:right"><div style="font-size:11px;color:color-mix(in srgb,var(--color-text) 60%,transparent)">28 entrées</div><div style="font-size:13px;color:var(--color-accent);font-weight:600">262,40 € / mois</div></div>
+            </div>
+
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:2px"><span style="font-size:13px;font-weight:600">Juillet 2026</span><span style="font-size:12px;color:color-mix(in srgb,var(--color-bg) 64%,#fff);font-variant-numeric:tabular-nums">154,70 €</span></div>
+            <div style="display:flex;flex-direction:column;gap:9px">
+              <div style="background:#fff;border-radius:20px;padding:12px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:11px"><span style="width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 13%,#fff);color:var(--color-accent)"><i class="ph-fill ph-gas-pump" style="font-size:16px"></i></span><div style="flex:1"><div style="font-size:14px;font-weight:500">Plein — 42,1 L</div><div style="font-size:11px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">24 juil. · 128 300 km · 6,2 L/100</div></div><span style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">71,20 €</span></div>
+              <div style="background:#fff;border-radius:20px;padding:12px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:11px"><span style="width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-bg) 7%,#fff);color:color-mix(in srgb,var(--color-bg) 60%,#fff)"><i class="ph-fill ph-ticket" style="font-size:16px"></i></span><div style="flex:1"><div style="font-size:14px;font-weight:500">Péage A10</div><div style="font-size:11px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">18 juil.</div></div><span style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">12,60 €</span></div>
+              <div style="background:#fff;border-radius:20px;padding:12px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:11px"><span style="width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 13%,#fff);color:var(--color-accent)"><i class="ph-fill ph-gas-pump" style="font-size:16px"></i></span><div style="flex:1"><div style="font-size:14px;font-weight:500">Plein — 38,4 L</div><div style="font-size:11px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">11 juil. · 127 720 km · 6,5 L/100</div></div><span style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">64,90 €</span></div>
+            </div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:4px"><span style="font-size:13px;font-weight:600">Juin 2026</span><span style="font-size:12px;color:color-mix(in srgb,var(--color-bg) 64%,#fff);font-variant-numeric:tabular-nums">486,30 €</span></div>
+            <div style="background:#fff;border-radius:20px;padding:12px 13px;box-shadow:0 4px 16px rgba(40,36,80,.06);display:flex;align-items:center;gap:11px"><span style="width:34px;height:34px;border-radius:12px;display:grid;place-items:center;background:color-mix(in srgb,var(--color-accent) 13%,#fff);color:var(--color-accent)"><i class="ph-fill ph-wrench" style="font-size:16px"></i></span><div style="flex:1"><div style="font-size:14px;font-weight:500">Plaquettes avant + disques</div><div style="font-size:11px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">27 juin · Garage Ferry · facture</div></div><span style="font-size:14px;font-weight:600;font-variant-numeric:tabular-nums">389,00 €</span></div>
+          </div>
+          <div style="position:absolute;left:18px;right:18px;bottom:18px;height:64px;border-radius:32px;background:var(--color-bg);display:grid;grid-template-columns:repeat(4,1fr);align-items:center;box-shadow:0 14px 34px rgba(22,24,38,.36)">
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-house" style="font-size:21px"></i></div>
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-bell-ringing" style="font-size:21px"></i></div>
+            <div style="display:grid;place-items:center"><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-accent);color:var(--color-bg)"><i class="ph-fill ph-receipt" style="font-size:20px"></i></span></div>
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-chart-line" style="font-size:21px"></i></div>
+          </div>
+        </div>
+        <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">05 — Journal : total en carte sombre, entrées en lignes-cartes</div>
+      </div>
+
+      <!-- A6 Rapports -->
+      <div>
+        <div style="width:380px;height:820px;border-radius:36px;overflow:hidden;display:flex;flex-direction:column;position:relative;background:linear-gradient(168deg,color-mix(in srgb,var(--color-accent) 6%,#fff),color-mix(in srgb,var(--color-accent) 16%,#fff) 58%,color-mix(in srgb,var(--color-accent) 5%,#fff));box-shadow:0 26px 60px rgba(30,26,60,.2)">
+          <div style="height:30px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:12px;font-weight:500"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-fill ph-cell-signal-full"></i><i class="ph-fill ph-wifi-high"></i><i class="ph-fill ph-battery-high"></i></span></div>
+          <div style="flex:1;overflow:hidden;display:flex;flex-direction:column;gap:13px;padding:10px 18px 96px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:22px;font-weight:600">Rapports</span><span style="flex:1"></span><span style="font-size:12px;font-weight:600;padding:8px 13px;border-radius:99px;background:#fff;box-shadow:0 4px 14px rgba(40,36,80,.08);display:flex;align-items:center;gap:6px">12 mois <i class="ph ph-caret-down" style="font-size:11px"></i></span></div>
+
+            <div style="background:#fff;border-radius:26px;padding:16px;box-shadow:0 6px 22px rgba(40,36,80,.07)">
+              <div style="display:flex;align-items:flex-end;justify-content:space-between"><div><div style="font-size:11px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Kilométrage</div><div style="font-size:26px;font-weight:600;font-variant-numeric:tabular-nums;line-height:1.15">128 450</div></div><span style="font-size:11px;font-weight:600;padding:5px 10px;border-radius:99px;background:color-mix(in srgb,var(--color-accent) 14%,#fff);color:var(--color-accent)">+1 240 / mois</span></div>
+              <svg viewBox="0 0 320 88" preserveAspectRatio="none" style="width:100%;height:78px;margin-top:8px">
+                <defs><linearGradient id="auroraFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9184d9" stop-opacity=".34"></stop><stop offset="1" stop-color="#9184d9" stop-opacity="0"></stop></linearGradient></defs>
+                <polygon points="0,78 46,70 92,64 138,50 184,42 230,29 276,17 320,6 320,88 0,88" fill="url(#auroraFill)"></polygon>
+                <polyline points="0,78 46,70 92,64 138,50 184,42 230,29 276,17 320,6" fill="none" stroke="var(--color-accent)" stroke-width="2.5" stroke-linecap="round"></polyline>
+                <circle cx="320" cy="6" r="4" fill="var(--color-accent)"></circle>
+              </svg>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:color-mix(in srgb,var(--color-bg) 60%,#fff)"><span>août 25</span><span>janv. 26</span><span>juil. 26</span></div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+              <div style="background:#fff;border-radius:20px;padding:14px;box-shadow:0 4px 16px rgba(40,36,80,.06)"><div style="font-size:10px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Dépense / mois</div><div style="font-size:19px;font-weight:600;font-variant-numeric:tabular-nums">262,40 €</div></div>
+              <div style="background:#fff;border-radius:20px;padding:14px;box-shadow:0 4px 16px rgba(40,36,80,.06)"><div style="font-size:10px;color:color-mix(in srgb,var(--color-bg) 64%,#fff)">Conso. moyenne</div><div style="font-size:19px;font-weight:600;font-variant-numeric:tabular-nums">6,4 L/100</div></div>
+            </div>
+
+            <div style="background:#fff;border-radius:26px;padding:16px;box-shadow:0 6px 22px rgba(40,36,80,.07)">
+              <div style="font-size:13px;font-weight:600">Dépenses par mois</div>
+              <div style="display:flex;align-items:flex-end;gap:7px;height:92px;margin-top:14px">
+                <div style="flex:1;height:38%;border-radius:6px;background:color-mix(in srgb,var(--color-accent) 22%,#fff)"></div>
+                <div style="flex:1;height:52%;border-radius:6px;background:color-mix(in srgb,var(--color-accent) 22%,#fff)"></div>
+                <div style="flex:1;height:30%;border-radius:6px;background:color-mix(in srgb,var(--color-accent) 22%,#fff)"></div>
+                <div style="flex:1;height:74%;border-radius:6px;background:color-mix(in srgb,var(--color-accent) 22%,#fff)"></div>
+                <div style="flex:1;height:44%;border-radius:6px;background:color-mix(in srgb,var(--color-accent) 22%,#fff)"></div>
+                <div style="flex:1;height:26%;border-radius:6px;background:color-mix(in srgb,var(--color-accent) 22%,#fff)"></div>
+                <div style="flex:1;height:88%;border-radius:6px;background:color-mix(in srgb,var(--color-accent) 22%,#fff)"></div>
+                <div style="flex:1;height:100%;border-radius:6px;background:var(--color-accent)"></div>
+              </div>
+              <div style="display:flex;justify-content:space-between;font-size:10px;color:color-mix(in srgb,var(--color-bg) 60%,#fff);margin-top:7px"><span>déc.</span><span>mars</span><span>juil.</span></div>
+            </div>
+
+            <div style="background:#fff;border-radius:26px;padding:16px;box-shadow:0 6px 22px rgba(40,36,80,.07)">
+              <div style="font-size:13px;font-weight:600">Répartition</div>
+              <div style="display:flex;height:8px;border-radius:4px;overflow:hidden;margin:12px 0 14px;gap:2px">
+                <div style="width:41%;background:var(--color-accent)"></div>
+                <div style="width:27%;background:color-mix(in srgb,var(--color-accent) 55%,#fff)"></div>
+                <div style="width:19%;background:color-mix(in srgb,var(--color-accent) 32%,#fff)"></div>
+                <div style="width:13%;background:color-mix(in srgb,var(--color-accent) 16%,#fff)"></div>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px 14px;font-size:12px">
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:var(--color-accent);flex:none"></span><span style="flex:1">Carburant</span><span style="font-weight:600;font-variant-numeric:tabular-nums">1 291 €</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:color-mix(in srgb,var(--color-accent) 55%,#fff);flex:none"></span><span style="flex:1">Entretien</span><span style="font-weight:600;font-variant-numeric:tabular-nums">850 €</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:color-mix(in srgb,var(--color-accent) 32%,#fff);flex:none"></span><span style="flex:1">Assurance</span><span style="font-weight:600;font-variant-numeric:tabular-nums">598 €</span></div>
+                <div style="display:flex;align-items:center;gap:7px"><span style="width:9px;height:9px;border-radius:3px;background:color-mix(in srgb,var(--color-accent) 16%,#fff);flex:none"></span><span style="flex:1">Divers</span><span style="font-weight:600;font-variant-numeric:tabular-nums">409 €</span></div>
+              </div>
+            </div>
+          </div>
+          <div style="position:absolute;left:18px;right:18px;bottom:18px;height:64px;border-radius:32px;background:var(--color-bg);display:grid;grid-template-columns:repeat(4,1fr);align-items:center;box-shadow:0 14px 34px rgba(22,24,38,.36)">
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-house" style="font-size:21px"></i></div>
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-bell-ringing" style="font-size:21px"></i></div>
+            <div style="display:grid;place-items:center;color:color-mix(in srgb,var(--color-text) 55%,transparent)"><i class="ph ph-receipt" style="font-size:21px"></i></div>
+            <div style="display:grid;place-items:center"><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-accent);color:var(--color-bg)"><i class="ph-fill ph-chart-line" style="font-size:20px"></i></span></div>
+          </div>
+        </div>
+        <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">06 — Rapports : une carte par question, dégradé sous la courbe</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<section style="display:flex;gap:160px;align-items:flex-start"><div id="1a" style="width:1340px;flex:none;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span class="lbl" style="font-size:13px;padding:4px 9px;background:#17150f;color:#f2f0ec;border-radius:3px">1a</span>
+    <span style="font-family:Inter,system-ui,sans-serif;font-size:26px;font-weight:500;color:#17150f">Nocturne</span>
+    <span class="lbl" style="font-size:12px;color:#5c5a56">sombre · compact · l'accent en trait et en halo</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,380px);gap:40px 40px">
+
+    <!-- ══ N1 Accueil ══ -->
+    <div>
+      <div class="ds-nocturne" style="width:380px;height:820px;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.4);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:11px;color:var(--color-neutral-500)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph ph-cell-signal-full"></i><i class="ph ph-wifi-high"></i><i class="ph ph-battery-high"></i></span></div>
+        <div style="height:52px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px">
+          <div style="display:flex;align-items:center;gap:8px;padding:5px 10px 5px 6px;border-radius:99px;background:var(--color-surface)">
+            <span style="width:24px;height:24px;border-radius:50%;background:repeating-linear-gradient(135deg,var(--color-neutral-800) 0 3px,var(--color-neutral-900) 3px 6px)"></span>
+            <span style="font-size:14px;font-weight:500">308 SW</span>
+            <i class="ph ph-caret-down" style="font-size:12px;color:var(--color-neutral-500)"></i>
+          </div>
+          <span style="flex:1"></span>
+          <span style="position:relative;width:36px;height:36px;display:grid;place-items:center;color:var(--color-neutral-300)"><i class="ph ph-bell" style="font-size:20px"></i><span style="position:absolute;top:7px;right:8px;width:7px;height:7px;border-radius:50%;background:var(--color-accent)"></span></span>
+        </div>
+
+        <div style="flex:1;overflow:hidden;padding:2px 14px 0;display:flex;flex-direction:column;gap:16px">
+          <div>
+            <div style="display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.11em;text-transform:uppercase;color:var(--color-accent)"><span style="width:5px;height:5px;border-radius:50%;background:var(--color-accent)"></span>À faire en priorité</div>
+            <div style="font-family:var(--font-heading);font-weight:500;font-size:27px;line-height:1.1;margin-top:8px">Contrôle technique</div>
+            <div style="font-size:13px;color:var(--color-neutral-400);margin-top:5px">Expire dans 11 jours · 9 août 2026</div>
+            <div style="height:3px;border-radius:2px;margin-top:12px;background:var(--color-neutral-800);overflow:hidden"><div style="width:91%;height:100%;background:linear-gradient(to right,var(--color-accent-700),var(--color-accent));box-shadow:0 0 10px var(--color-accent)"></div></div>
+            <div style="display:flex;gap:8px;margin-top:12px">
+              <button class="btn btn-primary" style="min-height:44px;flex:1">Marquer comme fait</button>
+              <button class="btn btn-secondary" style="min-height:44px;width:44px;padding:0"><i class="ph ph-alarm" style="font-size:18px"></i></button>
+            </div>
+          </div>
+
+          <div style="border-radius:var(--radius-md);overflow:hidden;position:relative;height:104px;background:repeating-linear-gradient(115deg,var(--color-neutral-900) 0 7px,#1b1d2b 7px 14px);display:grid;place-items:center">
+            <span class="lbl" style="font-size:10px;color:var(--color-neutral-600)">photo du véhicule</span>
+            <span class="tag tag-neutral" style="position:absolute;left:10px;bottom:10px;font-variant-numeric:tabular-nums">AB-123-CD</span>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:flex-end;justify-content:space-between">
+              <div>
+                <div style="font-size:11px;color:var(--color-neutral-500)">Kilométrage</div>
+                <div style="font-family:var(--font-heading);font-size:26px;font-weight:500;font-variant-numeric:tabular-nums;line-height:1.1">128 450 <span style="font-size:14px;color:var(--color-neutral-500)">km</span></div>
+              </div>
+              <svg viewBox="0 0 120 34" preserveAspectRatio="none" style="width:120px;height:34px"><polyline points="0,30 20,26 40,21 60,18 80,12 100,9 120,3" fill="none" stroke="var(--color-accent)" stroke-width="1.5" stroke-linecap="round"></polyline></svg>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+            <div class="card" style="gap:2px;padding:10px"><div style="font-size:10px;color:var(--color-neutral-500)">Coût / km</div><div style="font-size:17px;font-weight:500;font-variant-numeric:tabular-nums">0,21 €</div></div>
+            <div class="card" style="gap:2px;padding:10px"><div style="font-size:10px;color:var(--color-neutral-500)">Coût / jour</div><div style="font-size:17px;font-weight:500;font-variant-numeric:tabular-nums">4,80 €</div></div>
+            <div class="card" style="gap:2px;padding:10px"><div style="font-size:10px;color:var(--color-neutral-500)">Conso.</div><div style="font-size:17px;font-weight:500;font-variant-numeric:tabular-nums">6,4 L</div></div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div style="display:flex;align-items:center;justify-content:space-between"><h6 style="margin:0;color:var(--color-neutral-400)">Ensuite</h6><span class="btn btn-ghost" style="font-size:12px">Tout voir</span></div>
+            <div style="display:flex;align-items:center;gap:10px"><i class="ph ph-drop" style="font-size:18px;color:var(--color-accent)"></i><div style="flex:1"><div style="font-size:14px">Vidange + filtre à huile</div><div style="font-size:11px;color:var(--color-neutral-500)">dans 620 km</div></div><span style="width:2px;height:26px;border-radius:1px;background:var(--color-accent)"></span></div>
+            <div style="display:flex;align-items:center;gap:10px"><i class="ph ph-shield-check" style="font-size:18px;color:var(--color-neutral-400)"></i><div style="flex:1"><div style="font-size:14px">Assurance</div><div style="font-size:11px;color:var(--color-neutral-500)">1 nov. 2026 · dans 95 j</div></div><span style="width:2px;height:26px;border-radius:1px;background:var(--color-neutral-700)"></span></div>
+            <div style="display:flex;align-items:center;gap:10px"><i class="ph ph-tire" style="font-size:18px;color:var(--color-neutral-400)"></i><div style="flex:1"><div style="font-size:14px">Pneus avant</div><div style="font-size:11px;color:var(--color-neutral-500)">dans 4 300 km</div></div><span style="width:2px;height:26px;border-radius:1px;background:var(--color-neutral-700)"></span></div>
+          </div>
+        </div>
+
+        <div style="position:absolute;right:16px;bottom:78px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);border:1px solid var(--color-accent);color:var(--color-accent);box-shadow:0 0 0 7px color-mix(in srgb, var(--color-accent) 7%, transparent), var(--shadow-md)"><i class="ph ph-plus" style="font-size:22px"></i></div>
+        <div style="height:62px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--color-surface);box-shadow:0 -1px 0 var(--color-divider)">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-accent)"><i class="ph ph-gauge" style="font-size:21px"></i>Accueil</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-bell-ringing" style="font-size:21px"></i>Échéances</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-receipt" style="font-size:21px"></i>Journal</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-chart-line" style="font-size:21px"></i>Rapports</div>
+        </div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">01 — Accueil : l'échéance la plus urgente ouvre l'écran</div>
+    </div>
+
+    <!-- ══ N2 Échéances ══ -->
+    <div>
+      <div class="ds-nocturne" style="width:380px;height:820px;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.4);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:11px;color:var(--color-neutral-500)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph ph-cell-signal-full"></i><i class="ph ph-wifi-high"></i><i class="ph ph-battery-high"></i></span></div>
+        <div style="height:52px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px"><span style="font-family:var(--font-heading);font-size:20px;font-weight:500">Échéances</span><span style="flex:1"></span><i class="ph ph-sliders-horizontal" style="font-size:20px;color:var(--color-neutral-300)"></i></div>
+
+        <div style="flex:1;overflow:hidden;padding:2px 14px 0;display:flex;flex-direction:column;gap:16px">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px">
+            <div class="card" style="padding:10px 8px;gap:1px;box-shadow:inset 0 0 0 1px var(--color-accent)"><div style="font-size:20px;font-weight:500;color:var(--color-accent)">2</div><div style="font-size:9px;letter-spacing:.04em;color:var(--color-neutral-400)">Urgent</div></div>
+            <div class="card" style="padding:10px 8px;gap:1px"><div style="font-size:20px;font-weight:500">3</div><div style="font-size:9px;letter-spacing:.04em;color:var(--color-neutral-400)">À surveiller</div></div>
+            <div class="card" style="padding:10px 8px;gap:1px"><div style="font-size:20px;font-weight:500">6</div><div style="font-size:9px;letter-spacing:.04em;color:var(--color-neutral-400)">OK</div></div>
+            <div class="card" style="padding:10px 8px;gap:1px"><div style="font-size:20px;font-weight:500">1</div><div style="font-size:9px;letter-spacing:.04em;color:var(--color-neutral-400)">À régler</div></div>
+          </div>
+
+          <div class="seg" style="align-self:flex-start"><label class="seg-opt"><input readOnly="readOnly" type="radio" name="n-due" checked="checked">Tout</label><label class="seg-opt"><input readOnly="readOnly" type="radio" name="n-due">Entretien</label><label class="seg-opt"><input readOnly="readOnly" type="radio" name="n-due">Papiers</label></div>
+
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <h6 style="margin:0;color:var(--color-accent)">Urgent</h6>
+            <div class="card" style="border-left:2px solid var(--color-accent);border-radius:0 var(--radius-md) var(--radius-md) 0"><div style="display:flex;align-items:flex-start;gap:10px"><i class="ph ph-shield-warning" style="font-size:19px;color:var(--color-accent);margin-top:2px"></i><div style="flex:1"><div style="font-size:15px">Contrôle technique</div><div style="font-size:11px;color:var(--color-neutral-400);margin-top:2px">Expire le 9 août 2026 · dans 11 jours</div></div></div><div style="display:flex;gap:7px;margin-top:2px"><button class="btn btn-primary" style="font-size:12px;padding:7px 12px">Marquer comme fait</button><button class="btn btn-secondary" style="font-size:12px;padding:7px 12px">Reporter</button></div></div>
+            <div class="card" style="border-left:2px solid var(--color-accent);border-radius:0 var(--radius-md) var(--radius-md) 0"><div style="display:flex;align-items:flex-start;gap:10px"><i class="ph ph-drop" style="font-size:19px;color:var(--color-accent);margin-top:2px"></i><div style="flex:1"><div style="font-size:15px">Vidange + filtre à huile</div><div style="font-size:11px;color:var(--color-neutral-400);margin-top:2px">Dans 620 km · tous les 15 000 km</div></div></div></div>
+
+            <h6 style="margin:6px 0 0;color:var(--color-neutral-400)">À surveiller</h6>
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 0"><i class="ph ph-shield-check" style="font-size:18px;color:var(--color-neutral-400)"></i><div style="flex:1"><div style="font-size:14px">Assurance</div><div style="font-size:11px;color:var(--color-neutral-500)">1 nov. 2026 · dans 95 j</div></div><i class="ph ph-caret-right" style="color:var(--color-neutral-600)"></i></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 0"><i class="ph ph-tire" style="font-size:18px;color:var(--color-neutral-400)"></i><div style="flex:1"><div style="font-size:14px">Pneus avant</div><div style="font-size:11px;color:var(--color-neutral-500)">dans 4 300 km</div></div><i class="ph ph-caret-right" style="color:var(--color-neutral-600)"></i></div>
+            <div style="display:flex;align-items:center;gap:10px;padding:9px 0"><i class="ph ph-gear" style="font-size:18px;color:var(--color-neutral-400)"></i><div style="flex:1"><div style="font-size:14px">Plaquettes de frein</div><div style="font-size:11px;color:var(--color-neutral-500)">Intervalle à définir</div></div><span class="tag tag-outline">Régler</span></div>
+          </div>
+        </div>
+
+        <div style="height:62px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--color-surface);box-shadow:0 -1px 0 var(--color-divider)">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-gauge" style="font-size:21px"></i>Accueil</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-accent)"><i class="ph ph-bell-ringing" style="font-size:21px"></i>Échéances</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-receipt" style="font-size:21px"></i>Journal</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-chart-line" style="font-size:21px"></i>Rapports</div>
+        </div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">02 — Échéances : entretiens + papiers, quatre compteurs d'état</div>
+    </div>
+
+    <!-- ══ N3 Ajout rapide ══ -->
+    <div>
+      <div class="ds-nocturne" style="width:380px;height:820px;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.4);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:11px;color:var(--color-neutral-500)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph ph-cell-signal-full"></i><i class="ph ph-wifi-high"></i><i class="ph ph-battery-high"></i></span></div>
+        <div style="flex:1;position:relative;overflow:hidden">
+          <div style="position:absolute;inset:0;padding:14px;opacity:.22;display:flex;flex-direction:column;gap:14px">
+            <div style="font-size:26px;font-family:var(--font-heading)">Contrôle technique</div>
+            <div style="height:100px;border-radius:8px;background:var(--color-surface)"></div>
+            <div style="height:70px;border-radius:8px;background:var(--color-surface)"></div>
+            <div style="height:180px;border-radius:8px;background:var(--color-surface)"></div>
+          </div>
+          <div style="position:absolute;inset:0;background:color-mix(in srgb, var(--color-bg) 72%, transparent)"></div>
+          <div style="position:absolute;right:16px;bottom:16px;display:flex;flex-direction:column;align-items:flex-end;gap:12px">
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--color-neutral-300)">Document</span><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);box-shadow:var(--shadow-sm);color:var(--color-neutral-200)"><i class="ph ph-file-text" style="font-size:19px"></i></span></div>
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--color-neutral-300)">Dépense</span><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);box-shadow:var(--shadow-sm);color:var(--color-neutral-200)"><i class="ph ph-currency-eur" style="font-size:19px"></i></span></div>
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--color-neutral-300)">Plein</span><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);box-shadow:var(--shadow-sm);color:var(--color-neutral-200)"><i class="ph ph-gas-pump" style="font-size:19px"></i></span></div>
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--color-neutral-300)">Réparation</span><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);box-shadow:var(--shadow-sm);color:var(--color-neutral-200)"><i class="ph ph-wrench" style="font-size:19px"></i></span></div>
+            <div style="display:flex;align-items:center;gap:10px"><span style="font-size:13px;color:var(--color-accent)">Relevé km</span><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);border:1px solid var(--color-accent);color:var(--color-accent)"><i class="ph ph-gauge" style="font-size:19px"></i></span></div>
+            <div style="width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);border:1px solid var(--color-accent);color:var(--color-accent);box-shadow:0 0 0 7px color-mix(in srgb, var(--color-accent) 7%, transparent), var(--shadow-md);margin-top:4px"><i class="ph ph-x" style="font-size:20px"></i></div>
+          </div>
+        </div>
+        <div style="height:62px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--color-surface);box-shadow:0 -1px 0 var(--color-divider);opacity:.5">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-gauge" style="font-size:21px"></i>Accueil</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-bell-ringing" style="font-size:21px"></i>Échéances</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-receipt" style="font-size:21px"></i>Journal</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-chart-line" style="font-size:21px"></i>Rapports</div>
+        </div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">03 — Ajout rapide : cinq gestes depuis n'importe quel écran</div>
+    </div>
+
+    <!-- ══ N4 Nouvelle intervention ══ -->
+    <div>
+      <div class="ds-nocturne" style="width:380px;height:820px;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.4);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:11px;color:var(--color-neutral-500)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph ph-cell-signal-full"></i><i class="ph ph-wifi-high"></i><i class="ph ph-battery-high"></i></span></div>
+        <div style="height:52px;flex:none;display:flex;align-items:center;gap:12px;padding:0 14px"><i class="ph ph-x" style="font-size:20px;color:var(--color-neutral-300)"></i><span style="font-family:var(--font-heading);font-size:18px;font-weight:500">Nouvelle entrée</span></div>
+
+        <div style="flex:1;overflow:hidden;padding:2px 14px 0;display:flex;flex-direction:column;gap:14px">
+          <div class="seg" style="width:100%"><label class="seg-opt" style="flex:1;justify-content:center"><input readOnly="readOnly" type="radio" name="n-kind" checked="checked"><i class="ph ph-wrench"></i>Entretien</label><label class="seg-opt" style="flex:1;justify-content:center"><input readOnly="readOnly" type="radio" name="n-kind"><i class="ph ph-gas-pump"></i>Carburant</label><label class="seg-opt" style="flex:1;justify-content:center"><input readOnly="readOnly" type="radio" name="n-kind"><i class="ph ph-currency-eur"></i>Dépense</label></div>
+
+          <div style="display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:var(--radius-md);border:1px solid var(--color-accent-800);background:color-mix(in srgb, var(--color-accent) 7%, transparent)"><i class="ph ph-link-simple" style="color:var(--color-accent)"></i><div style="flex:1;font-size:12px;color:var(--color-accent-300)">Lié à <span style="color:var(--color-accent-200)">Contrôle technique</span> — l'échéance sera remise à zéro</div></div>
+
+          <div class="field"><label>Intitulé</label><input readOnly="readOnly" class="input" value="Contrôle technique périodique"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="field"><label>Date</label><input readOnly="readOnly" class="input" value="29/07/2026"></div>
+            <div class="field"><label>Kilométrage</label><input readOnly="readOnly" class="input" value="128 450"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div class="field"><label>Coût</label><input readOnly="readOnly" class="input" value="82,00 €"></div>
+            <div class="field"><label>Garage</label><input readOnly="readOnly" class="input" value="Autosur Massy"></div>
+          </div>
+          <div class="btn btn-ghost" style="align-self:flex-start;font-size:12px"><i class="ph ph-plus"></i>Nouveau garage</div>
+
+          <div class="field"><label>Justificatif</label>
+            <div style="display:flex;gap:10px">
+              <div style="width:86px;height:104px;border-radius:var(--radius-md);background:repeating-linear-gradient(115deg,var(--color-neutral-900) 0 6px,#1b1d2b 6px 12px);display:grid;place-items:center"><span class="lbl" style="font-size:9px;color:var(--color-neutral-600)">scan</span></div>
+              <div style="width:86px;height:104px;border-radius:var(--radius-md);border:1px dashed var(--color-neutral-700);display:grid;place-items:center;color:var(--color-neutral-500)"><i class="ph ph-camera" style="font-size:22px"></i></div>
+            </div>
+          </div>
+          <div class="field"><label>Note</label><input readOnly="readOnly" class="input" value="Contrôle OK, RAS"></div>
+        </div>
+
+        <div style="flex:none;padding:12px 14px 16px;background:var(--color-bg);box-shadow:0 -1px 0 var(--color-divider)"><button class="btn btn-primary btn-block" style="min-height:48px;margin:0">Enregistrer l'entrée</button></div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">04 — Un seul formulaire pour trois types, pré-rempli par « fait »</div>
+    </div>
+
+    <!-- ══ N5 Journal ══ -->
+    <div>
+      <div class="ds-nocturne" style="width:380px;height:820px;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.4);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:11px;color:var(--color-neutral-500)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph ph-cell-signal-full"></i><i class="ph ph-wifi-high"></i><i class="ph ph-battery-high"></i></span></div>
+        <div style="height:52px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px"><span style="font-family:var(--font-heading);font-size:20px;font-weight:500">Journal</span><span style="flex:1"></span><i class="ph ph-magnifying-glass" style="font-size:19px;color:var(--color-neutral-300)"></i><i class="ph ph-funnel" style="font-size:19px;color:var(--color-neutral-300)"></i></div>
+
+        <div style="flex:1;overflow:hidden;padding:2px 14px 0;display:flex;flex-direction:column;gap:14px">
+          <div style="display:flex;gap:7px;flex-wrap:wrap"><span class="tag tag-outline">Tous les types</span><span class="tag tag-neutral">12 derniers mois</span><span class="tag tag-neutral">Tous garages</span></div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between"><div><div style="font-size:11px;color:var(--color-neutral-500)">Total sur la période</div><div style="font-family:var(--font-heading);font-size:24px;font-weight:500;font-variant-numeric:tabular-nums">3 148,60 €</div></div><span class="btn btn-ghost" style="font-size:12px"><i class="ph ph-export"></i>PDF</span></div>
+
+          <div style="display:flex;flex-direction:column;gap:2px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:8px 0"><h6 style="margin:0;color:var(--color-neutral-400)">Juillet 2026</h6><span style="font-size:12px;color:var(--color-neutral-500);font-variant-numeric:tabular-nums">154,70 €</span></div>
+            <div style="display:flex;gap:11px;padding:9px 0"><i class="ph ph-gas-pump" style="font-size:18px;color:var(--color-accent);margin-top:2px"></i><div style="flex:1"><div style="font-size:14px">Plein — 42,1 L</div><div style="font-size:11px;color:var(--color-neutral-500)">24 juil. · 128 300 km · 6,2 L/100</div></div><div style="font-size:14px;font-variant-numeric:tabular-nums">71,20 €</div></div>
+            <div style="display:flex;gap:11px;padding:9px 0"><i class="ph ph-ticket" style="font-size:18px;color:var(--color-neutral-400);margin-top:2px"></i><div style="flex:1"><div style="font-size:14px">Péage A10</div><div style="font-size:11px;color:var(--color-neutral-500)">18 juil.</div></div><div style="font-size:14px;font-variant-numeric:tabular-nums">12,60 €</div></div>
+            <div style="display:flex;gap:11px;padding:9px 0"><i class="ph ph-gas-pump" style="font-size:18px;color:var(--color-accent);margin-top:2px"></i><div style="flex:1"><div style="font-size:14px">Plein — 38,4 L</div><div style="font-size:11px;color:var(--color-neutral-500)">11 juil. · 127 720 km · 6,5 L/100</div></div><div style="font-size:14px;font-variant-numeric:tabular-nums">64,90 €</div></div>
+            <div style="display:flex;gap:11px;padding:9px 0"><i class="ph ph-car-profile" style="font-size:18px;color:var(--color-neutral-400);margin-top:2px"></i><div style="flex:1"><div style="font-size:14px">Parking Gare de Lyon</div><div style="font-size:11px;color:var(--color-neutral-500)">4 juil.</div></div><div style="font-size:14px;font-variant-numeric:tabular-nums">6,00 €</div></div>
+
+            <div style="display:flex;justify-content:space-between;align-items:baseline;padding:14px 0 8px"><h6 style="margin:0;color:var(--color-neutral-400)">Juin 2026</h6><span style="font-size:12px;color:var(--color-neutral-500);font-variant-numeric:tabular-nums">486,30 €</span></div>
+            <div style="display:flex;gap:11px;padding:9px 0"><i class="ph ph-wrench" style="font-size:18px;color:var(--color-accent);margin-top:2px"></i><div style="flex:1"><div style="font-size:14px">Plaquettes avant + disques</div><div style="font-size:11px;color:var(--color-neutral-500)">27 juin · Garage Ferry · 126 980 km</div><span class="tag tag-neutral" style="margin-top:5px"><i class="ph ph-paperclip" style="margin-right:4px"></i>Facture</span></div><div style="font-size:14px;font-variant-numeric:tabular-nums">389,00 €</div></div>
+            <div style="display:flex;gap:11px;padding:9px 0"><i class="ph ph-gas-pump" style="font-size:18px;color:var(--color-accent);margin-top:2px"></i><div style="flex:1"><div style="font-size:14px">Plein — 40,9 L</div><div style="font-size:11px;color:var(--color-neutral-500)">15 juin · 126 410 km · 6,4 L/100</div></div><div style="font-size:14px;font-variant-numeric:tabular-nums">68,80 €</div></div>
+          </div>
+        </div>
+
+        <div style="height:62px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--color-surface);box-shadow:0 -1px 0 var(--color-divider)">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-gauge" style="font-size:21px"></i>Accueil</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-bell-ringing" style="font-size:21px"></i>Échéances</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-accent)"><i class="ph ph-receipt" style="font-size:21px"></i>Journal</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-chart-line" style="font-size:21px"></i>Rapports</div>
+        </div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">05 — Journal : filtres, totaux par mois, export PDF</div>
+    </div>
+
+    <!-- ══ N6 Rapports ══ -->
+    <div>
+      <div class="ds-nocturne" style="width:380px;height:820px;border-radius:16px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.4);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 14px;font-size:11px;color:var(--color-neutral-500)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph ph-cell-signal-full"></i><i class="ph ph-wifi-high"></i><i class="ph ph-battery-high"></i></span></div>
+        <div style="height:52px;flex:none;display:flex;align-items:center;gap:10px;padding:0 14px"><span style="font-family:var(--font-heading);font-size:20px;font-weight:500">Rapports</span><span style="flex:1"></span><span class="tag tag-outline">12 mois</span></div>
+
+        <div style="flex:1;overflow:hidden;padding:2px 14px 0;display:flex;flex-direction:column;gap:16px">
+          <div>
+            <h6 style="margin:0 0 10px;color:var(--color-neutral-400)">Kilométrage</h6>
+            <div style="display:flex;align-items:flex-end;gap:12px"><div style="font-family:var(--font-heading);font-size:26px;font-weight:500;font-variant-numeric:tabular-nums">128 450</div><div style="font-size:11px;color:var(--color-neutral-500);padding-bottom:5px">+1 240 km / mois en moyenne</div></div>
+            <svg viewBox="0 0 340 92" preserveAspectRatio="none" style="width:100%;height:92px;margin-top:8px">
+              <polyline points="0,84 48,76 96,70 144,56 192,48 240,34 288,20 340,8" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round"></polyline>
+              <polygon points="0,84 48,76 96,70 144,56 192,48 240,34 288,20 340,8 340,92 0,92" fill="var(--color-accent)" opacity=".10"></polygon>
+              <circle cx="340" cy="8" r="3" fill="var(--color-accent)"></circle>
+            </svg>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-neutral-600);margin-top:2px"><span>août 25</span><span>janv. 26</span><span>juil. 26</span></div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <div class="card" style="gap:2px;padding:11px"><div style="font-size:10px;color:var(--color-neutral-500)">Dépense / mois</div><div style="font-size:18px;font-weight:500;font-variant-numeric:tabular-nums">262,40 €</div></div>
+            <div class="card" style="gap:2px;padding:11px"><div style="font-size:10px;color:var(--color-neutral-500)">Conso. moyenne</div><div style="font-size:18px;font-weight:500;font-variant-numeric:tabular-nums">6,4 L/100 km</div></div>
+          </div>
+
+          <div>
+            <h6 style="margin:0 0 10px;color:var(--color-neutral-400)">Dépenses par mois</h6>
+            <div style="display:flex;align-items:flex-end;gap:6px;height:96px">
+              <div style="flex:1;height:38%;background:var(--color-neutral-800);border-radius:2px"></div>
+              <div style="flex:1;height:52%;background:var(--color-neutral-800);border-radius:2px"></div>
+              <div style="flex:1;height:30%;background:var(--color-neutral-800);border-radius:2px"></div>
+              <div style="flex:1;height:74%;background:var(--color-neutral-800);border-radius:2px"></div>
+              <div style="flex:1;height:44%;background:var(--color-neutral-800);border-radius:2px"></div>
+              <div style="flex:1;height:26%;background:var(--color-neutral-800);border-radius:2px"></div>
+              <div style="flex:1;height:88%;background:var(--color-neutral-800);border-radius:2px"></div>
+              <div style="flex:1;height:100%;background:var(--color-accent);border-radius:2px;box-shadow:0 0 14px color-mix(in srgb, var(--color-accent) 55%, transparent)"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-neutral-600);margin-top:6px"><span>déc.</span><span>mars</span><span>juil.</span></div>
+          </div>
+
+          <div>
+            <h6 style="margin:0 0 10px;color:var(--color-neutral-400)">Répartition</h6>
+            <div style="display:flex;height:6px;border-radius:3px;overflow:hidden;margin-bottom:12px"><div style="width:41%;background:var(--color-accent)"></div><div style="width:27%;background:var(--color-accent-700)"></div><div style="width:19%;background:var(--color-neutral-700)"></div><div style="width:13%;background:var(--color-neutral-800)"></div></div>
+            <div style="display:flex;flex-direction:column;gap:8px;font-size:13px">
+              <div style="display:flex;gap:9px;align-items:center"><span style="width:7px;height:7px;border-radius:2px;background:var(--color-accent)"></span><span style="flex:1">Carburant</span><span style="font-variant-numeric:tabular-nums;color:var(--color-neutral-300)">1 291,20 €</span></div>
+              <div style="display:flex;gap:9px;align-items:center"><span style="width:7px;height:7px;border-radius:2px;background:var(--color-accent-700)"></span><span style="flex:1">Entretien</span><span style="font-variant-numeric:tabular-nums;color:var(--color-neutral-300)">850,10 €</span></div>
+              <div style="display:flex;gap:9px;align-items:center"><span style="width:7px;height:7px;border-radius:2px;background:var(--color-neutral-700)"></span><span style="flex:1">Assurance</span><span style="font-variant-numeric:tabular-nums;color:var(--color-neutral-300)">598,00 €</span></div>
+              <div style="display:flex;gap:9px;align-items:center"><span style="width:7px;height:7px;border-radius:2px;background:var(--color-neutral-800)"></span><span style="flex:1">Divers</span><span style="font-variant-numeric:tabular-nums;color:var(--color-neutral-300)">409,30 €</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:62px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--color-surface);box-shadow:0 -1px 0 var(--color-divider)">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-gauge" style="font-size:21px"></i>Accueil</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-bell-ringing" style="font-size:21px"></i>Échéances</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-neutral-500)"><i class="ph ph-receipt" style="font-size:21px"></i>Journal</div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--color-accent)"><i class="ph ph-chart-line" style="font-size:21px"></i>Rapports</div>
+        </div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">06 — Rapports : coûts, courbe km, conso, répartition</div>
+    </div>
+
+  </div>
+</div>
+
+<div id="1b" style="width:1340px;flex:none;display:flex;flex-direction:column;gap:22px">
+  <div style="display:flex;align-items:baseline;gap:14px">
+    <span class="lbl" style="font-size:13px;padding:4px 9px;background:#17150f;color:#f2f0ec;border-radius:3px">1b</span>
+    <span style="font-family:'Source Serif 4',Georgia,serif;font-size:26px;font-weight:600;color:#17150f">Broadsheet</span>
+    <span class="lbl" style="font-size:12px;color:#5c5a56">papier · serif · pas de boîtes, l'espace hiérarchise</span>
+  </div>
+
+  <div style="display:grid;grid-template-columns:repeat(3,380px);gap:40px 40px">
+
+    <!-- ══ B1 Accueil ══ -->
+    <div>
+      <div class="ds-broadsheet" style="width:380px;height:820px;border-radius:4px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.26);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:11px;color:var(--color-neutral-600)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-duotone ph-cell-signal-full"></i><i class="ph-duotone ph-wifi-high"></i><i class="ph-duotone ph-battery-high"></i></span></div>
+        <div style="flex:none;padding:6px 18px 0">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-family:var(--font-heading);font-weight:600;font-size:15px;letter-spacing:.16em;text-transform:uppercase">Motora</span>
+            <span style="flex:1"></span>
+            <span style="font-size:13px;display:flex;align-items:center;gap:5px">308 SW <i class="ph-duotone ph-caret-down" style="font-size:12px;color:var(--color-neutral-600)"></i></span>
+            <i class="ph-duotone ph-bell" style="font-size:18px;color:var(--color-accent-700)"></i>
+          </div>
+          <div style="height:3px;background:var(--color-text);margin-top:8px"></div>
+          <div style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-600);padding:5px 0"><span>Mercredi 29 juillet 2026</span><span>AB-123-CD</span></div>
+          <div style="height:1px;background:var(--color-text)"></div>
+        </div>
+
+        <div style="flex:1;overflow:hidden;padding:18px 18px 0;display:flex;flex-direction:column;gap:20px">
+          <div>
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-accent-2-700)">À faire en priorité</div>
+            <div style="font-family:var(--font-heading);font-weight:600;font-size:32px;line-height:1.06;margin-top:7px;text-wrap:pretty">Le contrôle technique expire dans 11 jours</div>
+            <div style="font-size:13px;font-style:italic;color:var(--color-neutral-700);margin-top:8px">Échéance le 9 août 2026 — pensez à réserver.</div>
+            <div style="display:flex;gap:10px;margin-top:14px;align-items:center">
+              <button class="btn btn-primary" style="min-height:44px">Marquer comme fait</button>
+              <button class="btn btn-ghost" style="min-height:44px">Reporter</button>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:16px;align-items:flex-start">
+            <div class="halftone" style="width:112px;height:78px;border-radius:2px;background:repeating-linear-gradient(115deg,var(--color-neutral-300) 0 7px,var(--color-neutral-200) 7px 14px);display:grid;place-items:center;flex:none"><span class="lbl" style="font-size:9px;color:var(--color-neutral-700)">photo</span></div>
+            <div style="flex:1">
+              <div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-600)">Kilométrage</div>
+              <div style="font-family:var(--font-heading);font-weight:600;font-size:34px;line-height:1;font-variant-numeric:tabular-nums;margin-top:2px">128 450</div>
+              <div style="font-size:12px;color:var(--color-neutral-700);font-style:italic">+1 240 km par mois</div>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:24px">
+            <div><div style="font-family:var(--font-heading);font-weight:600;font-size:22px;font-variant-numeric:tabular-nums">0,21 €</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)">par km</div></div>
+            <div><div style="font-family:var(--font-heading);font-weight:600;font-size:22px;font-variant-numeric:tabular-nums">4,80 €</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)">par jour</div></div>
+            <div><div style="font-family:var(--font-heading);font-weight:600;font-size:22px;font-variant-numeric:tabular-nums">6,4 L</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)">aux 100 km</div></div>
+          </div>
+
+          <div>
+            <div style="display:flex;align-items:baseline;justify-content:space-between"><div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-neutral-600)">Ensuite</div><span class="btn btn-ghost" style="font-size:12px">Tout voir</span></div>
+            <div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
+              <div style="display:flex;gap:12px;align-items:baseline"><i class="ph-duotone ph-drop" style="font-size:17px;color:var(--color-accent-2-700)"></i><div style="flex:1"><div style="font-size:15px">Vidange + filtre à huile</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">dans 620 km</div></div></div>
+              <div style="display:flex;gap:12px;align-items:baseline"><i class="ph-duotone ph-shield-check" style="font-size:17px;color:var(--color-accent-700)"></i><div style="flex:1"><div style="font-size:15px">Assurance</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">1 nov. 2026 — dans 95 jours</div></div></div>
+              <div style="display:flex;gap:12px;align-items:baseline"><i class="ph-duotone ph-tire" style="font-size:17px;color:var(--color-accent-700)"></i><div style="flex:1"><div style="font-size:15px">Pneus avant</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">dans 4 300 km</div></div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="position:absolute;right:18px;bottom:76px;width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--color-accent);color:var(--color-bg);box-shadow:var(--shadow-md)"><i class="ph ph-plus" style="font-size:22px"></i></div>
+        <div style="height:60px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--color-bg);box-shadow:0 -1px 0 var(--color-divider)">
+          <div style="text-align:center;font-size:12px;font-family:var(--font-heading);font-weight:600;color:var(--color-accent-700)">Accueil<div style="height:2px;width:26px;background:var(--color-accent);margin:5px auto 0"></div></div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Échéances</div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Journal</div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Rapports</div>
+        </div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">01 — Accueil : l'échéance en titre de une, sous la manchette</div>
+    </div>
+
+    <!-- ══ B2 Échéances ══ -->
+    <div>
+      <div class="ds-broadsheet" style="width:380px;height:820px;border-radius:4px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.26);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:11px;color:var(--color-neutral-600)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-duotone ph-cell-signal-full"></i><i class="ph-duotone ph-wifi-high"></i><i class="ph-duotone ph-battery-high"></i></span></div>
+        <div style="flex:none;padding:8px 18px 0;display:flex;align-items:baseline;gap:10px"><span style="font-family:var(--font-heading);font-weight:600;font-size:24px">Échéances</span><span style="flex:1"></span><i class="ph-duotone ph-sliders-horizontal" style="font-size:18px;color:var(--color-accent-700)"></i></div>
+
+        <div style="flex:1;overflow:hidden;padding:18px 18px 0;display:flex;flex-direction:column;gap:20px">
+          <div style="display:flex;gap:20px">
+            <div><div style="font-family:var(--font-heading);font-weight:600;font-size:28px;color:var(--color-accent-2-700);font-variant-numeric:tabular-nums">2</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)">Urgent</div></div>
+            <div><div style="font-family:var(--font-heading);font-weight:600;font-size:28px;font-variant-numeric:tabular-nums">3</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)">À surveiller</div></div>
+            <div><div style="font-family:var(--font-heading);font-weight:600;font-size:28px;font-variant-numeric:tabular-nums">6</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)">OK</div></div>
+            <div><div style="font-family:var(--font-heading);font-weight:600;font-size:28px;font-variant-numeric:tabular-nums">1</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)">À régler</div></div>
+          </div>
+
+          <div class="seg" style="align-self:flex-start"><label class="seg-opt"><input readOnly="readOnly" type="radio" name="b-due" checked="checked">Tout</label><label class="seg-opt"><input readOnly="readOnly" type="radio" name="b-due">Entretien</label><label class="seg-opt"><input readOnly="readOnly" type="radio" name="b-due">Papiers</label></div>
+
+          <div>
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-accent-2-700)">Urgent</div>
+            <div style="margin-top:14px">
+              <div style="font-family:var(--font-heading);font-weight:600;font-size:20px;line-height:1.15">Contrôle technique</div>
+              <div style="font-size:12px;font-style:italic;color:var(--color-neutral-700);margin-top:4px">Expire le 9 août 2026 — dans 11 jours</div>
+              <div style="display:flex;gap:10px;margin-top:10px"><button class="btn btn-primary" style="font-size:12px;padding:8px 13px">Marquer comme fait</button><button class="btn btn-ghost" style="font-size:12px">Reporter</button></div>
+            </div>
+            <div style="margin-top:20px">
+              <div style="font-family:var(--font-heading);font-weight:600;font-size:20px;line-height:1.15">Vidange + filtre à huile</div>
+              <div style="font-size:12px;font-style:italic;color:var(--color-neutral-700);margin-top:4px">Dans 620 km — tous les 15 000 km</div>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-neutral-600)">À surveiller</div>
+            <div style="display:flex;flex-direction:column;gap:15px;margin-top:14px">
+              <div style="display:flex;align-items:baseline;gap:12px"><i class="ph-duotone ph-shield-check" style="font-size:17px;color:var(--color-accent-700)"></i><div style="flex:1"><div style="font-size:15px">Assurance</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">1 nov. 2026 — dans 95 jours</div></div></div>
+              <div style="display:flex;align-items:baseline;gap:12px"><i class="ph-duotone ph-tire" style="font-size:17px;color:var(--color-accent-700)"></i><div style="flex:1"><div style="font-size:15px">Pneus avant</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">dans 4 300 km</div></div></div>
+              <div style="display:flex;align-items:baseline;gap:12px"><i class="ph-duotone ph-gear" style="font-size:17px;color:var(--color-neutral-600)"></i><div style="flex:1"><div style="font-size:15px">Plaquettes de frein</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">Intervalle à définir</div></div><span class="tag tag-outline">Régler</span></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:60px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--color-bg);box-shadow:0 -1px 0 var(--color-divider)">
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Accueil</div>
+          <div style="text-align:center;font-size:12px;font-family:var(--font-heading);font-weight:600;color:var(--color-accent-700)">Échéances<div style="height:2px;width:26px;background:var(--color-accent);margin:5px auto 0"></div></div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Journal</div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Rapports</div>
+        </div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">02 — Échéances : le magenta ne sert qu'à l'urgence</div>
+    </div>
+
+    <!-- ══ B3 Ajout rapide ══ -->
+    <div>
+      <div class="ds-broadsheet" style="width:380px;height:820px;border-radius:4px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.26);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:11px;color:var(--color-neutral-600)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-duotone ph-cell-signal-full"></i><i class="ph-duotone ph-wifi-high"></i><i class="ph-duotone ph-battery-high"></i></span></div>
+        <div style="flex:1;position:relative;overflow:hidden">
+          <div style="position:absolute;inset:0;padding:18px;opacity:.25;display:flex;flex-direction:column;gap:16px">
+            <div style="height:3px;background:var(--color-text)"></div>
+            <div style="font-family:var(--font-heading);font-weight:600;font-size:30px;line-height:1.06">Le contrôle technique expire dans 11 jours</div>
+            <div style="height:78px;background:var(--color-neutral-200)"></div>
+            <div style="height:120px;background:var(--color-neutral-200)"></div>
+          </div>
+          <div style="position:absolute;inset:0;background:color-mix(in srgb, var(--color-bg) 74%, transparent)"></div>
+          <div style="position:absolute;right:18px;bottom:16px;display:flex;flex-direction:column;align-items:flex-end;gap:13px">
+            <div style="display:flex;align-items:center;gap:12px"><span style="font-size:14px;font-family:var(--font-heading);font-weight:600">Document</span><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);box-shadow:var(--shadow-sm);color:var(--color-text)"><i class="ph-duotone ph-file-text" style="font-size:19px"></i></span></div>
+            <div style="display:flex;align-items:center;gap:12px"><span style="font-size:14px;font-family:var(--font-heading);font-weight:600">Dépense</span><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);box-shadow:var(--shadow-sm);color:var(--color-text)"><i class="ph-duotone ph-currency-eur" style="font-size:19px"></i></span></div>
+            <div style="display:flex;align-items:center;gap:12px"><span style="font-size:14px;font-family:var(--font-heading);font-weight:600">Plein</span><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);box-shadow:var(--shadow-sm);color:var(--color-text)"><i class="ph-duotone ph-gas-pump" style="font-size:19px"></i></span></div>
+            <div style="display:flex;align-items:center;gap:12px"><span style="font-size:14px;font-family:var(--font-heading);font-weight:600">Réparation</span><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-surface);box-shadow:var(--shadow-sm);color:var(--color-text)"><i class="ph-duotone ph-wrench" style="font-size:19px"></i></span></div>
+            <div style="display:flex;align-items:center;gap:12px"><span style="font-size:14px;font-family:var(--font-heading);font-weight:600;color:var(--color-accent-700)">Relevé km</span><span style="width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--color-accent);color:var(--color-bg)"><i class="ph ph-gauge" style="font-size:19px"></i></span></div>
+            <div style="width:56px;height:56px;border-radius:50%;display:grid;place-items:center;background:var(--color-text);color:var(--color-bg);box-shadow:var(--shadow-md);margin-top:4px"><i class="ph ph-x" style="font-size:20px"></i></div>
+          </div>
+        </div>
+        <div style="height:60px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--color-bg);box-shadow:0 -1px 0 var(--color-divider);opacity:.5">
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Accueil</div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Échéances</div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Journal</div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Rapports</div>
+        </div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">03 — Ajout rapide : mêmes cinq gestes, libellés en serif</div>
+    </div>
+
+    <!-- ══ B4 Nouvelle entrée ══ -->
+    <div>
+      <div class="ds-broadsheet" style="width:380px;height:820px;border-radius:4px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.26);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:11px;color:var(--color-neutral-600)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-duotone ph-cell-signal-full"></i><i class="ph-duotone ph-wifi-high"></i><i class="ph-duotone ph-battery-high"></i></span></div>
+        <div style="flex:none;padding:8px 18px 0;display:flex;align-items:center;gap:12px"><i class="ph ph-x" style="font-size:19px;color:var(--color-neutral-700)"></i><span style="font-family:var(--font-heading);font-weight:600;font-size:22px">Nouvelle entrée</span></div>
+
+        <div style="flex:1;overflow:hidden;padding:16px 18px 0;display:flex;flex-direction:column;gap:15px">
+          <div class="seg" style="width:100%"><label class="seg-opt" style="flex:1;justify-content:center"><input readOnly="readOnly" type="radio" name="b-kind" checked="checked">Entretien</label><label class="seg-opt" style="flex:1;justify-content:center"><input readOnly="readOnly" type="radio" name="b-kind">Carburant</label><label class="seg-opt" style="flex:1;justify-content:center"><input readOnly="readOnly" type="radio" name="b-kind">Dépense</label></div>
+
+          <div style="font-size:12px;font-style:italic;color:var(--color-accent-700);display:flex;gap:8px;align-items:baseline"><i class="ph-duotone ph-link-simple"></i><span>Lié au <span style="font-style:normal;font-weight:600">Contrôle technique</span> — l'échéance sera remise à zéro.</span></div>
+
+          <div class="field"><label>Intitulé</label><input readOnly="readOnly" class="input" value="Contrôle technique périodique"></div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="field"><label>Date</label><input readOnly="readOnly" class="input" value="29/07/2026"></div>
+            <div class="field"><label>Kilométrage</label><input readOnly="readOnly" class="input" value="128 450"></div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="field"><label>Coût</label><input readOnly="readOnly" class="input" value="82,00 €"></div>
+            <div class="field"><label>Garage</label><input readOnly="readOnly" class="input" value="Autosur Massy"></div>
+          </div>
+          <div class="btn btn-ghost" style="align-self:flex-start;font-size:12px"><i class="ph ph-plus"></i>Nouveau garage</div>
+
+          <div class="field"><label>Justificatif</label>
+            <div style="display:flex;gap:12px">
+              <div class="halftone" style="width:84px;height:100px;border-radius:2px;background:repeating-linear-gradient(115deg,var(--color-neutral-300) 0 6px,var(--color-neutral-200) 6px 12px);display:grid;place-items:center"><span class="lbl" style="font-size:9px;color:var(--color-neutral-700)">scan</span></div>
+              <div style="width:84px;height:100px;border-radius:2px;border:1px dashed var(--color-neutral-400);display:grid;place-items:center;color:var(--color-neutral-600)"><i class="ph-duotone ph-camera" style="font-size:22px"></i></div>
+            </div>
+          </div>
+          <div class="field"><label>Note</label><input readOnly="readOnly" class="input" value="Contrôle OK, RAS"></div>
+        </div>
+
+        <div style="flex:none;padding:14px 18px 18px"><button class="btn btn-primary btn-block" style="min-height:48px;margin:0">Enregistrer l'entrée</button></div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">04 — Formulaire unique ; le lien à l'échéance est en italique</div>
+    </div>
+
+    <!-- ══ B5 Journal ══ -->
+    <div>
+      <div class="ds-broadsheet" style="width:380px;height:820px;border-radius:4px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.26);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:11px;color:var(--color-neutral-600)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-duotone ph-cell-signal-full"></i><i class="ph-duotone ph-wifi-high"></i><i class="ph-duotone ph-battery-high"></i></span></div>
+        <div style="flex:none;padding:8px 18px 0;display:flex;align-items:baseline;gap:12px"><span style="font-family:var(--font-heading);font-weight:600;font-size:24px">Journal</span><span style="flex:1"></span><i class="ph-duotone ph-magnifying-glass" style="font-size:18px;color:var(--color-accent-700)"></i><i class="ph-duotone ph-funnel" style="font-size:18px;color:var(--color-accent-700)"></i></div>
+
+        <div style="flex:1;overflow:hidden;padding:16px 18px 0;display:flex;flex-direction:column;gap:18px">
+          <div style="display:flex;gap:8px;flex-wrap:wrap"><span class="tag tag-outline">Tous les types</span><span class="tag tag-neutral">12 derniers mois</span><span class="tag tag-neutral">Tous garages</span></div>
+          <div style="display:flex;align-items:flex-end;justify-content:space-between">
+            <div><div style="font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--color-neutral-600)">Total sur la période</div><div style="font-family:var(--font-heading);font-weight:600;font-size:30px;font-variant-numeric:tabular-nums;line-height:1.1">3 148,60 €</div></div>
+            <span class="btn btn-ghost" style="font-size:12px"><i class="ph ph-export"></i>PDF</span>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-neutral-600)">Juillet 2026</div><span style="font-size:12px;font-variant-numeric:tabular-nums;color:var(--color-neutral-700)">154,70 €</span></div>
+            <div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
+              <div style="display:flex;gap:12px;align-items:baseline"><i class="ph-duotone ph-gas-pump" style="font-size:17px;color:var(--color-accent-700)"></i><div style="flex:1"><div style="font-size:15px">Plein — 42,1 L</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">24 juil. · 128 300 km · 6,2 L/100</div></div><div style="font-size:15px;font-variant-numeric:tabular-nums">71,20 €</div></div>
+              <div style="display:flex;gap:12px;align-items:baseline"><i class="ph-duotone ph-ticket" style="font-size:17px;color:var(--color-neutral-600)"></i><div style="flex:1"><div style="font-size:15px">Péage A10</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">18 juil.</div></div><div style="font-size:15px;font-variant-numeric:tabular-nums">12,60 €</div></div>
+              <div style="display:flex;gap:12px;align-items:baseline"><i class="ph-duotone ph-gas-pump" style="font-size:17px;color:var(--color-accent-700)"></i><div style="flex:1"><div style="font-size:15px">Plein — 38,4 L</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">11 juil. · 127 720 km · 6,5 L/100</div></div><div style="font-size:15px;font-variant-numeric:tabular-nums">64,90 €</div></div>
+              <div style="display:flex;gap:12px;align-items:baseline"><i class="ph-duotone ph-car-profile" style="font-size:17px;color:var(--color-neutral-600)"></i><div style="flex:1"><div style="font-size:15px">Parking Gare de Lyon</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">4 juil.</div></div><div style="font-size:15px;font-variant-numeric:tabular-nums">6,00 €</div></div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-neutral-600)">Juin 2026</div><span style="font-size:12px;font-variant-numeric:tabular-nums;color:var(--color-neutral-700)">486,30 €</span></div>
+            <div style="display:flex;flex-direction:column;gap:14px;margin-top:12px">
+              <div style="display:flex;gap:12px;align-items:baseline"><i class="ph-duotone ph-wrench" style="font-size:17px;color:var(--color-accent-700)"></i><div style="flex:1"><div style="font-size:15px">Plaquettes avant + disques</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">27 juin · Garage Ferry · 126 980 km</div><span class="tag tag-neutral" style="margin-top:6px">Facture jointe</span></div><div style="font-size:15px;font-variant-numeric:tabular-nums">389,00 €</div></div>
+              <div style="display:flex;gap:12px;align-items:baseline"><i class="ph-duotone ph-gas-pump" style="font-size:17px;color:var(--color-accent-700)"></i><div style="flex:1"><div style="font-size:15px">Plein — 40,9 L</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700)">15 juin · 126 410 km · 6,4 L/100</div></div><div style="font-size:15px;font-variant-numeric:tabular-nums">68,80 €</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="height:60px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--color-bg);box-shadow:0 -1px 0 var(--color-divider)">
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Accueil</div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Échéances</div>
+          <div style="text-align:center;font-size:12px;font-family:var(--font-heading);font-weight:600;color:var(--color-accent-700)">Journal<div style="height:2px;width:26px;background:var(--color-accent);margin:5px auto 0"></div></div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Rapports</div>
+        </div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">05 — Journal : totaux mensuels en tête de colonne, aucun filet</div>
+    </div>
+
+    <!-- ══ B6 Rapports ══ -->
+    <div>
+      <div class="ds-broadsheet" style="width:380px;height:820px;border-radius:4px;overflow:hidden;display:flex;flex-direction:column;background:var(--color-bg);box-shadow:0 20px 50px rgba(0,0,0,.26);position:relative">
+        <div style="height:26px;flex:none;display:flex;align-items:center;justify-content:space-between;padding:0 18px;font-size:11px;color:var(--color-neutral-600)"><span>9:41</span><span style="display:flex;gap:5px"><i class="ph-duotone ph-cell-signal-full"></i><i class="ph-duotone ph-wifi-high"></i><i class="ph-duotone ph-battery-high"></i></span></div>
+        <div style="flex:none;padding:8px 18px 0;display:flex;align-items:baseline;gap:12px"><span style="font-family:var(--font-heading);font-weight:600;font-size:24px">Rapports</span><span style="flex:1"></span><span class="tag tag-outline">12 mois</span></div>
+
+        <div style="flex:1;overflow:hidden;padding:16px 18px 0;display:flex;flex-direction:column;gap:20px">
+          <div>
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-neutral-600)">Kilométrage</div>
+            <div style="display:flex;align-items:flex-end;gap:12px;margin-top:4px"><div style="font-family:var(--font-heading);font-weight:600;font-size:30px;font-variant-numeric:tabular-nums;line-height:1">128 450</div><div style="font-size:12px;font-style:italic;color:var(--color-neutral-700);padding-bottom:3px">+1 240 km / mois</div></div>
+            <svg viewBox="0 0 340 88" preserveAspectRatio="none" style="width:100%;height:88px;margin-top:10px">
+              <polyline points="0,80 48,72 96,66 144,53 192,45 240,32 288,19 340,7" fill="none" stroke="var(--color-accent)" stroke-width="1.6" stroke-linecap="round"></polyline>
+              <circle cx="340" cy="7" r="3.5" fill="var(--color-accent-2)"></circle>
+            </svg>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-neutral-600);margin-top:2px"><span>août 25</span><span>janv. 26</span><span>juil. 26</span></div>
+          </div>
+
+          <div style="display:flex;gap:26px">
+            <div><div style="font-family:var(--font-heading);font-weight:600;font-size:24px;font-variant-numeric:tabular-nums">262,40 €</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)">par mois</div></div>
+            <div><div style="font-family:var(--font-heading);font-weight:600;font-size:24px;font-variant-numeric:tabular-nums">6,4 L</div><div style="font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--color-neutral-600)">aux 100 km</div></div>
+          </div>
+
+          <div>
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-neutral-600)">Dépenses par mois</div>
+            <div style="display:flex;align-items:flex-end;gap:7px;height:92px;margin-top:12px">
+              <div style="flex:1;height:38%;background:var(--color-neutral-400)"></div>
+              <div style="flex:1;height:52%;background:var(--color-neutral-400)"></div>
+              <div style="flex:1;height:30%;background:var(--color-neutral-400)"></div>
+              <div style="flex:1;height:74%;background:var(--color-neutral-400)"></div>
+              <div style="flex:1;height:44%;background:var(--color-neutral-400)"></div>
+              <div style="flex:1;height:26%;background:var(--color-neutral-400)"></div>
+              <div style="flex:1;height:88%;background:var(--color-neutral-400)"></div>
+              <div style="flex:1;height:100%;background:var(--color-accent)"></div>
+            </div>
+            <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--color-neutral-600);margin-top:6px"><span>déc.</span><span>mars</span><span>juil.</span></div>
+          </div>
+
+          <div>
+            <div style="font-size:10px;letter-spacing:.13em;text-transform:uppercase;color:var(--color-neutral-600)">Répartition</div>
+            <table class="table" style="margin-top:8px">
+              <tbody>
+                <tr><td style="padding-left:0">Carburant</td><td style="text-align:right;font-variant-numeric:tabular-nums;padding-right:0">1 291,20 €</td></tr>
+                <tr><td style="padding-left:0">Entretien</td><td style="text-align:right;font-variant-numeric:tabular-nums;padding-right:0">850,10 €</td></tr>
+                <tr><td style="padding-left:0">Assurance</td><td style="text-align:right;font-variant-numeric:tabular-nums;padding-right:0">598,00 €</td></tr>
+                <tr><td style="padding-left:0">Divers</td><td style="text-align:right;font-variant-numeric:tabular-nums;padding-right:0">409,30 €</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div style="height:60px;flex:none;display:grid;grid-template-columns:repeat(4,1fr);align-items:center;background:var(--color-bg);box-shadow:0 -1px 0 var(--color-divider)">
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Accueil</div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Échéances</div>
+          <div style="text-align:center;font-size:12px;color:var(--color-neutral-700)">Journal</div>
+          <div style="text-align:center;font-size:12px;font-family:var(--font-heading);font-weight:600;color:var(--color-accent-700)">Rapports<div style="height:2px;width:26px;background:var(--color-accent);margin:5px auto 0"></div></div>
+        </div>
+      </div>
+      <div class="lbl" style="margin-top:10px;font-size:11px;color:#4d4b47">06 — Rapports : chiffres en serif, un seul aplat cyan par graphe</div>
+    </div>
+
+  </div>
+</div>
+
+
+</section>
+</x-dc>
+</body>
+</html>

@@ -7,12 +7,14 @@ import 'package:carnet_auto/models/maintenance_prediction.dart';
 import 'package:carnet_auto/models/mileage_log.dart';
 import 'package:carnet_auto/models/reminder.dart';
 import 'package:carnet_auto/models/vehicle.dart';
+import 'package:carnet_auto/providers/aurora_shell_provider.dart';
+import 'package:carnet_auto/providers/auth_provider.dart';
 import 'package:carnet_auto/providers/document_provider.dart';
 import 'package:carnet_auto/providers/maintenance_provider.dart';
 import 'package:carnet_auto/providers/notification_provider.dart';
-import 'package:carnet_auto/providers/shell_provider.dart';
 import 'package:carnet_auto/providers/vehicle_provider.dart';
 import 'package:carnet_auto/screens/shell/app_shell.dart';
+import 'package:carnet_auto/widgets/aurora/aurora_floating_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -29,6 +31,9 @@ class _StubVehicles extends VehiclesNotifier {
 Future<void> _pumpShell(WidgetTester tester) async {
   await tester.pumpWidget(ProviderScope(
     overrides: [
+      // AuroraHomeScreen's greeting reads this; Supabase is never
+      // initialized in a widget test, so the real provider would throw.
+      currentUserProvider.overrideWithValue(null),
       vehiclesProvider.overrideWith(_StubVehicles.new),
       maintenanceHistoryProvider('v1')
           .overrideWith((ref) async => const <MaintenanceHistory>[]),
@@ -61,44 +66,45 @@ Future<void> _pumpShell(WidgetTester tester) async {
 void main() {
   setUpAll(() => initializeDateFormatting('fr_FR', null));
 
-  testWidgets('opens on Véhicule with the selector in the app bar',
-      (tester) async {
+  testWidgets('opens on Accueil with the vehicle name shown', (tester) async {
     await _pumpShell(tester);
 
-    // The vehicle name appears twice: app-bar selector and photo hero.
+    // The vehicle name appears twice: the greeting block and the photo
+    // hero's plate/km pill row's neighbourhood.
     expect(find.text('Clio'), findsWidgets);
-    expect(find.text('KILOMÉTRAGE'), findsOneWidget);
+    expect(find.textContaining('Bonjour'), findsOneWidget);
   });
 
   testWidgets('each tab shows its own content', (tester) async {
     await _pumpShell(tester);
 
-    await tester.tap(find.text('Historique'));
+    await tester.tap(find.bySemanticsLabel('Journal'));
     await tester.pumpAndSettle();
     expect(find.textContaining('Rechercher'), findsOneWidget);
 
-    await tester.tap(find.text('Échéances'));
+    await tester.tap(find.bySemanticsLabel('Échéances'));
     await tester.pumpAndSettle();
-    expect(find.textContaining("Ajouter un type d'entretien"), findsOneWidget,
-        reason: 'the only way to create a maintenance type in the app');
+    expect(find.text('Échéances'), findsOneWidget);
+    expect(find.text('Rien à signaler'), findsOneWidget,
+        reason: 'no predictions/documents were stubbed for this vehicle');
 
-    await tester.tap(find.text('Plus'));
+    await tester.tap(find.bySemanticsLabel('Rapports'));
     await tester.pumpAndSettle();
-    expect(find.text('Paramètres'), findsOneWidget);
+    expect(find.text('Rapports'), findsOneWidget);
   });
 
-  testWidgets('the add dial exposes all five entry kinds', (tester) async {
+  testWidgets('the quick-add sheet exposes all five entry kinds', (tester) async {
     await _pumpShell(tester);
 
     await tester.tap(find.bySemanticsLabel('Ajouter une entrée'));
     await tester.pumpAndSettle();
 
     for (final label in [
-      'Relevé km',
+      'Relevé kilométrique',
       'Réparation',
-      'Plein',
+      'Plein de carburant',
       'Dépense',
-      'Document',
+      'Document scanné',
     ]) {
       expect(find.text(label), findsOneWidget, reason: '$label is orphaned');
     }
@@ -111,10 +117,10 @@ void main() {
 
     final element = tester.element(find.byType(AppShell));
     final container = ProviderScope.containerOf(element);
-    expect(container.read(shellTabProvider), ShellTab.vehicle);
+    expect(container.read(auroraShellTabProvider), AuroraNavTab.home);
 
-    await tester.tap(find.text('Échéances'));
+    await tester.tap(find.bySemanticsLabel('Échéances'));
     await tester.pumpAndSettle();
-    expect(container.read(shellTabProvider), ShellTab.due);
+    expect(container.read(auroraShellTabProvider), AuroraNavTab.due);
   });
 }
